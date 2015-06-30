@@ -1,0 +1,17 @@
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svn/svnrepos/!svn/ver/173151/server5/deploy/trunk/TTEngine/templates/user
+END
+user_create.html
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/svn/svnrepos/!svn/ver/173107/server5/deploy/trunk/TTEngine/templates/user/user_create.html
+END
+user_list.html
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/svn/svnrepos/!svn/ver/173151/server5/deploy/trunk/TTEngine/templates/user/user_list.html
+END

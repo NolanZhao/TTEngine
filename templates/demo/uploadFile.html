@@ -1,0 +1,57 @@
+{% extends "root.html" %}
+{% load rzrk_tags %}
+
+{% block title %}{% settings_value "MAIN_PROJECT_NAME" %}-文件列表{% endblock %}
+{% block rootJsAndCss %}
+    <style>
+
+    </style>
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+        })
+    </script>
+{% endblock %}
+{% block rootBody %}
+    <div class="title_1">
+        <span>{% if is_sys %}系统{% endif %}文件列表</span>
+    </div>
+    <div class="inner">
+        <form method="post" enctype="multipart/form-data" action="/demo/uploadFile/">
+            {% csrf_token %}
+            <input id="uploadPackageFile" type="file" name="uploadFile">
+            <input type="submit" value="上传文件">
+        </form>
+
+        <table class="bordered table" style="margin-top: 35px;">
+            {% if dirs|length > 0 %}
+                <tr type="main">
+                    <th style="width: 40px;">序号</th>
+                    <th>文件名称</th>
+                    <th>下载</th>
+                </tr>
+                {% for file in dirs %}
+                    <tr type="main">
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ file }}</td>
+                        <td></td>
+                        <td>
+                            <span class="btn" onclick="javascript:window.open('/demo/downloadFile/?file={{ file }}')" >下载</span>
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% endif %}
+        </table>
+    </div>
+    <div id="dialog_table" class="easyDialog_wrapper"
+         style="display: none; margin: 0px; min-width: 1045px; width: auto; min-height: 300px; max-height: 500px;">
+        <div class="easyDialog_content">
+            <h4 class="easyDialog_title" id="easyDialogTitle" style="cursor: move;">
+                <a href="javascript:void(0)" title="关闭窗口" class="close_btn" id="closeBtn_rzrk">×</a>
+                <span type="dialog_title"></span>
+            </h4>
+            <div class="easyDialog_text" style="min-height: 300px; max-height: 415px; overflow: auto;">
+            </div>
+        </div>
+    </div>
+{% endblock %}

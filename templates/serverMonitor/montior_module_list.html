@@ -1,0 +1,57 @@
+{% extends "root.html" %}
+{% load rzrk_tags %}
+
+{% block title %}{% settings_value "MAIN_PROJECT_NAME" %}-监控模块查看{% endblock %}
+{% block rootJsAndCss %}
+        <script type="text/javascript">
+            $(document).ready(function () {
+                $("#addSetting").bind('click', function () {
+                    var flag = $("#addSetting").attr('name');
+                    window.location.href = '/serverMonitor/monitorModule_add/?flag=' + flag;
+                });
+
+                //修改
+                $(".inner").on("click", '.btn[cmd=editSetting]', function() {
+                    var id = this.id;
+                    var flag = $(this).attr('name');
+                    var url = "/serverMonitor/monitorModule_edit/?id=" + id + '&flag='+ flag;
+                    window.open(url, '_self');
+                });
+            });
+        </script>
+{% endblock %}
+{% block rootBody %}
+    <div class="title_1" ><span>监控模块列表</span></div>
+    <div class="inner">
+        <div class="btn_line">
+            <div class="btn" id="addSetting" name="sermonitor_add">添加</div>
+        </div>
+        <table class="bordered table" style="margin-top: 32px">
+            <tr>
+                <th>序号</th>
+                <th>监控模块名称</th>
+                <th>详细描述</th>
+                <th>创建者</th>
+                <th>创建时间</th>
+                <th>操作</th>
+            </tr>
+            {% for setting in settings %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td><div onmouseover="mOver(this)" onmouseout="mOut(this)" class="btn"style="color:black;border:none;background-color: transparent" cmd="viewModule" id="{{ setting.id }}" setting_name="{{ setting.module }}">{{ setting.module }}</div></td>
+                    <td>{{ setting.description}}</td>
+                    <td>{{ setting.create_user }}</td>
+                    <td>{{ setting.create_time|date:'Y-m-d H:i:s' }}</td>
+                    <td>
+                        <div class="btn_line">
+                            <span class="btn" cmd="editSetting" title="编辑监控项" id="{{ setting.id }}" setting_name="{{setting.log_type }}" name="sermonitor_edit">修改</span>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+            {% if settings|length  == 0 %}
+                <td>暂无监控类型信息</td>
+            {% endif %}
+        </table>
+    </div>
+{% endblock %}

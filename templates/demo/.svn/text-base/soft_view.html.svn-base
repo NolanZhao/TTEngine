@@ -1,0 +1,161 @@
+{% extends "root.html" %}
+{% load rzrk_tags %}
+
+{% block title %}{% settings_value "MAIN_PROJECT_NAME" %}-文件列表{% endblock %}
+{% block rootJsAndCss %}
+    <style>
+
+        .tips_file {
+        }
+
+        .cus_name_item {
+            color: cyan;
+            text-decoration: underline;
+        }
+
+        .cus_name_item:hover {
+            background-color: dodgerblue;
+            cursor: pointer;
+        }
+
+        .program_name {
+            color: cyan;
+        }
+
+        .old_mark {
+            color: red;
+        }
+    </style>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            //下载压缩包
+            $("#downloadZip").bind('click', function () {
+                var $this = $(this);
+                window.open('/demo/downloadZip/', '_self');
+            });
+{#            //下载文件#}
+{#            $(".inner").on("click", ".btn[cmd=download]", function () {#}
+{#                var $this = $(this);#}
+{#                window.open('/demo/downloadFile/?file_name={{ file }}', '_self');#}
+{#            });#}
+{#            //删除文件#}
+{#            $(".inner").on("click", function () {#}
+{#                var $this = $(this);#}
+{#                window.open('/demo/downloadFile/?file_name={{ file }}', '_self');#}
+{#            });#}
+
+            $('#saveBtn').bind('click', function () {
+                var tip_id = $('#tip_id').val();
+                var tip_content = $('#tip_content').val();
+                var tip_file = $('#tip_file');
+
+                if (!tip_id || !tip_content) {
+                    dialog_error('', '必要参数为空!');
+                    return false;
+                }
+                var path = tip_file.val();
+                var file_flag = path ? true : false;
+
+                var url = '/demo/showBaseSoft/';
+
+                if (file_flag) {
+                    tip_file.wrap("<form action='" + url + "' method='post' enctype='multipart/form-data' style='display:none'></form>");
+                    tip_file.parent().append("<input type='text' name='tip_id' value='" + tip_id + "'>");
+                    tip_file.parent().append("<input type='text' name='tip_content' value='" + tip_content + "'>");
+
+                    $(tip_file.parent()).ajaxSubmit({
+                        url: url,
+                        type: 'post',
+                        dataType: 'json',
+                        timeout: 30 * 60 * 1000,
+                        beforeSend: function () {
+                        },
+                        uploadProgress: function (event, position, total, percentComplete) {
+                        },
+                        success: function (resp) {
+                            if (resp.success) {
+                                dialog_success('', resp.error, function () {
+                                    window.location.href = '/demo/showBaseSoft/'
+                                }, 2000)
+                            } else {
+                                tip_file.parent().find("input[name=tip_id]").remove();
+                                tip_file.parent().find("input[name=tip_content]").remove();
+                                tip_file.unwrap();
+                                dialog_error(resp.error);
+                            }
+                        },
+                        error: function (xhr) {
+                            dialog_error("上传异常!" + xhr);
+                        }
+                    });
+
+                } else {
+                    $.post(url, {tip_id: tip_id, tip_content: tip_content}, function (resp) {
+                        if (resp.success) {
+                            dialog_success('', resp.error, function () {
+                                window.location.href = '/demo/showBaseSoft/'
+                            }, 2000)
+                        } else {
+                            dialog_error(resp.error);
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+{% endblock %}
+{% block rootBody %}
+    <div class="title_1">
+        <span>{% if is_sys %}系统{% endif %}文件列表</span>
+    </div>
+    <div class="inner">
+        <div class="btn_line">
+            <div class="btn" id="downloadZip" style="z-index: 2;">下载所有文件压缩包</div>
+            <div class="btn" id="saveBtn" style="z-index: 2;">保存</div>
+            <div id="packageFile" href="" role="button" class="btn">上传文件</div>
+        </div>
+
+        <form method="post" enctype="multipart/form-data" action="/demo/uploadBaseSoft/">
+            {% csrf_token %}
+            <input id="uploadPackageFile" type="file" name="uploadBaseSoft">
+            <input type="submit" value="上传文件">
+        </form>
+
+        <table class="bordered table" style="margin-top: 35px;">
+            {% if dirs|length > 0 %}
+                <tr type="main">
+                    <th style="width: 40px;">序号</th>
+                    <th>文件名称</th>
+                    <th>文件说明</th>
+                    <th>删除</th>
+                    <th>下载</th>
+                </tr>
+                {% for file in dirs %}
+                    <tr type="main">
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ file }}</td>
+                        <td></td>
+                        <td>
+                            <span class="btn" onclick="javascript:window.open('/demo/deleteFile/?file={{ file }}')" >删除</span>
+                        </td>
+                        <td>
+                            <span class="btn" onclick="javascript:window.open('/demo/downloadFile/?file={{ file }}')" >下载</span>
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% endif %}
+        </table>
+    </div>
+    <div id="dialog_table" class="easyDialog_wrapper"
+         style="display: none; margin: 0px; min-width: 1045px; width: auto; min-height: 300px; max-height: 500px;">
+        <div class="easyDialog_content">
+            <h4 class="easyDialog_title" id="easyDialogTitle" style="cursor: move;">
+                <a href="javascript:void(0)" title="关闭窗口" class="close_btn" id="closeBtn_rzrk">×</a>
+                <span type="dialog_title"></span>
+            </h4>
+            <div class="easyDialog_text" style="min-height: 300px; max-height: 415px; overflow: auto;">
+            </div>
+        </div>
+
+    </div>
+{% endblock %}

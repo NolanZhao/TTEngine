@@ -1,0 +1,320 @@
+{% extends "root.html" %}
+{% load rzrk_tags %}
+
+{% block title %}{% settings_value "MAIN_PROJECT_NAME" %}-欢迎{% endblock %}
+{% block rootJsAndCss %}
+    <style>
+         .cus_name_item {
+            color: blue;
+            text-decoration: underline;
+        }
+
+        .cus_name_item:hover {
+            background-color: #D5DDF6;
+            cursor: pointer;
+        }
+    </style>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            //portal升级脚本查看
+            $("body").on("click", ".btn[type=portal_upgrade_sql]", function () {
+                var $this = $(this);
+                var sql = $this.attr('value');
+
+                var dialog_title = $('span[type=dialog_title]');
+
+                dialog_title.text('升级脚本');
+
+                var dialog_table = $('#dialog_table .easyDialog_text');
+                dialog_table.empty();
+                dialog_table.append(sql);
+                easyDialog.open({
+                    container: 'dialog_table',
+                    overlay: false
+                });
+            });
+            //文件列表
+            $(".inner").on("click", ".btn[cmd=file_list]", function () {
+                var $this = $(this);
+                var package_id = $this.parent().find('input[name=package_id]').val();
+
+                var url = '/customer/package_file/';
+
+                $.get(url, {packageId: package_id}, function (resp) {
+                    if (resp.success) {
+                        var data = resp.data;
+                        var dialog_title = $('span[type=dialog_title]');
+                        dialog_title.text('文件列表');
+                        var dialog_table = $('div[class=easyDialog_text]');
+                        dialog_table.empty();
+                        //初始化table
+                        var html = '';
+                        html += '<table class="bordered table_small" type="dialog_table">';
+                        html += '<tr>';
+                        html += '<th>序号</th>';
+                        html += '<th>路径</th>';
+                        html += '<th>大小</th>';
+                        html += '<th>sha1</th>';
+                        html += '<th>权限</th>';
+                        html += '<th>操作</th>';
+                        html += '</tr>';
+
+                        for (var index in data) {
+                            var data_item = data[index];
+                            html += '<tr>';
+                            html += '<td>' + (parseInt(index) + 1) + '</td>';
+                            html += '<td>' + data_item.path + '</td>';
+                            html += '<td>' + Math.round((parseInt(data_item.size) / 1024) * 100) / 100 + ' KB</td>';
+                            html += '<td>' + data_item.sha1 + '</td>';
+                            html += '<td>' + data_item.mod + '</td>';
+                            html += '<td>';
+                            html += '<span class="btn" cmd="file_download" value="' + data_item.id + '" style="line-height: 21px;">下载</span>';
+                            html += '</td>';
+                            html += '</tr>';
+                        }
+                        html += '</table>';
+
+                        dialog_table.append(html);
+                        easyDialog.open({
+                            container: 'dialog_table',
+                            overlay: false
+                        });
+                    } else {
+                        alert(resp.error);
+                    }
+                });
+            });
+
+            //文件下载
+            $("body").on("click", ".btn[cmd=file_download]", function () {
+                var $this = $(this);
+                var file_id = $this.attr('value');
+                var url = '/customer/package_file/download/?id=' + file_id;
+                window.open(url);
+            });
+
+            //分支信息
+            $(".inner").on("click", ".btn[cmd=package_branch]", function () {
+                var $this = $(this);
+                var package_id = $this.parent().find('input[name=package_id]').val();
+
+                var url = '/customer/package_branch/';
+
+                $.get(url, {packageId: package_id}, function (resp) {
+                    if (resp.success) {
+                        var data = resp.data;
+                        var dialog_title = $('span[type=dialog_title]');
+                        dialog_title.text('分支信息');
+                        var dialog_table = $('div[class=easyDialog_text]');
+                        dialog_table.empty();
+                        //初始化table
+                        var html = '';
+                        html += '<table class="bordered table_small" type="dialog_table">';
+                        html += '<tr>';
+                        html += '<th>序号</th>';
+                        html += '<th>分支</th>';
+                        html += '<th>版本号</th>';
+                        html += '</tr>';
+
+                        for (var index in data.branches) {
+                            var data_item = data.branches[index];
+                            html += '<tr>';
+                            html += '<td>' + (parseInt(index) + 1) + '</td>';
+                            html += '<td>' + data_item[0] + '</td>';
+                            html += '<td>' + data_item[1] + '</td>';
+                            html += '</tr>';
+                        }
+                        html += '</table>';
+
+                        dialog_table.append(html);
+                        easyDialog.open({
+                            container: 'dialog_table',
+                            overlay: false
+                        });
+                    } else {
+                        alert(resp.error);
+                    }
+                });
+            });
+
+
+            //删除
+            $('.inner').on('click', '.btn[cmd=delete_record]', function () {
+                var $this = $(this);
+                var id = $this.attr('value');
+
+                if (!id) {
+                    alert('升级记录ID为空!');
+                    return;
+                }
+
+                if (!confirm('确认删除该升级记录?')) {
+                    return;
+                }
+
+                var url = '/customer/deploy/record/del/';
+
+                $.post(url, {id: id}, function (resp) {
+                    if (resp.success) {
+                        $this.parent().parent().parent().remove();
+                        alert(resp.error);
+                    } else {
+                        alert(resp.error);
+                    }
+                }, 'json');
+            });
+
+            $('.inner').on('click', '.btn[cmd=delete_cus_record]', function () {
+                var $this = $(this);
+                var id = $this.attr('value');
+
+                if (!id) {
+                    alert('升级记录ID为空!');
+                    return;
+                }
+
+                if (!confirm('确认删除该升级记录?')) {
+                    return;
+                }
+
+                var url = '/customer/deploy/cus_record/del/';
+
+                $.post(url, {id: id}, function (resp) {
+                    if (resp.success) {
+                        dialog_success('', resp.error, function () {
+                            window.location.reload();
+                        });
+                    } else {
+                        dialog_error('', resp.error);
+                    }
+                }, 'json');
+            });
+
+            //修改升级记录
+            $('.inner').on('click', '.btn[cmd=edit_cus_record]', function() {
+                  var $this = $(this);
+                  var id = $this.attr('value');
+                  var flag = $this.attr('name');
+                  var type = $this.attr('label');
+                  var url = '/customer/deploy/record/list/edit/?id=' + id + '&flag='+ flag + '&type=' + type;
+                  window.open(url, '_self');
+            });
+
+            //发送邮件
+            $('.inner').on('click', '.btn[cmd=send_email]', function() {
+                 var $this = $(this);
+                 var id = $this.attr('value')
+                $.post('/customer/deploy/record/list/email/', {id:id}, function(resp) {
+                    if(resp.success){
+                          dialog_success('', resp.error);
+                    }else{
+                        dialog_error('', resp.error);
+                    }
+                })
+            });
+
+             //升级检查记录
+            $('.inner').on('click', '.btn[cmd=check_update]', function (){
+                var $this = $(this);
+                var id = $this.attr('value');
+                var url = '/customer/deploy/record/check/?id='+ id;
+                window.location.href = url;
+            });
+
+        });
+    </script>
+{% endblock %}
+{% block rootBody %}
+    <div class="title_1">
+        <span>客户查询列表</span>
+        <span style="margin-left: 1200px" title="不具备查询功能,仅有显示功能">查询:</span>
+        <input id="record_se" class="b_searchbox" value="{% if text %}{{ text}} {% else %}{% endif %}" style="margin-left: 0px;width: 200px">
+    </div>
+    <div class="inner">
+        <div class="btn_line"></div>
+        <table class="bordered table">
+            <tr>
+                <th>序号</th>
+                <th>客户名称</th>
+                <th>版本号</th>
+                <th>机器</th>
+                <th>Portal</th>
+                <th>开始时间</th>
+                <th>结束时间</th>
+                <th>实施人员</th>
+                <th>升级备注</th>
+                <th>是否升级检查</th>
+                <th>升级检查人员</th>
+                <th>录入时间</th>
+                <th>录入人员</th>
+                <th width="155px" colspan="2">操作</th>
+            </tr>
+             {% if cus_records %}
+                {% for record in cus_records %}
+                    {% for server_package in record.cus_package.machine_packages %}
+                        {% if forloop.first %}
+                        <tr>
+                            <td rowspan="{{ record.cus_package.machine_packages|length }}">{{ forloop.parentloop.counter }}</td>
+                            <td>
+                                <a  href="/customer/view/?cus_id={{ server_package.customer.id  }}" title="点击查看详情" cmd="viewCustomer" title="查看"  cus_name="{{ server_package.customer.name  }}" class="cus_name_item" >{{ server_package.customer.name  }}</a>
+                            </td>
+                            <td>{{ server_package.version }}</td>
+                            <td>{{ server_package.machine.name }}</td>
+                            <td rowspan="{{ record.cus_package.machine_packages|length }}">
+                                <a title="点击查看详情[{{ record.cus_package.portal_package.svn_url }}]" href="/portal/package/view/?id={{ record.cus_package.portal_package.id }}">{{ record.cus_package.portal_package.svn_version }}</a>
+                            </td>
+                            <td rowspan="{{ record.cus_package.machine_packages|length }}">{{ record.start_time|date:'Y-m-d H:i:s' }}</td>
+                            <td rowspan="{{ record.cus_package.machine_packages|length }}">{{ record.end_time|date:'Y-m-d H:i:s' }}</td>
+                            <td rowspan="{{ record.cus_package.machine_packages|length }}">{{ record.deploy_user }}</td>
+                            <td rowspan="{{ record.cus_package.machine_packages|length }}">{{ record.remark }}</td>
+                            <td rowspan="{{ record.cus_package.machine_packages|length }}">{{ record.is_checked }}</td>
+                            <td rowspan="{{ record.cus_package.machine_packages|length }}">{{ record.check_user }}</td>
+                            <td rowspan="{{ record.cus_package.machine_packages|length }}">{{ record.create_time|date:'Y-m-d H:i:s' }}</td>
+                            <td rowspan="{{ record.cus_package.machine_packages|length }}">{{ record.create_user }}</td>
+                            <td>
+                                <input type="hidden" name="package_id" value="{{ server_package.id }}">
+                                <span class="btn" cmd="file_list" title="文件列表">文件列表</span>
+                                <span class="btn" cmd="package_branch" title="分支信息">分支信息</span>
+                                <span class="btn" cmd="download_server" title="下载Server包" onclick="javascript:window.open('/customer/download_install_package/?packageId={{ server_package.id }}','_self')">下载</span>
+                                <span class="btn" cmd="check_update" title="升级检查记录" value="{{ record.customer.id }}">升级检查记录</span>
+                            </td>
+                            <td rowspan="{{ record.cus_package.machine_packages|length }}">
+                                <span class="btn" cmd="edit_cus_record" title="编辑" name = "all_record_list" value="{{ record.id }}" label="edit">修改</span>
+                                <span class="btn" cmd="delete_cus_record" title="删除" value="{{ record.id }}">删除</span>
+                                <span class="btn" type="portal_upgrade_sql" value="{{ record.portal_upgrade_sql }}">升级脚本</span>
+                                <span class="btn" cmd="send_email" title="发送邮件" value="{{ record.id }}">发送邮件</span>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td>{{ server_package.customer.name }}</td>
+                            <td>{{ server_package.version }}</td>
+                            <td>{{ server_package.machine.name }}</td>
+                            <td>
+                                <input type="hidden" name="package_id" value="{{ server_package.id }}">
+                                <span class="btn" cmd="file_list" title="文件列表">文件列表</span>
+                                <span class="btn" cmd="package_branch" title="分支信息">分支信息</span>
+                                <span class="btn" cmd="download_server" title="下载Server包" onclick="javascript:window.open('/customer/download_install_package/?packageId={{ server_package.id }}','_self')">下载</span>
+                            </td>
+                        </tr>
+                         {% endif %}
+                    {% endfor %}
+                {% endfor %}
+            {% else %}
+                <tr type="record" key="{{ machine_id }}">
+                    <td colspan="11">暂无升级记录</td>
+                </tr>
+            {% endif %}
+        </table>
+    </div>
+    <div id="dialog_table" class="easyDialog_wrapper" style="display: none; margin: 0px; min-width: 1045px; width: auto; min-height: 300px; max-height: 500px;">
+        <div class="easyDialog_content">
+            <h4 class="easyDialog_title" id="easyDialogTitle" style="cursor: move;">
+                <a href="javascript:void(0)" title="关闭窗口" class="close_btn closeBtn_rzrk">×</a>
+                <span type="dialog_title"></span>
+            </h4>
+            <div class="easyDialog_text" style="min-height: 300px; max-height: 415px; overflow: auto;">
+            </div>
+        </div>
+    </div>
+{% endblock %}

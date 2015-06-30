@@ -1,0 +1,346 @@
+{% extends "root.html" %}
+{% load rzrk_tags %}
+
+{% block rootJsAndCss %}
+    <style>
+        .tips_file {
+        }
+
+        .cus_name_item {
+            color: blue;
+            text-decoration: underline;
+        }
+
+        .cus_name_item:hover {
+            background-color: #D5DDF6;
+            cursor: pointer;
+        }
+
+        .cus_status_item {
+            color: blue;
+            text-decoration: underline;
+        }
+
+        .cus_status_item:hover {
+            background-color: #D5DDF6;
+            cursor: pointer;
+        }
+        .program_name {
+            color: blue;
+        }
+
+        .old_mark {
+            color: red;
+        }
+    </style>
+    <script type="text/javascript">
+    $(document).ready(function () {
+        //tips删除按钮
+        $(".inner").on("click", ".btn[cmd=delCustomer]", function () {
+
+            if (confirm("是否删除客户[" + $(this).attr("cus_name") + "]")) {
+                var url = "/customer/del/";
+                $.post(url, {cus_id: this.id}, function (resp) {
+                    if (resp.success) {
+                        alert(resp.error);
+                        window.location.reload();
+                    } else {
+                        alert(resp.error);
+                    }
+                });
+            }
+        });
+        //编辑按钮
+        $(".inner").on("click", ".btn[cmd=editCustomer]", function () {
+            window.open("/customer/edit/?cus_id=" + this.id, '_self');
+        });
+        //查看按钮
+        $(".inner").on("click", "span[cmd=viewCustomer]", function () {
+            window.open("/customer/view/?cus_id=" + this.id, '_self');
+        });
+        // 创建分支
+        $(".inner").on("click", ".btn[cmd=createTag]", function () {
+            window.open("/programBranch/create/?customerTag=" + $(this).attr("tag"), '_self');
+        });
+        //添加按钮
+        $(".inner").on("click", "#addCustomer", function () {
+            {% if is_sys %}
+                window.open("/customer/system/create/", '_self');
+            {% else %}
+                window.open("/customer/create/", "_self");
+            {% endif %}
+        });
+
+        //跳转到portal
+        $(".inner").on("click", "span[cmd=switch_portal]", function() {
+            var $this = $(this);
+            var cus_id = this.id;
+            var url = '/customer/switch_portal/';
+            $.get(url,{'cus_id': cus_id} , function (resp) {
+                if (resp.success) {
+                    var portal_ip = resp.data;
+                    window.open("https://" + portal_ip,  '_self');
+                } else {
+                    alert(resp.error);
+                }
+            }, "json");
+
+        });
+
+        //tips
+        $(".inner").on("click", ".btn[cmd=cus_tips]", function () {
+            var $this = $(this);
+            var cus_id = this.id;
+            var cus_name = $this.attr('cus_name');
+
+            var url = '/customer/tips/';
+
+            $.get(url, {'cus_id': cus_id}, function (resp) {
+                if (resp.success) {
+                    var data = resp.data;
+                    var dialog_title = $('span[type=dialog_title]');
+                    dialog_title.html('<span class="cus_name" value="' + cus_id + '">' + cus_name + '</span>' + ' - 备注');
+                    var dialog_table = $('#dialog_table .easyDialog_text');
+                    dialog_table.empty();
+                    dialog_table.append(data);
+                    easyDialog.open({
+                        container: 'dialog_table',
+                        overlay: false
+                    });
+                } else {
+                    alert(resp.error);
+                }
+            });
+        });
+
+        //tips添加按钮
+        $("body").on("click", "#addTips", function () {
+            var cus_id = $(this).attr('value');
+            var $this = $(this).parent().parent().find('tr[type=head]');
+            var html = '';
+            html += '<tr>';
+            html += '<td colspan="2">';
+            html += '<textarea name="content" value="" style="width: 100%; height: 150px;"></textarea>';
+            html += '</td>';
+            html += '<td>';
+            html += '<input type="file" name="upload_file" class="tips_file">';
+            html += '</td>';
+            html += '<td>';
+            html += '<span class="btn" cmd="tip_save" style="line-height:20px;" value="' + cus_id + '">保存</span>';
+            html += '<span class="btn" cmd="tip_del" style="line-height:20px;">删除</span>';
+            html += '</td>';
+            html += '</tr>';
+            $this.after(html);
+        });
+
+        //tips删除按钮
+        $("body").on("click", ".btn[cmd=tip_del]", function () {
+            var $this = $(this);
+            if (!$this.attr('value')) {
+                $this.parent().parent().remove();
+                return;
+            }
+            var tip_id = $this.attr('value');
+            var url = '/customer/tips/del/';
+            if (confirm('确认删除该备注?')) {
+                $.post(url, {id: tip_id}, function (resp) {
+                    if (resp.success) {
+                        alert(resp.error);
+                        $this.parent().parent().remove();
+                    } else {
+                        alert(resp.error);
+                    }
+                });
+            }
+        });
+
+        //tips保存按钮
+        $("body").on("click", ".btn[cmd=tip_save]", function () {
+            var $this = $(this).parent().parent();
+            var cus_id = $(this).attr('value');
+            var content = $this.find('textarea').val();
+
+            var file_input = $this.parent().parent().find('input[type=file]');
+            var path = file_input.val();
+            var file_flag = (path) ? true : false;
+
+            var url = '/customer/tips/create/';
+
+            //上传文件
+            if (file_flag) {
+                file_input.wrap("<form action='" + url + "' method='post' enctype='multipart/form-data' style='display:none'></form>");
+                file_input.parent().append("<input type='text' name='cus_id' value='" + cus_id + "'>");
+                file_input.parent().append("<input type='text' name='content' value='" + content + "'>");
+
+                $(file_input.parent()).ajaxSubmit({
+                    url: url,
+                    type: 'post',
+                    dataType: 'json',
+                    // 上传时间限制30分钟
+                    timeout: 30 * 60 * 1000,
+                    beforeSend: function () {
+                    },
+                    uploadProgress: function (event, position, total, percentComplete) {
+                    },
+                    success: function (resp) {
+                        if (resp.success) {
+                            var data = resp.data;
+                            var html = '';
+                            html += '<tr>';
+                            html += '<td><xmp>' + data.content + '</xmp></td>';
+                            html += '<td>' + data.create_user + '</td>';
+                            html += '<td>' + data.create_time + '</td>';
+                            html += '<td>';
+                            html += '<span class="btn" cmd="tip_del" style="line-height: 20px;" value="' + data.id + '">删除</span>';
+                            html += '<span class="btn" style="line-height: 20px;" onclick="javascript:window.open(\'/customer/tips/edit/?id=' + data.id + '\',\'_blank\')">编辑</span>';
+                            if (data.download) {
+                                html += '<span class="btn" cmd="tip_download" style="line-height: 20px;" onclick="javascript:window.open(\'/customer/tips/download/?id=' + data.id + '\',\'_self\')">下载</span>';
+                            }
+                            html += '</td>';
+                            html += '</tr>';
+                            $this.replaceWith(html);
+                        } else {
+                            alert(resp.error);
+                        }
+                        file_input.parent().find("input[name=cus_id]").remove();
+                        file_input.parent().find("input[name=content]").remove();
+                        file_input.unwrap();
+                    },
+                    error: function (xhr) {
+                        alert("上传异常!" + xhr);
+                    }
+                });
+
+            } else {
+                $.post(url, {cus_id: cus_id, content: content}, function (resp) {
+                    if (resp.success) {
+                        var data = resp.data;
+                        var html = '';
+                        html += '<tr>';
+                        html += '<td><xmp>' + data.content + '</xmp></td>';
+                        html += '<td>' + data.create_user + '</td>';
+                        html += '<td>' + data.create_time + '</td>';
+                        html += '<td><span class="btn" cmd="tip_del" style="line-height: 20px;" value="' + data.id + '">删除</span>';
+                        html += '<span class="btn" style="line-height: 20px;" onclick="javascript:window.open(\'/customer/tips/edit/?id=' + data.id + '\',\'_blank\')">编辑</span>';
+                        html += '</td>';
+                        html += '</tr>';
+                        $this.replaceWith(html);
+                    } else {
+                        alert(resp.error);
+                    }
+                });
+            }
+        });
+    $('.inner').on('click', 'span[cmd=viewState]', function () {
+        var unknown = '<span style="color:gray;font-size:10px;">[未知]</span>';
+        var old = '<span style="color:red;font-size:10px;">[有更新]</span>';
+        var old_key = '<span style="color:red;font-size:10px;">[关键更新]</span>';
+        var $this = $(this);
+        var cus_id = this.id;
+        var cus_name = $this.attr('cus_name');
+        var url = '/customer/status/';
+        $.get(url, {'cus_id': cus_id}, function (resp) {
+            if (resp.success) {
+                var data = resp.data;
+                var dialog_title = $('#dialog_table span[type=dialog_title]');
+                dialog_title.text(cus_name + '分支信息');
+                var dialog_table = $('#dialog_table .easyDialog_text');
+                dialog_table.empty();
+                dialog_table.append(data);
+                easyDialog.open({
+                    container: 'dialog_table',
+                    overlay: false
+        });
+            }else{
+                 alert(resp.error);
+            }
+        });
+
+
+
+    });
+
+    });
+
+    </script>
+{% endblock %}
+{% block rootBody %}
+    <div class="inner">
+        <div class="btn_line">
+            {% if is_sys %}
+            <a href="/customer/system/create/" style="position: fixed;z-index: 2;text-decoration: none;" class="btn" >添加</a>
+            {% else %}
+            <a href="/customer/create/" style="position: fixed;z-index: 2;text-decoration: none;" class="btn" >添加</a>
+            {% endif %}
+            <a href="/demo/quickSearch/" style="position:fixed ;z-index: 2;margin-left:80px;text-decoration: none;" class="btn">快速查找</a>
+        </div>
+
+        <table class="bordered table" style="margin-top: 35px;">
+            {% if customers|length > 0 %}
+                <tr type="main">
+                    <th style="width: 30px;height: 20px">序号</th>
+                    <th style="width: 240px;">客户名称</th>
+                    <th style="width: 160px;">更新状态</th>
+                    <th style="width: 180px;">更新时间</th>
+                    <th style="width: 60px;">负责人</th>
+                    <th style="width: 80px;">客户状态</th>
+                    <th style="width: 690px">操作</th>
+                </tr>
+                {% for customer in customers %}
+                    <tr type="main">
+                        <td rowspan_bak="{{ customer|get_customer_row_span }}">{{ forloop.counter }}</td>
+                        <td>
+                            {% if customer.is_sys %}<span style="color: red">[系统客户]</span>:{% else %}[普通客户]:{% endif %}
+                            <a  href="/customer/view/?cus_id={{ customer.id }}" title="点击查看详情" cmd="viewCustomer" title="查看" style="font-weight: bold" cus_name="{{ customer.name }}" class="cus_name_item" >{{ customer.name }}</a>
+                        </td>
+                        <td>
+                             {% for customerdeploystatu in customerdeploystatus %}
+                                 {% if customerdeploystatu.customer.id == customer.id %}
+                                     <a  href="/customer/view/?cus_id={{ customer.id }}" title="点击查看详情" cmd="viewState" title="查看"  cus_name="{{ customer.name }}" class="cus_name_item" >{{ customerdeploystatu.state }}</a>
+                                 {% endif %}
+                             {% endfor %}
+                        </td>
+                        <td>{{ customer.modifyTime|date:'Y-m-d H:i:s' }}</td>
+                        <td>{{ customer.aftersale }}</td>
+                        <td>
+                            {{ customer.customerstatus }}
+                        {% comment %}    <select name="cars">
+                            <option value="volvo">测试中</option>
+                            <option value="saab">已签约</option>
+                            <option value="fiat" selected="selected">已付费</option>
+                            </select>{% endcomment %}
+
+                        </td>
+                        <td>
+                            <span class="btn" cmd="delCustomer" title="删除" id="{{ customer.id }}" cus_name="{{ customer.name }}">删除</span>
+                            <a  style="text-decoration: none" href="/customer/edit?cus_id={{customer.id }}" class="btn" cmd="editCustomer" title="编辑" cus_name="{{ customer.name }}">修改</a>
+                            <span class="btn" cmd="cus_tips" title="备注" id="{{ customer.id }}" cus_name="{{ customer.name }}">备注</span>
+                            <a  style="text-decoration: none" href="/programBranch/create/?customerTag=" class="btn" cmd="createTag" title="创建分支" id="{{ customer.id }}" tag="{{ customer.tag }}">创建分支</a>
+                            <a  style="text-decoration: none" href="/customer/compiling/?cus_id={{ customer.id }}" class="btn" title="编译">更新编译</a>
+                            <a  style="text-decoration: none" href="/customer/client/compiling/?cus_id={{ customer.id }}" class="btn" title="客户端编译打包">客户端</a>
+                            <a  style="text-decoration: none" href="/customer/package/{{ customer.id }}/" class="btn" title="客户包">客户包</a>
+                            <a  style="text-decoration: none" href="/customer/deploy/record/list/?cus_id={{ customer.id }}" class="btn" cmd="viewVersion">升级记录</a>
+                            <a  style="text-decoration: none" href="/customer/onekey_update/?cus_id={{ customer.id }}" class="btn" cmd=onekey_update title=一键更新" >一键更新</a>
+                            <span class="btn" cmd="switch_portal" title="跳转到portal" id="{{ customer.id }}" cus_name="{{ customer.name }}">跳转到portal</span>
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="6">暂无客户信息</td>
+                </tr>
+            {% endif %}
+        </table>
+    </div>
+    <div id="dialog_table" class="easyDialog_wrapper" style="display: none; margin: 0px; min-width: 1045px; width: auto; min-height: 300px; max-height: 500px;">
+        <div class="easyDialog_content">
+            <h4 class="easyDialog_title" id="easyDialogTitle" style="cursor: move;">
+                <a href="javascript:void(0)" title="关闭窗口" class="close_btn closeBtn_rzrk">×</a>
+                <span type="dialog_title"></span>
+            </h4>
+
+            <div class="easyDialog_text" style="min-height: 300px; max-height: 415px; overflow: auto;">
+            </div>
+        </div>
+    </div>
+{% endblock %}

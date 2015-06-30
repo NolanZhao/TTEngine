@@ -1,0 +1,186 @@
+{% extends "customer_common_button.html" %}
+{% load rzrk_tags %}
+
+{% block title %}{% settings_value "MAIN_PROJECT_NAME" %}-欢迎{% endblock %}
+{% block rootJsAndCss %}
+    <style type="text/css">
+    </style>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            //添加按钮
+            $(".inner").on("click", "#createPackage", function () {
+                window.open("/customer/cus_package_create/?cus_id={{ customer.id }}", "_self");
+            });
+            //机器包列表
+            $(".inner").on("click", "#server_package_list", function () {
+                window.open("/customer/package_list/?cus_id={{ customer.id }}", "_self");
+            });
+            //机器包升级列表
+            $(".inner").on("click","#server_deploy_package_list",function(){
+                window.open("/customer/deploy_package_list/?cus_id={{ customer.id }}","_self");
+            }
+            )
+            //添加按钮
+            $(".inner").on("click", "#createServerPackage", function () {
+                window.open("/customer/package_create/?cus_id={{ customer.id }}", "_self");
+            });
+            //删除客户包
+            $('.inner').on('click', '.btn[cmd=delete_cus_package]', function () {
+                var $this = $(this);
+
+                var package_name = $this.attr('name');
+                var package_id = $this.attr('key');
+
+                var cmd = $this.attr('cmd');
+                var cmd_name = '确认"删除"客户包[' + package_name + ']?';
+                var url = '/customer/cus_package_del/';
+                if (!confirm(cmd_name)) {
+                    return false;
+                }
+                $.post(url, {id: package_id}, function (resp) {
+                    if (resp.success) {
+                        window.location.reload();
+                    } else {
+                        dialog_error('', resp.error);
+                    }
+                }, 'json');
+            });
+
+            //绑定远程部署方法
+            $('.inner').on('click', '.btn[cmd=remote_deploy]', remote_deploy);
+            // 下载客户包方法
+            $(".inner").on('click', '.btn[cmd=download_cus_package]', cus_package_download);
+        });
+
+        /*
+         * 下载客户包
+         */
+        function cus_package_download() {
+            var $this = $(this);
+            //全部按钮均取消绑定
+            $('.btn[cmd=download_cus_package]').unbind('click');
+
+            var package_id = $this.attr('key');
+
+            var url = '/customer/cus_package_download/?id=';
+            window.open(url + package_id, '_self');
+{#            $.get(url, {id: package_id}, function (resp) {#}
+{#                try {#}
+{#                    if (resp.success) {#}
+{#                        dialog_success('', JSON.stringify(resp.error));#}
+{#                    } else {#}
+{#                        dialog_error('', resp.error);#}
+{#                    }#}
+{#                } catch (err) {#}
+{#                    dialog_error(err.name, err.message);#}
+{#                }#}
+{#                finally {#}
+{#                    $this.text('下载');#}
+{#                    $('.btn[cmd=download_cus_package]').bind('click', cus_package_download);#}
+{#                }#}
+{#            }, 'json');#}
+        }
+
+        /*
+         * 远程部署主方法
+         */
+        function remote_deploy() {
+            var $this = $(this);
+            //全部按钮均取消绑定
+            $('.btn[cmd=remote_deploy]').unbind('click');
+
+            $this.text('部署中...');
+            var package_name = $this.attr('name');
+            var package_id = $this.attr('key');
+
+            var url = '/customer/cus_package_update/';
+            $.post(url, {id: package_id}, function (resp) {
+                try {
+                    if (resp.success) {
+                        dialog_success('', JSON.stringify(resp.error));
+                    } else {
+                        dialog_error('', resp.error);
+                    }
+                } catch (err) {
+                    dialog_error(err.name, err.message);
+                }
+                finally {
+                    $this.text('部署');
+                    $('.btn[cmd=remote_deploy]').bind('click', remote_deploy);
+                }
+            }, 'json');
+        }
+    </script>
+{% endblock %}
+    {% block title_1 %}
+        <span style="float: left"><span class="cus_name" value="{{ customer.id }}">{{ customer.name }}</span> - 客户包</span>
+      {% endblock %}
+            {% block extratitle_1 %}
+            <span class="btn" id="createServerPackage">创建机器包</span>
+            <span class="btn" id="createPackage">创建客户包</span>
+            <span class="btn" id="server_package_list">机器包列表</span>
+            <span class="btn" id="server_deploy_package_list">机器包升级记录</span>
+            {% endblock %}
+        {% block content %}
+            <tr>
+                <th colspan="1">客户名称:</th>
+                <td colspan="7">
+                    <span class="like_table">
+                        <span>{{ customer.name }}</span>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <th style="width: 100px;">序号</th>
+                <th>包名</th>
+                <th>Server包</th>
+                <th style="width: 100px;">Portal版本</th>
+                <th style="width: 100px;">创建者</th>
+                <th style="width: 200px;">创建时间</th>
+                <th>备注</th>
+                <th style="width: 130px;">操作</th>
+            </tr>
+            {% if packages %}
+                {% for package in packages %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ package.name }}</td>
+                        <td>
+                            {% for package in package.machine_packages %}
+                                <a href="/customer/package/view/?package_id={{ package.id }}" target="_self" title="点击查看Server包详情">{{ package.machine.name }}</a>
+                                <br>
+                            {% endfor %}
+                        </td>
+                        <td>
+                            <a href="/portal/package/view/?id={{ package.portal_package.id }}" target="_self" title="点击查看Portal包详情">{{ package.portal_package.svn_version }}</a>
+                        </td>
+                        <td>{{ package.create_user.username }}</td>
+                        <td>{{ package.create_time|date:'Y-m-d H:i:s' }}</td>
+                        <td>{{ package.remark }}</td>
+                        <td>
+                            <span class="btn" cmd="delete_cus_package" name="{{ package.name }}" key="{{ package.id }}">删除</span>
+                            <span class="btn" onclick="javascript:window.open('/customer/cus_package_edit/?cus_package_id={{ package.id }}','_self')">编辑</span>
+                            <span class="btn" cmd="remote_deploy" name="{{ package.name }}" key="{{ package.id }}">部署</span>
+                            <span class="btn" cmd="download_cus_package" name="{{ package.name }}" key="{{ package.id }}">下载</span>
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="7">暂无客户包</td>
+                </tr>
+            {% endif %}
+            <div id="dialog_table" class="easyDialog_wrapper" style="display: none; margin: 0px; min-width: 1080px; width: auto; min-height: 300px; max-height: 500px;">
+            <div class="easyDialog_content">
+            <h4 class="easyDialog_title" id="easyDialogTitle" style="cursor: move;">
+                <a href="javascript:void(0)" title="关闭窗口" class="close_btn" id="closeBtn_rzrk">×</a>
+                <span type="dialog_title"></span>
+            </h4>
+
+            <div class="easyDialog_text" style="min-height: 300px; max-height: 415px; overflow: auto;">
+                <table class="bordered table_small" type="dialog_table">
+                </table>
+            </div>
+            </div>
+            </div>
+         {% endblock %}

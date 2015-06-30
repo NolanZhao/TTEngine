@@ -1,0 +1,138 @@
+{% extends "customer_common_button.html" %}
+{% load rzrk_tags %}
+
+{% block title %}{% settings_value "MAIN_PROJECT_NAME" %}-欢迎{% endblock %}
+{% block rootJsAndCss %}
+    <style>
+        textarea {
+            width: 100%;
+            height: 200px;
+        }
+    </style>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            //保存按钮
+            $('#saveBtn').bind('click', function () {
+                var tip_id = $('#tip_id').val();
+                var tip_content = $('#tip_content').val();
+                var tip_file = $('#tip_file');
+
+                if (!tip_id || !tip_content) {
+                    dialog_error('', '必要参数为空!');
+                    return false;
+                }
+                var path = tip_file.val();
+                var file_flag = path ? true : false;
+
+                var url = '/customer/tips/edit/';
+
+                if (file_flag) {
+                    tip_file.wrap("<form action='" + url + "' method='post' enctype='multipart/form-data' style='display:none'></form>");
+                    tip_file.parent().append("<input type='text' name='tip_id' value='" + tip_id + "'>");
+                    tip_file.parent().append("<input type='text' name='tip_content' value='" + tip_content + "'>");
+
+                    $(tip_file.parent()).ajaxSubmit({
+                        url: url,
+                        type: 'post',
+                        dataType: 'json',
+                        timeout: 30 * 60 * 1000,
+                        beforeSend: function () {
+                        },
+                        uploadProgress: function (event, position, total, percentComplete) {
+                        },
+                        success: function (resp) {
+                            if (resp.success) {
+                                dialog_success('', resp.error, function () {
+                                    window.location.href = '/customer/remark/list/'
+                                }, 2000)
+                            } else {
+                                tip_file.parent().find("input[name=tip_id]").remove();
+                                tip_file.parent().find("input[name=tip_content]").remove();
+                                tip_file.unwrap();
+                                dialog_error(resp.error);
+                            }
+                        },
+                        error: function (xhr) {
+                            dialog_error("上传异常!" + xhr);
+                        }
+                    });
+
+                } else {
+                    $.post(url, {tip_id: tip_id, tip_content: tip_content}, function (resp) {
+                        if (resp.success) {
+                            dialog_success('', resp.error, function () {
+                                window.location.href = '/customer/remark/list/'
+                            }, 2000)
+                        } else {
+                            dialog_error(resp.error);
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+{% endblock %}
+{% block title_1 %}
+        <span style="float:left"><span class="cus_name" value="{{ customer.id }}">{{ customer.name }}</span> - {% if is_edit %}编辑{% elif is_view %}查看{% else %}录入{% endif %}备注</span>
+   {% endblock %}
+   {% block content %}
+            <tr>
+                <th style="width: 120px;">客户名称:</th>
+                <td>
+                    {{ customer.name }}
+                    <input type="hidden" name="tip_id" id="tip_id" value="{{ tip.id }}">
+                </td>
+            </tr>
+            <tr>
+                <th>备注:</th>
+                <td>
+                    {% if is_view %}
+                        <xmp>{{ tip.content }}</xmp>
+                    {% else %}
+                        <textarea id="tip_content">{{ tip.content }}</textarea>
+                    {% endif %}
+                </td>
+            </tr>
+            {% if is_edit %}
+                <tr>
+                    <th>原文件:</th>
+                    <td>
+                        {% if tip.file %}
+                            <span class="like_table">
+                                <span>{{ tip.file_name }}({% widthratio tip.file_size 1024 1 %} KB)</span>
+                                <span class="btn" title="点击下载" onclick="javascript:window.open('/customer/tips/download/?id={{ tip.id }}','_self')">下载</span>
+                            </span>
+                        {% else %}
+                            暂无文件
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endif %}
+            <tr>
+                <th>{% if is_edit %}新{% endif %}文件:</th>
+                <td>
+                    {% if is_view %}
+                        <span class="btn" title="{{ tip.file_name }}({% widthratio tip.file_size 1024 1 %} KB)" onclick="javascript:window.open('/customer/tips/download/?id={{ tip.id }}','_self')">下载</span>
+                    {% else %}
+                        <input type="file" name="tip_file" id="tip_file" class="tips_file">
+                    {% endif %}
+                </td>
+            </tr>
+        {% if not is_view %}
+            <div class="btn_line">
+                <span class="btn" id="saveBtn">保存</span>
+                <span class="btn" id="file_clean" onclick="javascript:$('#tip_file').val('')">清空文件</span>
+            </div>
+        {% endif %}
+        <div id="dialog_table" class="easyDialog_wrapper" style="display: none; margin: 0px; min-width: 1045px; width: auto; min-height: 300px; max-height: 500px;">
+        <div class="easyDialog_content">
+            <h4 class="easyDialog_title" id="easyDialogTitle" style="cursor: move;">
+                <a href="javascript:void(0)" title="关闭窗口" class="close_btn" id="closeBtn_rzrk">×</a>
+                <span type="dialog_title"></span>
+            </h4>
+
+            <div class="easyDialog_text" style="min-height: 300px; max-height: 415px; overflow: auto;">
+            </div>
+        </div>
+    </div>
+        {% endblock %}

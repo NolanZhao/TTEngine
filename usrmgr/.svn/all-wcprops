@@ -1,0 +1,41 @@
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/svn/svnrepos/!svn/ver/173151/server5/deploy/trunk/TTEngine/usrmgr
+END
+views.py
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svn/svnrepos/!svn/ver/173107/server5/deploy/trunk/TTEngine/usrmgr/views.py
+END
+__init__.py
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svn/svnrepos/!svn/ver/166034/server5/deploy/trunk/TTEngine/usrmgr/__init__.py
+END
+passoword.py
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svn/svnrepos/!svn/ver/172333/server5/deploy/trunk/TTEngine/usrmgr/passoword.py
+END
+tests.py
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svn/svnrepos/!svn/ver/166034/server5/deploy/trunk/TTEngine/usrmgr/tests.py
+END
+models.py
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svn/svnrepos/!svn/ver/173151/server5/deploy/trunk/TTEngine/usrmgr/models.py
+END
+urls.py
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svn/svnrepos/!svn/ver/172489/server5/deploy/trunk/TTEngine/usrmgr/urls.py
+END

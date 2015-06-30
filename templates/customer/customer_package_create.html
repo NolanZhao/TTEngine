@@ -1,0 +1,144 @@
+{% extends "customer_common_button.html" %}
+{% load rzrk_tags %}
+
+{% block title %}{% settings_value "MAIN_PROJECT_NAME" %}-欢迎{% endblock %}
+{% block rootJsAndCss %}
+    <style>
+        .like_table span {
+            width: 180px;
+        }
+
+        .like_table input {
+            margin-left: 10px;
+        }
+    </style>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            {% for program in  program_names %}
+                 $(".inner").on("change", "select[name={{ program }}]", function () {
+                    var $this = $(this);
+                    var branchTag = $this.val();
+                    var programName = $this.attr('name');
+                    $.get('/customer/package_default/', {programName: programName, branchTag: branchTag, customerID: "{{customer.id}}"}, function (resp) {
+                        }, 'json');
+                });
+            {% endfor %}
+            //开始编译按钮
+            $(".inner").on("click", "#saveBtn", function () {
+                //获取参数
+                var param_dict = {};
+                var params = $(".branch_params");
+                for (var index = 0; index < params.length; index++) {
+                    var $this = $(params[index]);
+                    var name = $this.attr('name');
+                    var value = $this.val();
+                    param_dict[name] = value;
+                }
+
+                  var updateMode = $("#updateMode").val();
+                  var srcVersion = $("#srcVersion").val();
+                  var dstVersion = $("#dstVersion").val();
+                  var selfDefine = $("#selfDefine").val();
+
+
+
+                var remark = $("#remark").val();
+                remark = remark == '请填写备注' ? '' : remark;
+                var machine_result = [{% for machine in machines %}'{{ machine.id }}'{% if not forloop.last %}, {% endif %}{% endfor %}];
+
+                var result = {
+                    'customerId': '{{ customer.id }}',
+                    'machine_id_list': machine_result,
+                    'params': param_dict,
+                    'updateMode': updateMode,
+                    'srcVersion': srcVersion,
+                    'dstVersion': dstVersion,
+                    'selfDefine': selfDefine,
+                    'remark': remark
+                };
+
+
+                var json = JSON.stringify(result);
+                $.post('/customer/package_create/', {json: json}, function (resp) {
+                    if (resp.success) {
+                        dialog_success('', resp.error, function () {
+                            window.location.href = '/customer/package/{{ customer.id }}/';
+                        });
+                    } else {
+                        dialog_error('', resp.error);
+                    }
+                }, 'json');
+            });
+        });
+    </script>
+{% endblock %}
+        {% block title_1 %}<span style="float:left;"><span class="cus_name" value="{{ customer.id }}">{{ customer.name }}</span> - 创建Server包</span>{% endblock %}
+        {% block content %}
+            <tr>
+                <th style="width: 150px;">客户名称:</th>
+                <td>{{ customer.name }}</td>
+            </tr>
+            <tr>
+                <th>机器列表:</th>
+                <td>
+                    {% for machine in machines %}
+                        <span>{{ machine.name }}</span>
+                        <br/>
+                    {% endfor %}
+                </td>
+            </tr>
+            <tr>
+                <th>选择代码分支:</th>
+                <td>
+                    {% for program in  program_names %}
+                        <span class="like_table">
+                            <span>{{ program }}:</span>
+                            <select id="{{ program }}" name="{{ program }}" class="branch_params">
+                                {% for data in  branchInfos %}
+                                    {% if data.programName == program %}
+                                        {% if data.customerTag == customer.tag or data.customerTag == "" %}
+                                            <option value="{{ data.branchTag }}"{% for defaultData in defaultInfo %}{% if data.branchTag == defaultData.branchTag and data.programName == defaultData.programName %}selected="selected"{% endif %}{% endfor %}> {{ data.branchTag }}</option>
+                                        {% endif %}
+                                    {% endif %}
+                                {% endfor %}
+                            </select>
+                            <br>
+                        </span>
+                    {% endfor %}
+                </td>
+            </tr>
+            <tr>
+                <th>数据库升级参数</th>
+                <td>
+                    <span>升级模式：</span>
+                    <select style="width:200px" id="updateMode">
+                        <option value="0">0</option>
+                        <option value="1">自定义</option>
+                    </select>
+                    <span>源版本  ：</span>
+                    <select style="width:200px" id="srcVersion">
+                        <option value="{{ server_previous_version }}">{{ server_previous_version }}</option>
+                    </select>
+                    <span>目的版本：</span>
+                    <select style="width:200px" id="dstVersion">
+                        <option value="{{ server_current_version }}">{{ server_current_version }}</option>
+                    </select>
+                    <br>
+                    <br>
+                    <textarea id="selfDefine" style="width: 100%;height: 20px">自定义参数</textarea>
+                </td>
+
+            </tr>
+            <tr>
+                <th>备注:</th>
+                <td>
+                    <textarea id="remark" style="width: 100%;height: 300px">请填写备注</textarea>
+                </td>
+            </tr>
+        </table>
+        <div class="btn_line">
+            <div class="btn" id="saveBtn">生成Server包</div>
+        </div>
+        </div>
+{% endblock %}
+

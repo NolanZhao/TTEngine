@@ -1,0 +1,78 @@
+{% extends "customer_common_button.html" %}
+{% load rzrk_tags %}
+
+{% block title %}{% settings_value "MAIN_PROJECT_NAME" %}-欢迎{% endblock %}
+{% block rootJsAndCss %}
+    <style>
+    </style>
+    <script type="text/javascript">
+        $(document).ready(function () {
+             //删除
+            $('.inner').on('click', '.btn[cmd=delete_check_record]', function () {
+                var $this = $(this);
+                var id = $this.attr('value');
+
+                if (!id) {
+                    alert('升级记录ID为空!');
+                    return;
+                }
+
+                if (!confirm('确认删除该升级记录?')) {
+                    return;
+                }
+
+                var url = '/customer/deploy/record/check/del/';
+
+               $.post(url, {id: id}, function (resp) {
+                    if (resp.success) {
+                        dialog_success('', resp.error, function () {
+                            window.location.reload();
+                        });
+                    } else {
+                        dialog_error('', resp.error);
+                    }
+                }, 'json');
+            });
+        });
+    </script>
+{% endblock %}
+{% block title_1 %}<span style="float: left"><span class="cus_name" value="{{ customer.id }}">{{ customer.name }}</span> 查看升级检查记录</span>{% endblock %}
+    {% block extratitle_1 %}
+            <div class="btn" id="page_add" onclick="javascript:window.open('/customer/deploy/record/check/create/?&cus_id={{ customer.id }}','_self')">添加</div>
+    {% endblock %}
+ {% block content %}
+            <tr>
+                <th colspan="2">客户名称:</th>
+                <td colspan="10">
+                    {{ customer.name }} - {% if customer.is_sys %}<span style="color: red">系统客户</span>{% else %}普通客户{% endif %}
+                    <input type="hidden" name="cus_id" id="cus_id" value="{{ customer.id }}">
+                    <input type="hidden" name="machine_id" id="machine_id" value="{{ machine.id }}">
+                </td>
+            </tr>
+            <tr>
+                <th>开始时间</th>
+                <th>结束时间</th>
+                <th>实施人员</th>
+                <th>检查备注</th>
+                <th>录入时间</th>
+                <th>录入人员</th>
+                <th width="155px" colspan="2">操作</th>
+            </tr>
+            {% if check_record %}
+                {% for record in check_record %}
+                        <tr>
+                            <td >{{ record.start_time|date:'Y-m-d H:i:s' }}</td>
+                            <td >{{ record.end_time|date:'Y-m-d H:i:s' }}</td>
+                            <td >{{ record.deploy_user }}</td>
+                            <td >{{ record.remark }}</td>
+                            <td >{{ record.create_time|date:'Y-m-d H:i:s' }}</td>
+                            <td >{{ record.create_user }}</td>
+                            <td ><span class="btn" cmd="delete_check_record" title="删除" value="{{ record.id }}">删除</span></td>
+                        </tr>
+                {% endfor %}
+            {% else %}
+                <tr type="record" key="{{ machine_id }}">
+                    <td colspan="11">暂无升级记录</td>
+                </tr>
+            {% endif %}
+ {% endblock %}

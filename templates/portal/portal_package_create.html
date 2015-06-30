@@ -1,0 +1,196 @@
+{% extends "root.html" %}
+{% load rzrk_tags %}
+
+{% block title %}{% settings_value "MAIN_PROJECT_NAME" %}-欢迎{% endblock %}
+{% block rootJsAndCss %}
+    <style type="text/css">
+        #remark {
+            width: 994px;
+            height: 200px;;
+        }
+
+        img {
+            overflow: hidden;
+            width: 281px;
+            height: 210px;
+            margin-left: -119px;
+            margin-top: -94px;
+        }
+
+        #loading {
+            overflow: hidden;
+            width: 44px;
+            height: 22px;
+            min-width: 40px;
+        }
+
+    </style>
+    <script type="text/javascript">
+        var portal_machine_list_json = {{ portal_machine_list_json|safe }};
+
+        $(document).ready(function () {
+            //登陆测试
+            $("#login_test").bind('click', login_test);
+            //生成Portal脚本
+            $("#saveBtn").bind('click', gen_portal_package);
+            // 更新 svn
+            $("#update_svn").bind('click', update_svn);
+
+            //绑定onchange事件
+            $('#portal_machine').bind('change', show_latest_svn_version);
+            // 手动 触发 portal_machine 的change事件
+            $('#portal_machine').trigger('change');
+        });
+
+        function login_test() {
+            var $this = $(this);
+            //开启loading
+            $this.unbind('click');
+            $("#loading").show();
+            $this.text('测试中...');
+            //获取参数
+            var pm_id = $("#portal_machine").val();
+
+            //开始执行测试方法
+            $.post('/portal/login_test/', {pm_id: pm_id}, function (resp) {
+                try {
+                    if (resp.success) {
+                        $("#svn_version").show();
+                        dialog_success('', resp.error);
+                    } else {
+                        dialog_error('', resp.error);
+                    }
+                } catch (err) {
+                    dialog_error(err.name, err.message);
+                }
+                finally {
+                    $this.text('登陆测试');
+                    $("#loading").hide();
+                    $this.bind('click', login_test);
+                }
+            });
+        }
+
+        function gen_portal_package() {
+            var $this = $(this);
+            //开启loading
+            $this.unbind('click');
+            $("#loading").show();
+            $this.text('创建中...');
+            //获取参数
+            var pm_id = $("#portal_machine").val();
+            var remark = $("#remark").val();
+            $.post('/portal/package/create/', {pm_id: pm_id, remark: remark}, function (resp) {
+                try {
+                    if (resp.success) {
+                        dialog_success('', resp.error, function () {
+                            window.location.href = '/portal/package/view/?id=' + resp.id;
+                        });
+                    } else {
+                        dialog_error('', resp.error);
+                    }
+                } catch (err) {
+                    dialog_error(err.name, err.message);
+                }
+                finally {
+                    $this.text('创建版本');
+                    $("#loading").hide();
+                    $this.bind('click', gen_portal_package);
+                }
+            });
+        }
+
+        function update_svn() {
+            var $this = $(this);
+            $this.unbind('click');
+            $this.text('更新中...');
+            //获取参数
+            var pm_id = $("#portal_machine").val();
+
+            //开始执行更新方法
+            $.post('/portal/update_svn/', {pm_id: pm_id}, function (resp) {
+                try {
+                    if (resp.success) {
+                        dialog_success('', resp.error);
+                        $("#portal_machine").trigger('change');
+                    } else {
+                        dialog_error('', resp.error);
+                    }
+                } catch (err) {
+                    dialog_error(err.name, err.message);
+                }
+                finally {
+                    $this.text('更新SVN');
+                    $this.bind('click', update_svn);
+                }
+            });
+        }
+        function show_latest_svn_version() {
+            var $this = $(this);
+            $("#svn_version").text("正在获取SVN版本信息...").css('color', 'red').show();
+            //获取参数
+            var pm_id = $("#portal_machine").val();
+            // 发送请求 获取 svn 信息
+            $.post('/portal/get_svn_info/', {pm_id: pm_id}, function(resp){
+                try{
+                    if (resp.success) {
+                        if (resp.is_latest == 'True')
+                            $("#svn_version").text(resp.error).css('color', 'green').show();
+                        else
+                            $("#svn_version").text(resp.error).css('color', 'red').show();
+
+                        //dialog_success('', resp.error);
+                    } else {
+                        $("#svn_version").text(resp.error).css('color', 'red').show()
+                        //dialog_error('', resp.error);
+                    }
+                } catch (err) {
+                    $("#svn_version").hide();
+                    dialog_error (err.name, err.message)
+                }
+            });
+
+
+        }
+    </script>
+{% endblock %}
+{% block rootBody %}
+    <div class="title_1">
+        <span>Portal版本生成</span>
+    </div>
+    <div class="inner">
+        <table class="bordered table" id="settings_table">
+            <tr>
+                <th>源主机</th>
+                <td>
+                    <span class="like_table">
+                        <select id="portal_machine" style="width: 300px;">
+                            {% for pm in pms %}
+                                <option value="{{ pm.id }}">{{ pm.host }} [{{ pm.name }}]</option>
+                            {% endfor %}
+                            {% if not pms %}
+                                <option value="-1">暂无主机源</option>
+                            {% endif %}
+                        </select>
+                        {% if pms %}
+                            <span class="btn" id="login_test">登陆测试</span>
+                            <span id="loading" style="display: none"><img src="/media/photo/loading.gif"></span>
+                        {% endif %}
+                        <span class='btn' id='update_svn'>更新SVN</span>
+                        <span id='svn_version' style="display: none"></span>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <th>备注</th>
+                <td>
+                    <textarea id="remark" {% if is_view %}disabled="disabled"{% endif %}
+                              style="margin-left: 10px">{{ package.remark }}</textarea>
+                </td>
+            </tr>
+        </table>
+        <div class="btn_line">
+            <div class="btn" id="saveBtn">创建版本</div>
+        </div>
+    </div>
+{% endblock %}

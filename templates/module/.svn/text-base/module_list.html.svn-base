@@ -1,0 +1,96 @@
+{% extends "root.html" %}
+{% load rzrk_tags %}
+
+{% block title %}{% settings_value "MAIN_PROJECT_NAME" %}-模块列表{% endblock %}
+{% block rootJsAndCss %}
+    <style>
+        #addModule {
+            position: fixed;
+        }
+    </style>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            //删除按钮
+            $(".inner").on("click", ".btn[cmd=delModule]", function () {
+
+                if (confirm("是否删除模块[" + $(this).attr("module_name") + "]")) {
+                    var url = "/module/del/";
+                    $.post(url, {moduleId: this.id}, function (resp) {
+                        if (resp.success) {
+                            alert(resp.error);
+                            window.location.reload();
+                        } else {
+                            alert(resp.error);
+                        }
+                    });
+                }
+            });
+            //编辑按钮
+            $(".inner").on("click", ".btn[cmd=editModule]", function () {
+                window.open("/module/edit/?module_id=" + this.id, '_self');
+            });
+            //添加模块按钮
+            $(".inner").on("click", "#addModule", function () {
+                window.open("/module/create/", '_self');
+            });
+            //添加模块按钮(复制)
+            $(".inner").on("click", ".btn[cmd=addModuleQuick]", function () {
+                window.open("/module/create/?p_id=" + this.id + "", '_self');
+            });
+            //查看按钮
+            $(".inner").on("click", ".btn[cmd=viewModule]", function () {
+                window.open("/module/view/?module_id=" + this.id, '_self');
+            });
+        });
+
+        function mOver(obj)
+        {
+        obj.style.background="lightblue";
+        }
+
+        function mOut(obj)
+        {
+        obj.style.background="transparent";
+        }
+    </script>
+{% endblock %}
+{% block rootBody %}
+    <div class="title_1"><span>模块列表</span></div>
+    <div class="inner">
+        <div class="btn_line">
+            <div class="btn" id="addModule">添加</div>
+        </div>
+        <table class="bordered table" style="margin-top: 32px">
+            <tr>
+                <th>列表</th>
+                <th>模块名称</th>
+                <th>模块描述</th>
+                <th>版本号</th>
+                <th>负责人</th>
+                <th>创建时间</th>
+                <th>操作</th>
+            </tr>
+            {% for module in modules %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td><div onmouseover="mOver(this)" onmouseout="mOut(this)" class="btn"style="color:black;border:none;background-color: transparent" cmd="viewModule" id="{{ module.id }}" module_name="{{ module.name }}">{{ module.name }}</div></td>
+                    <td>{{ module.remark}}</td>
+                    <td>{{ module.version }}</td>
+                    <td>{{ module.head }}</td>
+                    <td>{{ module.createTime|date:'Y-m-d H:i:s' }}</td>
+                    <td>
+                        <div class="btn_line">
+                            <span class="btn" cmd="viewModule" title="查看模块" id="{{ module.id }}" module_name="{{ module.name }}">查看</span>
+                            <span class="btn" cmd="addModuleQuick" title="复制内容并添加新模块" id="{{ module.id }}">复制</span>
+                            <span class="btn" cmd="delModule" title="删除模块" id="{{ module.id }}" module_name="{{ module.name }}">删除</span>
+                            <span class="btn" cmd="editModule" title="编辑模块" id="{{ module.id }}" module_name="{{ module.name }}">修改</span>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+            {% if modules|length  == 0 %}
+                <td>暂无模块信息</td>
+            {% endif %}
+        </table>
+    </div>
+{% endblock %}

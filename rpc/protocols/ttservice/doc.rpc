@@ -1,0 +1,106 @@
+func的格式如下:
+
+func=[getPrecision'testfunc2,param1,param2'testfunc3]
+
+函数与函数之间用单引号"'"分割, 函数与自己的参数, 参数与参数之间都用逗号","分隔
+
+
+rpc协议格式定义说明
+
+1: 类型说明
+
+    基本数据类型包括以下几种:
+    #i     int32
+    #l     int64(long)
+    #s     string
+    #b     bool
+    #d     double
+
+    复合类型有:
+    [] list
+    {} dict
+
+    基本类型以"#"开头, 自定义类型不带"#"
+
+2: 注释
+
+    如果行以"#"或者"//"开始则认为是注释行
+
+3: 枚举
+格式如下:
+enum_XXX : (
+    VALUE1 : 1; //注释
+    VALUE2 : 2; //注释
+    VALUE3 : 4;
+    VALUE4 : 5;
+)
+
+生成代码:
+enum XXX
+{
+    VALUE1 = 1, //注释
+    VALUE2 = 2, //注释
+    VALUE3 = 4,
+    VALUE4,
+};
+
+4: 结构
+格式如下:
+XXX : (
+    value1 : #i = 5; //注释一
+    value2 : #s = "abc";
+    value3 : #s;
+    value4 : [#s];
+)
+
+生成代码:
+struct XXX
+{
+    XXX()
+        :value1(5),
+        value2("abc")
+    {};
+    int value1; //注释一
+    std::string value2;
+    std::string value3;
+    std::vector< std::string > value4;
+};
+
+5: 请求函数
+格式如下:
+funcName(requestParams) => (resultParams)
+如
+selectStock(market:#S, instrument:#S) => (success:#b)
+
+6: 订阅函数
+格式如下:
+funcName(requestParams) ==> (resultParams)
+如
+getCanOrderNum(market:#S, instrument:#S) ==> (nums:[#i])
+另外, 会自动产生反订阅函数
+getCanOrderNum_unsub(market:#S, instrument:#S) => (success:#b)
+
+7: 消息通知函数
+=> funcName(params)
+如:
+=> pushDateChange(date:#S)
+
+8: 常量定义
+constName(constType) : value;
+如:
+TTSERVICE_CMD_FUTURE_LOGIN(#S) : "tt_login";
+产生代码
+static const std::string TTSERVICE_CMD_FUTURE_LOGIN = "tt_login";
+
+9: 其他设置
+Namespace = xx
+ServiceName = xx
+Includes = (xx)
+
+注意事项:
+1: 对于自定义结构, 如果带有命名空间标记::, 系统不会再增加namespace, 如果未带::标记, 则默认添加namespace::
+如 quoter::TimeSeq 解析为quoter::TimeSeq, TimeSeq则如果namespace为ttservice会解析为ttservice::TimeSeq
+2: 参数名不要以"_"开头, 系统中临时变量等都以"_"开头
+3: 订阅函数默认支持请求, 订阅,
+4: 请求参数和返回参数不能同名
+5: 函数名禁止connect, disconnect

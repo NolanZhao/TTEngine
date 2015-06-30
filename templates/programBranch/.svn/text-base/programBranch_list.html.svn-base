@@ -1,0 +1,98 @@
+{% extends "root.html" %}
+{% load rzrk_tags %}
+
+{% block title %}{% settings_value "MAIN_PROJECT_NAME" %}-欢迎{% endblock %}
+{% block rootJsAndCss %}
+    <style>
+    </style>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $(".inner").on("click", "#create", function () {
+                window.open("/programBranch/create");
+            });
+            $(".inner").on("click", "#load", function () {
+                window.open("/programBranch/load");
+            });
+        });
+
+        var operate_dict = {
+            update: '更新',
+            clean: '清空',
+            compile: '编译',
+            delete: '删除'
+        };
+
+        //执行SVN相关操作
+        function operate(cmd, id, branch) {
+            var $this = $(this);
+            var target_obj = $(this);
+            var cmd_name = operate_dict[cmd];
+            var params = {
+                cmd: cmd,
+                id: id
+            };
+
+            easyDialog.open({
+                container: {
+                    header: '确认',
+                    content: '确定' + cmd_name + '分支' + branch + '?',
+                    yesFn: function () {
+                        $.post('/programBranch/operate/', params, function (resp) {
+                            if (resp.success) {
+                                dialog_success('', resp.error, null, 2000);
+                                if (cmd == 'delete') {
+                                    $('#' + resp.id + '').remove();
+                                }
+                            } else {
+                                dialog_error('', resp.error);
+                            }
+                        }, 'json');
+                    },
+                    noFn: true
+                },
+                overlay: false
+            });
+        }
+    </script>
+{% endblock %}
+{% block rootBody %}
+    <div class="title_1">
+        <span>Svn版本记录</span>
+    </div>
+    <div class="inner">
+        <div class="btn_line">
+            <div class="btn" id="create">创建</div>
+            <div class="btn" id="load">重新导入</div>
+        </div>
+        <table class="bordered table">
+            <tr>
+                <th>序号</th>
+                <th>程序名称</th>
+                <th>分支名称</th>
+                <th>客户标记</th>
+                <th style="width: 255px;">操作</th>
+            </tr>
+            {% for branch in branches %}
+                <tr id="{{ branch.id }}" style="background-color: {{ branch.programName|parse_svn_program_color }}">
+                    <td>{{ forloop.counter }}</td>
+                    <td><span>{{ branch.programName }}</span></td>
+                    <td>
+                        {% if branch.is_exist|stringformat:'s' == 'False' %}
+                            <span style="background-color: #ffff00;cursor: pointer" title="不存在的路径">[无效]</span>
+                        {% elif branch.is_exist|stringformat:'s' == 'None' %}
+                            <span style="background-color: #ffff00;cursor: pointer" title="路径状态未知">[未知]</span>
+                        {% endif %}
+                        {{ branch.branchTag }}
+                    </td>
+                    <td>{{ branch.customerTag }}</td>
+                    <td>
+                        <span class="btn" cmd="svn_update" title="更新" onclick="operate('update','{{ branch.id }}','{{ branch.branchTag }}')">更新</span>
+                        <span class="btn" cmd="svn_clean" title="清除" onclick="operate('clean','{{ branch.id }}','{{ branch.branchTag }}')">清空</span>
+                        <span class="btn" cmd="svn_compile" title="编译" onclick="operate('compile','{{ branch.id }}','{{ branch.branchTag }}')">编译</span>
+                        <span class="btn" cmd="svn_del" title="删除" onclick="operate('delete','{{ branch.id }}','{{ branch.branchTag }}')">删除</span>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+{% endblock %}

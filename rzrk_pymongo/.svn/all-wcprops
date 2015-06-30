@@ -1,0 +1,131 @@
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svn/svnrepos/!svn/ver/167800/server5/deploy/trunk/TTEngine/rzrk_pymongo
+END
+common.py
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svn/svnrepos/!svn/ver/167800/server5/deploy/trunk/TTEngine/rzrk_pymongo/common.py
+END
+collection.py
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svn/svnrepos/!svn/ver/167800/server5/deploy/trunk/TTEngine/rzrk_pymongo/collection.py
+END
+read_preferences.py
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/svn/svnrepos/!svn/ver/167800/server5/deploy/trunk/TTEngine/rzrk_pymongo/read_preferences.py
+END
+connection.py
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svn/svnrepos/!svn/ver/167800/server5/deploy/trunk/TTEngine/rzrk_pymongo/connection.py
+END
+__init__.py
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svn/svnrepos/!svn/ver/167800/server5/deploy/trunk/TTEngine/rzrk_pymongo/__init__.py
+END
+auth.py
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svn/svnrepos/!svn/ver/167800/server5/deploy/trunk/TTEngine/rzrk_pymongo/auth.py
+END
+helpers.py
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svn/svnrepos/!svn/ver/167800/server5/deploy/trunk/TTEngine/rzrk_pymongo/helpers.py
+END
+master_slave_connection.py
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/svn/svnrepos/!svn/ver/167800/server5/deploy/trunk/TTEngine/rzrk_pymongo/master_slave_connection.py
+END
+database.py
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svn/svnrepos/!svn/ver/167800/server5/deploy/trunk/TTEngine/rzrk_pymongo/database.py
+END
+thread_util.py
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svn/svnrepos/!svn/ver/167800/server5/deploy/trunk/TTEngine/rzrk_pymongo/thread_util.py
+END
+cursor_manager.py
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/svn/svnrepos/!svn/ver/167800/server5/deploy/trunk/TTEngine/rzrk_pymongo/cursor_manager.py
+END
+pool.py
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svn/svnrepos/!svn/ver/167800/server5/deploy/trunk/TTEngine/rzrk_pymongo/pool.py
+END
+replica_set_connection.py
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/svn/svnrepos/!svn/ver/167800/server5/deploy/trunk/TTEngine/rzrk_pymongo/replica_set_connection.py
+END
+son_manipulator.py
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/svn/svnrepos/!svn/ver/167800/server5/deploy/trunk/TTEngine/rzrk_pymongo/son_manipulator.py
+END
+ssl_match_hostname.py
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/svn/svnrepos/!svn/ver/167800/server5/deploy/trunk/TTEngine/rzrk_pymongo/ssl_match_hostname.py
+END
+uri_parser.py
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svn/svnrepos/!svn/ver/167800/server5/deploy/trunk/TTEngine/rzrk_pymongo/uri_parser.py
+END
+errors.py
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svn/svnrepos/!svn/ver/167800/server5/deploy/trunk/TTEngine/rzrk_pymongo/errors.py
+END
+mongo_client.py
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/svn/svnrepos/!svn/ver/167800/server5/deploy/trunk/TTEngine/rzrk_pymongo/mongo_client.py
+END
+cursor.py
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svn/svnrepos/!svn/ver/167800/server5/deploy/trunk/TTEngine/rzrk_pymongo/cursor.py
+END
+message.py
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svn/svnrepos/!svn/ver/167800/server5/deploy/trunk/TTEngine/rzrk_pymongo/message.py
+END
+mongo_replica_set_client.py
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/svn/svnrepos/!svn/ver/167800/server5/deploy/trunk/TTEngine/rzrk_pymongo/mongo_replica_set_client.py
+END

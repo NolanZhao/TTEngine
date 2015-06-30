@@ -1,0 +1,818 @@
+﻿Namespace = ttservice
+ServiceName = StockCommon
+
+Includes = (
+    Protocol/rpc_Structs_Def.h,
+    Protocol/rpc_ExtraEnums.h
+	idata/IData.h,
+	idata/IDataBson.h,
+)
+
+CppIncludes = (
+    Protocol/rpc_Structs.h,    idata/IDataCreator.h,
+    boost/assign/list_of.hpp,
+)
+
+
+StockLoginResp :(
+	success:#b| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	error:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	branchNo:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	clientId:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	clientName:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	exchangeType:#i| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	exchangeName:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	fundAccount:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+){ptr}
+
+# 请求资金相关 从券商可转出资金也用这个
+StockQueryFundReq :(
+    fundAccount:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    password:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    branchNo:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    moneyType:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+){ptr}
+StockQueryFundResp : (
+    success:#b| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    error:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    moneyType:EMoneyType=MONEY_TYPE_RMB| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    currentBalance:#d| |name=当前余额 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    enableBalance:#d| |name=可用金额 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    fetchBalance:#d| |name=可取金额 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    interest:#d| |name= | isKey =待入账利息 | precision = | flag =  | invisible=  | property= | func= ;
+    assetBalance:#d| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    fetchCash:#d| |name= | isKey =可取现金 | precision = | flag =  | invisible=  | property= | func= ;
+    marketValue:#d| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+){ptr}
+
+
+#请求账号相关信息
+StockQueryAccountReq :(
+	accountType:#i| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    userName:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    password:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    bankNo:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    exchangeType:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+){ptr}
+StockQueryAccountResp : (
+    success:#b| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    error:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    fundAccount:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    clientName:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    exchangeType:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    enableBalance:#d| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    clientRights:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    moneyCount:#i| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    moneyType:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    stockAccount:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+){ptr}
+
+//股东信息查询
+StockQueryStockholderReq :(
+	accountinfo:CAccountInfoPtr| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    fundAccount:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    password:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    branchNo:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    exchangeType:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+){ptr}
+StockQueryStockholderResp : (
+    success:#b| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    error:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    exchangeType:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    exchangeName:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    stockAccount:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    holderStatus:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    mainFlag:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    seatNo:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    clientName:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+){ptr}
+
+
+//查询持仓
+StockQueryPositionReq : (
+	accountinfo:CAccountInfoPtr| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    fundAccount:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    password:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    branchNo:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    stockAccount:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    exchangeType:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    stockCode:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    queryDirection:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    requestNum:#i=50| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;//请求数目，默认50，超过1000按1000条出来
+    positionStr:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;定位串，初始请求可以置空，从特定记录开始，需填入记录相应定位串    
+){ptr}
+StockQueryPositionResp : (
+    success:#b| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    error:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    positionStr:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;定位串，初始请求可以置空，从特定记录开始，需填入记录相应定位串
+    exchangeType:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    stockCode:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    stockName:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    totalAmt:#d| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    enableAmount:#d| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    lastPrice:#d| |name=最新价 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    costPrice:#d| |name=成本价 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    income:#d| |name=盈亏 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    incomeRate:#d| |name=盈亏比例 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    handFlag:#S| |name=股手标记 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    stockAccount:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    marketValue:#d| |name=市值 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    costBalance:#d| |name=成本总额 | isKey = | precision = | flag =  | invisible=  | property= | func= ;//成本总额
+){ptr}
+
+//请求查询历史委托
+StockQueryOrderReq:(
+    fundAccount:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    password:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    startDate:#i| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    endDate:#i| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; //20120110    
+    branchNo:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    stockAccount:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    exchangeType:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    stockCode:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    queryDirection:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    requestNum:#i=50| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;//请求数目，默认50，超过1000按1000条出来
+    positionStr:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;定位串，初始请求可以置空，从特定记录开始，需填入记录相应定位串
+    locateEntrustNo:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;//委托号,如果要请求单条委托，需要requestNum设置为1，stockCode和exchangeType为空
+){ptr}
+
+StockQueryOrderResp:(
+	positionStr:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;定位串，初始请求可以置空，从特定记录开始，需填入记录相应定位串
+    success:#b| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    error:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    entrustNo:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    exchangeType:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    stockAccount:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    stockCode:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    stockName:#S| |name=证券名称 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    entrustBS:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    entrustBSName:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    entrustPrice:#d| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    entrustAmount:#d| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    bizAmount:#d| |name=成交数量 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    bizPrice:#d| |name=成交价格 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    entrustDate:#i| |name=委托日期 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    entrustTime:#i| |name=委托时间 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    entrustType:#S| |name=委托类别 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    entrustTypeName:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    entrustStatus:#S| |name=委托状态 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    entrustStatusName:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    cancelInfo:#S| |name=废单原因 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    orderRef:#S| |name=内部号 | isKey = | precision = | flag =  | invisible=  | property= | func= ;//对broker无用
+    cancelAmount:#d=0| |name=已撤数量 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    valid_flag:#S="1"| |name=合法标记 | isKey = | precision = | flag =  | invisible=1  | property= | func= ;
+    entrustProp:#S="0"| |name=委托属性 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    entrustPropName:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    tradeAmount:#d=-1| |name=委托已成交金额 | isKey = | precision = | flag =  | invisible=  | property= | func= ;//-1表示这个数据上游没提供，需要自己算
+){ptr}
+
+//请求历史成交
+StockQueryBusinessReq : (
+    fundAccount:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    password:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    startDate:#i| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    endDate:#i| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    branchNo:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    stockAccount:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    exchangeType:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    stockCode:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    queryDirection:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    requestNum:#i=1000| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;//请求数目，默认50，超过1000按1000条出来
+    positionStr:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;定位串，初始请求可以置空，从特定记录开始，需填入记录相应定位串    
+){ptr}
+StockQueryBusinessResp : (
+    success:#b| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    error:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    bizNo:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    bizDate:#i| |name=成交日期 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    exchangeType:#S| |name=交易类别 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    exchangeName:#S| |name=证券账号 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    stockAccount:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    stockCode:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    stockName:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    entrustBS:#S| |name=买卖方向 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    entrustBSName:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    bizAmount:#d| |name=成交数量 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    bizPrice:#d| |name=成交价格 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    bizTime:#i| |name=成交时间 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    entrustNo:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    bizBalance:#d| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    occurBalance:#d| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    remark:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    orderRef:#S| |name=内部号 | isKey = | precision = | flag =  | invisible=  | property= | func= ;//对broker无用
+    entrustDate:#s| |name=委托日期 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    secu_acc_name:#S| |name股东姓名= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    ext_rec_num:#S| |name=外部记录号 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    positionStr:#S| |name=记录序列号 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	fundAccount:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    moneyType:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    entrustProp:#S="0"| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    entrustPropName:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    entrustType:#S| |name=委托类别 | isKey = | precision = | flag =  | invisible=1  | property= | func= ;
+    entrustTypeName:#S| |name= | isKey = | precision = | flag =  | invisible=1  | property= | func= ;    
+){ptr}
+
+//查询交割单
+StockQueryDeliveryReq : (
+    fundAccount:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    password:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    startDate:#i| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    endDate:#i| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    branchNo:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    stockAccount:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    exchangeType:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    extInst:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+){ptr}
+StockQueryDeliveryResp : (
+    success:#b| |name= | isKey = | precision = | flag =  | invisible=1 ;
+    error:#S| |name= | isKey = | precision = | flag =  | invisible=1 ;
+    date:#i| |name=日期 | isKey =1 | precision = | flag =  | invisible=  | property= | func= ;
+    bizTime:#i| |name=成交时间 | isKey =1 | precision = | flag =  | invisible=1, ;
+    exchangeType:#S| |name= | isKey =1 | precision = | flag =  | invisible=1 ;
+    exchangeName:#S| |name=市场 | isKey = | precision = | flag =  | invisible=1, ;
+    stockAccount:#S| |name=股东账号 | isKey =1 | precision = | flag =  | invisible=  | property= | func= ;
+    stockCode:#S| |name=证券代码 | isKey =1 | precision = | flag =  | invisible=  | property= | func= ;
+    stockName:#S| |name=证券名称 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    entrustBS:#S| |name= | isKey = | precision = | flag =  | invisible=1 ;
+    entrustBSName:#S| |name=操作 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    bizAmount:#d| |name=成交数量 | isKey = | precision =0 | flag =  | invisible=  | property= | func= ;
+    bizPrice:#d| |name=成交价格 | isKey = | precision =3 | flag =  | invisible=  | property= | func= ;
+    bizBalance:#d| |name=成交金额 | isKey = | precision =2 | flag =  | invisible=  | property= [SUMSTAT]| func= ;
+    postBalance:#d| |name=资金余额 | isKey = | precision =2 | flag =  | invisible=  | property= | func= ;
+    postAmount:#d| |name=股份余额 | isKey = | precision = | flag =  | invisible=1, ;
+    bizNo:#S| |name=成交序列号 | isKey =1 | precision = | flag =  | invisible= ;
+    commission:#d| |name=手续费 | isKey = | precision =2 | flag =  | invisible=  | property=[SUMSTAT] | func=;
+    stampTax:#d| |name=印花税 | isKey = | precision =2 | flag =  | invisible=  | property=[SUMSTAT] | func= ;
+    transFee:#d| |name=其他杂费 | isKey = | precision =2 | flag =  | invisible=  | property=[SUMSTAT] | func= ;
+    entrustNo:#S| |name=委托号 | isKey =1 | precision = | flag =  | invisible=1, ;
+    m_accountInfo:CAccountInfoPtr| |name=资金账号 | isKey =1 | precision = | flag =  | invisible=,1,  | property= | func= ;
+){ptr}
+
+//查询对账单
+StockQueryAccountStatementReq : (
+    fundAccount:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    password:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    startDate:#i| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    endDate:#i| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    branchNo:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    stockAccount:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    exchangeType:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    extInst:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+){ptr}
+StockQueryAccountStatementResp : (
+    success:#b| |name= | isKey = | precision = | flag =  | invisible=1 ;
+    error:#S| |name= | isKey = | precision = | flag =  | invisible=1 ;
+    date:#i| |name=交易日期 | isKey =1 | precision = | flag =  | invisible=  | property= | func= ;
+    serialNo:#i| |name=流水号 | isKey =1 | precision = | flag =  | invisible=  | property= | func= ;
+    bizFlag:#i| |name=业务标识 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    bizName:#S| |name=业务名称 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    bizTime:#i| |name=成交时间 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    moneyType:#S| |name=币种类别 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    occurBalance:#d| |name=发生金额 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    postBalance:#d| |name=资金余额 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    exchangeType:#S| |name=交易市场类别 | isKey =1 | precision = | flag =  | invisible=  | property= | func= ;
+    stockAccount:#S| |name=证券账号 | isKey =1 | precision = | flag =  | invisible=  | property= | func= ;
+    stockCode:#S| |name=股票代码 | isKey =1 | precision = | flag =  | invisible=  | property= | func= ;
+    entrustBS:#S| |name=买卖 | isKey = | precision = | flag =  | invisible=1 ;
+    entrustBSName:#S| |name=买卖 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    bizAmount:#d| |name=成交量 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    bizPrice:#d| |name=成交价格 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+){ptr}
+//查询绑定银行账号
+StockQueryTransferBanksReq : (
+    fundAccount:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    password:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    branchNo:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    moneyType:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    bankNo:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+){ptr}
+StockQueryTransferBanksResp : (
+    success:#b| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    error:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    moneyType:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    bankNo:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    bankAccount:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    bankName:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+){ptr}
+//银证转账
+StockTransferReq : (
+    fundAccount:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    password:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    bankNo:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    trsfDirection:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    moneyType:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    occurBalance:#d| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    branchNo:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    bankAccount:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    bankPwd:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+){ptr}
+StockTransferResp : (
+    success:#b| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    error:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    serialNo:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+){ptr}
+
+//查询转账流水
+StockQueryTransferSerialReq : (
+    fundAccount:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    password:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    branchNo:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    requestNum:#i| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    positionStr:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+){ptr}
+StockQueryTransferSerialResp : (
+    success:#b| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    error:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    bankNo:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    entrustNo:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    sourceFlag:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    moneyType:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    moneyName:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    occurBalance:#d| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    entrustTime:#i| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    cancelInfo:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+){ptr}
+//请求历史转账流水
+StockQueryHistoryTransferSerialReq : (
+    fundAccount:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    password:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    startDate:#i| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    endDate:#i| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;    
+    bankNo:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    branchNo:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+){ptr}
+StockQueryHistoryTransferSerialResp : (
+    success:#b| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    error:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    date:#i| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    time:#i| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    bankNo:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    entrustNo:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    sourceFlag:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    moneyType:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    moneyName:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    occurBalance:#d| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    remark:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+){ptr}
+
+//下单
+StockOrderReq : (
+	m_accountInfo:CAccountInfoPtr| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    fundAccount:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    password:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    exchangeType:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    stockCode:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    entrustAmount:#d| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    entrustPrice:#d| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    entrustBS:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    orderRef:#S| |name=内部号 | isKey = | precision = | flag =  | invisible=  | property= | func= ;//对broker无用
+    entrustProp:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    branchNo:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    bankNo:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+){ptr}
+StockOrderResp : (
+    success:#b| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    error:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    entrustNo:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+){ptr}
+//撤单
+StockCancelReq : (
+	m_accountInfo:CAccountInfoPtr| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    fundAccount:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    password:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    exchangeType:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    entrustNo:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    branchNo:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    stockCode:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;    
+){ptr}
+StockCancelResp : (
+    success:#b| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    error:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    m_orderRef:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;//要撤的单子的委托号,接口不提供，自己填数值
+    needPush:#b=false| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;//是否还需要后续的主推决定撤单成败
+    entrustNo:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;//如果是主推，还有必要给出委托号
+){ptr}
+
+//批量下单，暂时只有中投
+StockBatchOrderReq:(
+    fundAccount:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    exchangeType:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    entrustBS:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    entrustProp:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    content:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+){ptr}
+StockBatchOrderResp:(
+    success:#b| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    error:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    entrustNo:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    stockCode:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+){ptr}
+
+//批量撤单，暂时也只有中投
+StockBatchCancelReq:(
+	fundAccount:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	exchangeType:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	bizNo:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+){ptr}
+StockBatchCancelResp:(
+    success:#b| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    error:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+){ptr}
+
+//请求成交增量接口（）一次最多拿到2k条，需要做比较好的底层支持,中投测试平台仅有，实盘平台以后也会有
+StockQueryBizIncReq : (
+    fundAccount:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;//资金账号
+    password:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;//密码，对中投无用
+    positionStr:#s=""| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;//起始序号
+    requestNum:#i=2000| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;//最大条数
+    exchangeType:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;//增补字段，长江等需要,不需要的可以填写空
+){ptr}
+
+//请求银行可转资金
+StockQueryBankAmountReq : (
+    fundAccount:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;//资金账号
+    password:#S| |name=资金密码 | isKey = | precision = | flag =  | invisible=  | property= | func= ;//资金密码，对中投无用
+    moneyType:#S| |name=货币类型 | isKey = | precision = | flag =  | invisible=  | property= | func= ;//货币类型
+    bankNo:#S| |name=银行代码 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    bankAccount:#S| |name=银行账号 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    bankPwd:#S| |name=银行密码 | isKey = | precision = | flag =  | invisible=  | property= | func= ;    //非必须
+){ptr}
+
+StockQueryBankAmountResp : (
+    success:#b| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    error:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	fundAccount:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;//资金账号
+	bankAccount:#S| |name=银行账号 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	moneyType:#S| |name=货币类型 | isKey = | precision = | flag =  | invisible=  | property= | func= ;//货币类型
+	balance:#d| |name=余额 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	enableBalance:#d| |name=可转金额 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+){ptr}
+
+//请求银行名字
+StockQueryBankInfoReq : (
+    bankNo:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+){ptr}
+
+StockQueryBankInfoResp : (
+    success:#b| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    error:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    bankNo:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    bankName:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+){ptr}
+
+StockUpdateTradingAccountPasswordReq:(
+	fundAccount:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;//资金账号
+	oldPwd:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	newPwd:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+){ptr}
+
+StockUpdateTradingAccountPasswordResp:(
+    success:#b| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    error:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+){ptr}
+
+//融資融券交易
+
+//委托交易
+StockSMTOrderReq:(
+	m_accountInfo:CAccountInfoPtr| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	fundAccount:#S | |name=资金账户 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	password:#S | |name=密码 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	exchangeType:#S | |name=交易类别 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	stockCode:#S | |name=证券代码 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	entrustAmount:#d | |name=委托数量 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	entrustPrice:#d | |name=委托价格 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	entrustBS:#S | |name=买卖方向 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	entrustProp:#S | |name=委托属性 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	entrustType:#S | |name=委托类别 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	assetProp:EXTAssetProp=EASSET_PROP_NORMAL | |name=资产属性 | isKey = | precision = | flag =  | invisible=  | property= | func= ;//标识是普通户还是信用户 对于融券融资 这里肯定是信用户
+	compactId:#S | |name=还款合约编号 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	stockAccount:#S | |name=证券账号 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	orderRef:#S | |name=委托引用 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+){ptr}
+
+StockSMTOrderResp:(
+    success:#b| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    error:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    entrustNo:#S | |name=委托编号 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+){ptr}
+
+//现金还款
+StockSMTCashRepayReq:(
+	m_accountInfo:CAccountInfoPtr| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	fundAccount:#S | |name=资金账户 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	password:#S | |name=密码 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	moneyType:EMoneyType=MONEY_TYPE_RMB | |name=币种类别 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	payType:#S | |name=还款方式 | isKey = | precision = | flag =  | invisible=  | property= | func= ;//0按金额还 1按笔还
+	occurBalance:#d | |name=还款金额 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	compactId:#S | |name=还款合约编号 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	orderRef:#S | |name=委托引用 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+){ptr}
+
+StockSMTCashRepayResp:(
+    success:#b| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    error:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    occurBalance:#d | |name=实际还款金额 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+){ptr}
+
+//现券还券
+StockSMTSecuRepayReq:(
+	m_accountInfo:CAccountInfoPtr| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	fundAccount:#S | |name=资金账户 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	password:#S | |name=密码 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	exchangeType:#S | |name=交易类别 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	stockAccount:#S | |name=证券账号 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	stockCode:#S | |name=证券代码 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	entrustAmount:#d | |name=还券数量 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	compactId:#S | |name=还款合约编号 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	withdrawFlag:#i=48 | |name=实时影响负债标志 | isKey = | precision = | flag =  | invisible=  | property= | func= ;//没特别需求不要填写
+	orderRef:#S | |name=委托引用 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+){ptr}
+
+StockSMTSecuRepayResp:(
+    success:#b| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    error:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    entrustNo:#S | |name=委托编号 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+){ptr}
+
+//委托撤单
+StockSMTCancelReq | StockCancelReq:(
+){ptr}
+
+StockSMTCancelResp | StockCancelResp:(
+){ptr}
+
+//查询资金
+StockSMTQueryFundReq:(
+	fundAccount:#S | |name=资金账户 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	password:#S | |name=密码 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	moneyType:EMoneyType=MONEY_TYPE_RMB | |name=币种类别 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+){ptr}
+
+StockSMTQueryFundResp:(
+    success:#b| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    error:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	fundAsset:#d | |name=现金资产 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	marketValue:#d | |name=证券市值 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	assureAsset:#d | |name=担保资产 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	totalDebit:#d | |name=总负债 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	fetchBalance:#d | |name=可取金额 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	perAssurescaleValue:#d | |name=个人维持担保比例 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	enableBailBalance:#d | |name=可用保证金 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	usedBailBalance:#d | |name=已用保证金 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	assureEnbuyBalance:#d | |name=买担保品可用资金 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	finEnbuyBalance:#d | |name=买融资标的可用资金 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	sloEnrepaidBalance:#d | |name=买券还券可用资金 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	finEnrepaidBalance:#d | |name=现金还款可用资金 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	finMaxQuota:#d | |name=融资最高额度 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	finEnableQuota:#d | |name=融资可用额度 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	finUsedQuota:#d | |name=融资已用额度 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	finUsedBail:#d | |name=融资已用保证金额 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	finCompactBalance:#d | |name=融资合约金额 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	finCompactFare:#d | |name=融资合约费用 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	finCompactInterest:#d | |name=融资合约利息 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	finMarketValue:#d | |name=融资市值 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	finIncome:#d | |name=融资合约盈亏 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	sloMaxQuota:#d | |name=融券最高额度 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	sloEnableQuota:#d | |name=融券可用额度 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	sloUsedQuota:#d | |name=融券已用额度 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	sloUsedBail:#d | |name=融券已用保证金额 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	sloCompactBalance:#d | |name=融券合约金额 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	sloCompactFare:#d | |name=融券合约费用 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	sloCompactInterest:#d | |name=融券合约利息 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	sloMarketValue:#d | |name=融券市值 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	sloIncome:#d | |name=融券合约盈亏 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	otherFare:#d | |name=其它费用 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	underlyMarketValue:#d | |name=标的证券市值 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+){ptr}
+
+//查询持仓
+StockSMTQueryPositionReq:(
+	fundAccount:#S | |name=资金账户 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	password:#S | |name=密码 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	exchangeType:#S | |name=交易类别 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	stockCode:#S | |name=证券代码 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	queryMode:EXTSMTQueryMode=QUERY_SMT_MODE_DETAIL | |name=查询模式 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	positionStr:#S | |name=定位串 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	requestNum:#i=50 | |name=请求行数 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+){ptr}
+
+StockSMTQueryPositionResp | StockQueryPositionResp :(
+	fundAccount:#S | |name=资金账户 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	currentAmount:#d | |name=当前数量 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	holdAmount:#d | |name=持有数量 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	incomeBalance:#d | |name=盈亏金额 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	avBuyPrice:#d | |name=买入均价 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	avIncomeBalance:#d | |name=实现盈亏 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	uncomeBuyAmount:#d | |name=未回买入数量 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	uncomeSellAmount:#d | |name=未回卖出数量 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	entrustSellAmount:#d | |name=委托卖出数量 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	realBuyAmount:#d | |name=回报买入数量 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	realSellAmount:#d | |name=回报卖出数量 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+){ptr}
+
+//客户融资融券合约持仓查询
+StockSMTQueryPositionCompactsReq:(
+	fundAccount:#S | |name=资金账户 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	password:#S | |name=密码 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	exchangeType:#S | |name=交易类别 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	stockAccount:#S | |name=证券账号 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	stockCode:#S | |name=证券代码 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	startDate:#i | |name=起始开仓日期 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	endDate:#i | |name=到期开仓日期 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	compactId:#S | |name=合约编号 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	compactType:EXTCompactType=COMPACT_TYPE_ALL | |name=合约类型 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	queryType:EXTCompactStatus=COMPACT_STATUS_UNDONE | |name=查询类型 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	queryMode:EXTSMTQueryMode=QUERY_SMT_MODE_DETAIL | |name=查询模式 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	sortDirection:#S | |name=返回排序方式 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	positionStr:#S | |name=定位串 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	requestNum:#i=50 | |name=请求行数 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+){ptr}
+
+StockSMTQueryPositionCompactsResp:(
+    success:#b| |name= | isKey = | precision = | flag =  | invisible=1  | property= | func= ;
+    error:#S| |name= | isKey = | precision = | flag =  | invisible=1  | property= | func= ;
+	openDate:#i | |name=合约开仓日期 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	compactId:#S | |name=合约编号 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	fundAccount:#S | |name=资金账号 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	moneyType:EMoneyType=MONEY_TYPE_RMB | |name=币种类别 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	exchangeType:#S | |name=交易类别 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	stockAccount:#S | |name=证券账号 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	stockCode:#S | |name=证券代码 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	crdtRatio:#d | |name=融资融券保证金比例 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	entrustNo:#S | |name=委托编号 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	entrustPrice:#d | |name=委托价格 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	entrustAmount:#d | |name=委托数量 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	businessAmount:#d | |name=合约开仓数量 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	businessBalance:#d | |name=合约开仓金额 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	businessFare:#d | |name=合约开仓费用 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	compactType:#S | |name=合约类型 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	compactStatus:#S | |name=合约状态 | isKey = | precision = | flag =  | invisible=  | property= | func= ;	
+	#compactType:EXTCompactType | |name=合约类型 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	#compactStatus:EXTCompactStatus | |name=合约状态 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	realCompactBalance:#d | |name=未还合约金额 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	realCompactAmount:#d | |name=未还合约数量 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	realCompactFare:#d | |name=未还合约费用 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	realCompactInterest:#d | |name=未还合约利息 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	repaidInterest:#d | |name=已还利息 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	repaidAmount:#d | |name=已还数量 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	repaidBalance:#d | |name=已还金额 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	compactInterest:#d | |name=合约总利息 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	usedBailBalance:#d | |name=占用保证金 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	yearRate:#d | |name=合约年利率 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	retEndDate:#i | |name=归还截止日 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	dateClear:#i | |name=了结日期 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	positionStr:#S | |name=定位串 | isKey = | precision = | flag =  | invisible=1  | property= | func= ;
+){ptr}
+
+//委托查询 (当日)
+StockSMTQueryOrderReq:(
+	fundAccount:#S | |name=资金账户 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	password:#S | |name=密码 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	exchangeType:#S | |name=交易类别 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	stockCode:#S | |name=证券代码 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	queryType:#i | |name=查询类别 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	queryMode:#i | |name=查询模式 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	entrustNo:#S | |name=委托号 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	positionStr:#S | |name=定位串 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	requestNum:#i | |name=请求行数 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+){ptr}
+
+StockSMTQueryOrderResp | StockQueryOrderResp:(
+	batchNo:#i | |name=委托批号 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	fundAccount:#S | |name=资金账户 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	reportNo:#i | |name=申请编号 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	reportTime:#i | |name=申报时间 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	tradeName:#S | |name=订单名称 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	cashgroupProp:#i | |name=头寸性质 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+){ptr}
+
+//委托查询 (历史)
+StockSMTQueryHistoryOrderReq:(
+	fundAccount:#S | |name=资金账户 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	password:#S | |name=密码 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	exchangeType:#S | |name=交易类别 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	stockAccount:#S | |name=证券账号 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	stockCode:#S | |name=证券代码 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	sortDirection:#i | |name=返回排序方式 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	startDate:#i | |name=起始开仓日期 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	endDate:#i | |name=到期开仓日期 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	compactId:#S | |name=合约编号 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	compactType:#i | |name=合约类型 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	queryMode:#i | |name=查询模式 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	positionStr:#S | |name=定位串 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	requestNum:#i | |name=请求行数 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+){ptr}
+
+StockSMTQueryHistoryOrderResp:(
+    success:#b| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    error:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	openDate:#i | |name=合约开仓日期 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	compactId:#S | |name=合约编号 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	fundAccount:#S | |name=资金账号 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	moneyType:EMoneyType=MONEY_TYPE_RMB | |name=币种类别 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	stockAccount:#S | |name=证券账号 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	exchangeType:#S | |name=交易类别 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	stockCode:#S | |name=证券代码 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	crdtRatio:#d | |name=融资融券保证金比例 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	entrustNo:#S | |name=委托编号 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	entrustPrice:#d | |name=委托价格 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	entrustAmount:#d | |name=委托数量 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	businessAmount:#d | |name=合约开仓数量 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	businessBalance:#d | |name=合约开仓金额 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	businessFare:#d | |name=合约开仓费用 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	compactType:#i | |name=合约类型 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	compactStatus:#i | |name=合约状态 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	repaidInterest:#d | |name=已还利息 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	repaidAmount:#d | |name=已还数量 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	repaidBalance:#d | |name=已还金额 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	compactInterest:#d | |name=合约总利息 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	usedBailBalance:#d | |name=占用保证金 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	yearRate:#d | |name=合约年利率 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	retEndDate:#i | |name=归还截止日 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	dateClear:#i | |name=了结日期 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	positionStr:#S | |name=定位串 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+){ptr}
+
+//成交查询 (当日)
+StockSMTQueryBusinessReq:(
+	fundAccount:#S | |name=资金账户 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	password:#S | |name=密码 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	exchangeType:#S | |name=交易类别 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	stockCode:#S | |name=证券代码 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	positionStr:#S | |name=定位串 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	requestNum:#i | |name=请求行数| isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	queryDirection:#S | |name=方向 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+){ptr}
+
+StockSMTQueryBusinessResp | StockQueryBusinessResp:(
+	serialNo:#i | |name=流水序号 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	realType:EEntrustTypes | |name=成交类别| isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	realStatus:EXTRealStatus | |name=成交状态| isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	businessTimes:#i | |name=分笔成交笔数 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	tradeName:#S | |name=订单名称 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	reportNo:#i | |name=申请编号 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+){ptr}
+
+//客户标的证券查询
+StockSMTQueryUnderlyingSecuritiesReq:(
+	fundAccount:#S | |name=资金账户 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	password:#S | |name=密码 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	exchangeType:#S | |name=交易类别 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	stockCode:#S | |name=证券代码 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	positionStr:#S | |name=定位串 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	requestNum:#i | |name=请求行数 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	queryMode:EXTCompactType=COMPACT_TYPE_FIN | |name=查询模式 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+){ptr}
+
+StockSMTQueryUnderlyingSecuritiesResp:(
+    success:#b| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    error:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	exchangeType:#S | |name=交易类别 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	stockCode:#S | |name=证券代码 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	stockName:#S | |name=股票名称 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	assureRatio:#d | |name=担保品折算比例 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	finRatio:#d | |name=融资保证金比例 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	finStatus:#S | |name=融资状态 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	sloRatio:#d | |name=融券保证金比例 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	sloStatus:#S | |name=融券状态 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	positionStr:#S | |name=定位串 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+){ptr}
+
+//融券卖出标的证券查询
+StockSMTQuerySellSecutitesReq:(
+	fundAccount:#S | |name=资金账户 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	password:#S | |name=密码 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	exchangeType:#S | |name=交易类别 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	stockCode:#S | |name=证券代码 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	positionStr:#S | |name=定位串 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	requestNum:#i | |name=请求行数 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+){ptr}
+
+StockSMTQuerySellSecutitesResp:(
+    success:#b| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    error:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	exchangeType:#S | |name=交易类别 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	stockCode:#S | |name=证券代码 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	stockName:#S | |name=股票名称 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	sloRatio:#d | |name=融券保证金比例 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	sloStatus:#S | |name=融券状态| isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	enableAmount:#d | |name=融券可融数量 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	positionStr:#S | |name=定位串 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+){ptr}
+
+//利率查询
+StockSMTQueryInterestRateReq:(
+	fundAccount:#S | |name=资金账户 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	password:#S | |name=密码 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	moneyType:#S | |name=货币类型 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+){ptr}
+
+StockSMTQueryInterestRateResp:(
+    success:#b| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    error:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	crdtrateKind:#S | |name=交易类别 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	stockCode:#S | |name=证券代码 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	rateDays:#i | |name=利率天数 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	yearRate:#d | |name=年利率 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+){ptr}

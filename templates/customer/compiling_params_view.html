@@ -1,0 +1,186 @@
+{% extends "root.html" %}
+{% load rzrk_tags %}
+
+{% block title %}{% settings_value "MAIN_PROJECT_NAME" %}-编译机参数管理{% endblock %}
+{% block rootJsAndCss %}
+    <style>
+        td input {
+            width: 100%;
+            font-family: "courier new";
+        }
+
+        #dock_wrap > #add {
+            position: fixed;
+            top: 10%;
+        }
+
+        #dock_wrap {
+            position: relative;
+            z-index: 20;
+        }
+
+    </style>
+    {% if not is_view %}
+        <script type="text/javascript">
+            $(document).ready(function () {
+                //添加机器
+                $(".inner").on("click", "span[cmd=edit]", function () {
+                    var $this = $(this);
+                    //尝试获取ID
+                    var id = $this.parent().find('input[name=param_id]').val();
+                    //替换name段
+                    var name_td = $($this.parent().parent().find('td')[0]);
+                    name_td.html('<input type="text" name="param_name" value="' + name_td.text() + '">');
+                    //重建value段
+                    var value_td = $($this.parent().parent().find('td')[1]);
+                    value_td.html('<input type="text" name="param_value" value="' + value_td.text() + '">');
+                    $this.attr('cmd', 'update');
+                    $this.text('更新');
+                });
+                //更新按钮
+                $(".inner").on("click", "span[cmd=update]", function () {
+                    var $this = $(this);
+                    //尝试获取ID
+                    var id = $this.parent().find('input[name=param_id]').val();
+                    //替换name段
+                    var name_td = $($this.parent().parent().find('td')[0]);
+                    var name = $(name_td.find('input[name=param_name]')).val();
+                    //重建value段
+                    var value_td = $($this.parent().parent().find('td')[1]);
+                    var value = $(value_td.find('input[name=param_value]')).val();
+
+                    var params = {
+                        "cmd": "update",
+                        "id": id,
+                        "name": name,
+                        "value": value
+                    };
+
+                    $.post('/customer/compiling/params/operate/', params, function (resp) {
+                        if (resp.success) {
+                            name_td.text(name);
+                            value_td.text(value);
+                            $this.attr('cmd', 'edit');
+                            $this.text('编辑');
+                            alert(resp.error)
+                        } else {
+                            alert(resp.error)
+                        }
+                    }, 'json')
+                });
+                //删除按钮
+                $(".inner").on("click", "span[cmd=delete]", function () {
+                    var $this = $(this);
+                    //尝试获取ID
+                    var id = $this.parent().find('input[name=param_id]').val();
+                    //未获取ID即为删除未保存的参数,直接移除控件
+                    if (!id) {
+                        $this.parent().parent().remove();
+                        return;
+                    }
+
+                    var params = {
+                        "cmd": "delete",
+                        "id": id
+                    };
+
+                    if (!confirm("确定删除此参数?")) {
+                        return false;
+                    }
+
+                    $.post('/customer/compiling/params/operate/', params, function (resp) {
+                        if (resp.success) {
+                            $this.parent().parent().remove();
+                            alert(resp.error)
+                        } else {
+                            alert(resp.error)
+                        }
+                    }, 'json')
+                });
+                //添加按钮
+                $(".inner").on("click", "#add", function () {
+                    //清空提示行
+                    var obj = $("#params_table");
+                    if (obj.find('input').length == 0) {
+                        $(obj.find('tr')[1]).remove();
+                    }
+                    var html = '';
+                    html += '<tr>';
+                    html += '<td>';
+                    html += '<input type="text" name="param_name" value="">';
+                    html += '</td>';
+                    html += '<td>';
+                    html += '<input type="text" name="param_value" value="">';
+                    html += '</td>';
+                    html += '<td>';
+                    html += '<input type="hidden" name="param_id" value="">';
+                    html += '<span class="btn" cmd="create">创建</span>';
+                    html += '<span class="btn" cmd="delete">删除</span>';
+                    html += '</td>';
+                    $("#params_table").append(html)
+                });
+                //创建按钮
+                $(".inner").on("click", "span[cmd=create]", function () {
+                    var $this = $(this);
+                    //替换name段
+                    var name_td = $($this.parent().parent().find('td')[0]);
+                    var name = $(name_td.find('input[name=param_name]')).val();
+                    //重建value段
+                    var value_td = $($this.parent().parent().find('td')[1]);
+                    var value = $(value_td.find('input[name=param_value]')).val();
+
+                    var params = {
+                        "cmd": "create",
+                        "name": name,
+                        "value": value
+                    };
+
+                    $.post('/customer/compiling/params/operate/', params, function (resp) {
+                        if (resp.success) {
+                            name_td.text(name);
+                            value_td.text(value);
+                            $this.parent().find('input[name=param_id]').val(resp.id);
+                            $this.attr('cmd', 'edit');
+                            $this.text('编辑');
+                            alert(resp.error)
+                        } else {
+                            alert(resp.error)
+                        }
+                    }, 'json')
+                });
+            });
+        </script>
+    {% endif %}
+{% endblock %}
+{% block rootBody %}
+    <div class="title_1"><span>编译机参数查看</span></div>
+    <div class="inner">
+        <div class="btn_line" id='dock_wrap'>
+            <div class="btn" id="add">添加参数</div>
+        </div>
+        <table class="bordered table" id="params_table" style="margin-top: 40px;">
+            <tr>
+                <th>名称</th>
+                <th>取值</th>
+                <th>操作</th>
+            </tr>
+            {% if params|length > 0 %}
+                {% for param in params %}
+                    <tr>
+                        <td>{{ param.name }}</td>
+                        <td>{{ param.value }}</td>
+                        <td>
+                            <input type="hidden" name="param_id" value="{{ param.id }}">
+                            <span class="btn" cmd="edit">编辑</span>
+                            <span class="btn" cmd="delete">删除</span>
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td type="setting" colspan="3">暂无编译参数</td>
+                </tr>
+            {% endif %}
+        </table>
+    </div>
+{% endblock %}

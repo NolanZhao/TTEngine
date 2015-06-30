@@ -1,0 +1,85 @@
+{% extends "root.html" %}
+{% load rzrk_tags %}
+
+{% block title %}{% settings_value "MAIN_PROJECT_NAME" %}-客户列表{% endblock %}
+{% block rootJsAndCss %}
+    <style>
+    </style>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            //删除用户
+            $('.inner').on('click', '.btn[cmd=del]', function () {
+                var $this = $(this);
+                var username = $this.attr('username');
+                var user_id = $this.attr('user_id');
+                dialog_confirm('确认', '确认删除用户[' + username + '] ?', function () {
+                    var url = '/user/delete/';
+                    var params = {id: user_id};
+                    $.post(url, params, function (resp) {
+                        if (resp.success) {
+                            $this.parent().parent().remove();
+                            dialog_success('', resp.error);
+                        } else {
+                            dialog_error('', resp.error);
+                        }
+                    }, 'json');
+                });
+            });
+
+            //编辑用户
+            $('.inner').on('click', '.btn[cmd=edit]', function () {
+                var $this = $(this);
+                var username = $this.attr('username');
+                var user_id = $this.attr('user_id');
+                window.open('/user/edit/?id=' + user_id, '_self');
+            });
+        });
+    </script>
+{% endblock %}
+{% block rootBody %}
+    <div class="title_1">
+        <span>用户列表</span>
+    </div>
+    <div class="inner">
+        <div class="btn_line">
+            <div class="btn" id="add_user" style="position: fixed;z-index: 2;" onclick="javascript:window.location.href = '/user/create/'">添加</div>
+        </div>
+        <table class="bordered table" style="margin-top: 35px;">
+            <tr type="main">
+                <th style="width: 40px;">序号</th>
+                <th>用户名</th>
+                <th style="width: 60px;">用户组</th>
+                <th>电话</th>
+                <th>邮箱</th>
+                <th style="width: 40px;">登陆</th>
+                <th style="width: 40px;">启用</th>
+                <th style="width: 80px;">超级用户</th>
+                <th style="width: 200px;">创建时间</th>
+                <th style="width: 150px;">操作</th>
+            </tr>
+            {% if users %}
+                {% for user in users %}
+                    <tr type="main">
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ user.username }}</td>
+                        <td>{{ user.group|get_group_value }}</td>
+                        <td>{% if user.telphone %}{{ user.telphone }}{% else %}-{% endif %}</td>
+                        <td>{% if user.email %}{{ user.email }}{% else %}-{% endif %}</td>
+                        <td><span {% if not user.is_staff %}style="color: red"{% endif %}>{% if user.is_staff %}允许{% else %}禁止{% endif %}</span></td>
+                        <td><span {% if not user.is_active %}style="color: red"{% endif %}>{% if user.is_active %}启用{% else %}禁用{% endif %}</span></td>
+                        <td><span {% if user.is_superuser %}style="color: red"{% endif %}>{% if user.is_superuser %}是{% else %}否{% endif %}</span></td>
+                        <td>{{ user.date_joined|date:'Y-m-d H:i:s' }}</td>
+                        <td>
+                            <span class="btn" title="删除" cmd="del" user_id="{{ user.id }}" username="{{ user.username }}">删除</span>
+                            <span class="btn" title="编辑" cmd="edit" user_id="{{ user.id }}">修改</span>
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="6">查无用户</td>
+                </tr>
+            {% endif %}
+        </table>
+    </div>
+{% endblock %}

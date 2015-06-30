@@ -1,0 +1,94 @@
+Namespace = ttservice
+ServiceName = StkBroker
+
+Includes = (
+    Protocol/rpc_StockCommon_Def.h,
+    Protocol/rpc_Structs_Def.h,
+)
+
+CppIncludes = (
+    Protocol/rpc_StockCommon.h,
+    Protocol/rpc_Structs.h,
+    net/RPCEngine.h
+)
+
+login(req:LoginReq) => (success:#b, error_no:#i, error_info:#S, response:[StockLoginRespPtr])
+logout() => ()
+
+order(req:StockOrderReqPtr) => (success:#b, error_no:#i, error_info:#S, response:[StockOrderRespPtr])
+
+queryFund(req:StockQueryFundReqPtr) => (success:#b, error_no:#i, error_info:#S, response:[StockQueryFundRespPtr])
+
+queryAccount(req:StockQueryAccountReqPtr) => (success:#b, error_no:#i, error_info:#S, response:[StockQueryAccountRespPtr])
+
+queryStockholder(req:StockQueryStockholderReqPtr) => (success:#b, error_no:#i, error_info:#S, response:[StockQueryStockholderRespPtr])
+
+queryPosition(req:StockQueryPositionReqPtr) => (success:#b, error_no:#i, error_info:#S, response:[StockQueryPositionRespPtr])
+
+queryOrder(req:StockQueryOrderReqPtr) => (success:#b, error_no:#i, error_info:#S, response:[StockQueryOrderRespPtr])
+    
+queryHistoryOrder(req:StockQueryOrderReqPtr) => (success:#b, error_no:#i, error_info:#S, response:[StockQueryOrderRespPtr])
+
+queryBusiness(req:StockQueryBusinessReqPtr) => (success:#b, error_no:#i, error_info:#S, response:[StockQueryBusinessRespPtr])
+
+queryHistoryBusiness(req:StockQueryBusinessReqPtr) => (success:#b, error_no:#i, error_info:#S, response:[StockQueryBusinessRespPtr])
+
+queryDelivery(req:StockQueryDeliveryReqPtr)  => (success:#b, error_no:#i, error_info:#S, response:[StockQueryDeliveryRespPtr])
+
+queryAccountStatement(req:StockQueryAccountStatementReqPtr) => (success:#b, error_no:#i, error_info:#S, response:[StockQueryAccountStatementRespPtr])
+
+cancel(req:StockCancelReqPtr) => (success:#b, error_no:#i, error_info:#S, response:[StockCancelRespPtr])
+
+batchOrder(req:StockBatchOrderReqPtr) => (success:#b, error_no:#i, error_info:#S, response:[StockBatchOrderRespPtr])
+
+batchCancel(req:StockBatchCancelReqPtr) => (success:#b, error_no:#i, error_info:#S, response:[StockBatchCancelRespPtr])
+
+queryBusinessInc(req:StockQueryBizIncReqPtr) => (success:#b, error_no:#i, error_info:#S, response:[StockQueryBusinessRespPtr])
+
+queryTransferBank(req:StockQueryTransferBanksReqPtr) => (success:#b, error_no:#i, error_info:#S, response:[StockQueryTransferBanksRespPtr])
+
+transfer(req:StockTransferReqPtr) => (success:#b, error_no:#i, error_info:#S, response:[StockTransferRespPtr])
+
+queryTransferSerial(req:StockQueryTransferSerialReqPtr) => (success:#b, error_no:#i, error_info:#S, response:[StockQueryTransferSerialRespPtr])
+
+queryHistoryTransferSerial(req:StockQueryHistoryTransferSerialReqPtr) => (success:#b, error_no:#i, error_info:#S, response:[StockQueryHistoryTransferSerialRespPtr])
+
+queryBankAmount(req:StockQueryBankAmountReqPtr) => (success:#b, error_no:#i, error_info:#S, response:[StockQueryBankAmountRespPtr])
+
+queryBankInfo(req:StockQueryBankInfoReqPtr) => (success:#b, error_no:#i, error_info:#S, response:[StockQueryBankInfoRespPtr])
+
+queryExchangeStatus(req:StockQueryAccountReqPtr) =>(content:[CExchangeStatusPtr])
+
+updateTradingAccountPassword(req:StockUpdateTradingAccountPasswordReqPtr) =>(success:#b, error_no:#i, error_info:#S, response:[StockUpdateTradingAccountPasswordRespPtr])
+
+smtOrder(req:StockSMTOrderReqPtr) => (success:#b, error_no:#i, error_info:#S, response:[StockSMTOrderRespPtr])
+
+smtCashRepay(req:StockSMTCashRepayReqPtr) => (success:#b, error_no:#i, error_info:#S, response:[StockSMTCashRepayRespPtr])
+
+smtSecuRepay(req:StockSMTSecuRepayReqPtr) => (success:#b, error_no:#i, error_info:#S, response:[StockSMTSecuRepayRespPtr])
+
+smtCancel(req:StockSMTCancelReqPtr) => (success:#b, error_no:#i, error_info:#S, response:[StockSMTCancelRespPtr])
+
+smtQueryFund(req:StockSMTQueryFundReqPtr) => (success:#b, error_no:#i, error_info:#S, response:[StockSMTQueryFundRespPtr])
+
+smtQueryPosition(req:StockSMTQueryPositionReqPtr) => (success:#b, error_no:#i, error_info:#S, response:[StockSMTQueryPositionRespPtr])
+
+smtQueryPositionCompacts(req:StockSMTQueryPositionCompactsReqPtr) => (success:#b, error_no:#i, error_info:#S, response:[StockSMTQueryPositionCompactsRespPtr])
+
+smtQueryOrder(req:StockSMTQueryOrderReqPtr) => (success:#b, error_no:#i, error_info:#S, response:[StockSMTQueryOrderRespPtr])
+
+smtQueryHistoryOrder(req:StockSMTQueryHistoryOrderReqPtr) => (success:#b, error_no:#i, error_info:#S, response:[StockSMTQueryHistoryOrderRespPtr])
+
+smtQueryBusiness(req:StockSMTQueryBusinessReqPtr) => (success:#b, error_no:#i, error_info:#S, response:[StockSMTQueryBusinessRespPtr])
+
+smtQueryUnderlyingSecurities(req:StockSMTQueryUnderlyingSecuritiesReqPtr) => (success:#b, error_no:#i, error_info:#S, response:[StockSMTQueryUnderlyingSecuritiesRespPtr])
+
+smtQuerySellSecutites(req:StockSMTQuerySellSecutitesReqPtr) => (success:#b, error_no:#i, error_info:#S, response:[StockSMTQuerySellSecutitesRespPtr])
+
+smtQueryInterestRate(req:StockSMTQueryInterestRateReqPtr) => (success:#b, error_no:#i, error_info:#S, response:[StockSMTQueryInterestRateRespPtr])
+
+=> pushMarketStatus(data:bson::bo)
+=> pushMsg(data:bson::bo)
+
+//IdataPtr in vector must be same type
+=> pushData(success:#b, error_no:#i, error_info:#S, records:[IDataPtr]) 

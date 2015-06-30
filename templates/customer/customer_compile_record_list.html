@@ -1,0 +1,82 @@
+{% extends "root.html" %}
+{% load rzrk_tags %}
+
+{% block title %}{% settings_value "MAIN_PROJECT_NAME" %}-欢迎{% endblock %}
+{% block rootJsAndCss %}
+    <style>
+    </style>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            //删除按钮
+            $(".inner").on("click", ".btn[cmd=del]", function () {
+                var $this = $(this);
+                if (confirm("确认删除日志?")) {
+                    var url = "/customer/compiling/record/del/";
+                    $.post(url, {id: $this.attr('value')}, function (resp) {
+                        if (resp.success) {
+                            dialog_success('', resp.error, function () {
+                                window.location.reload();
+                            });
+                        } else {
+                            dialog_error('', resp.error);
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+{% endblock %}
+{% block rootBody %}
+    <div class="title_1">
+        <span>查看编译记录</span>
+    </div>
+    <div class="inner">
+        <div class="btn_line">
+            <div class="btn" id="page_back">返回</div>
+        </div>
+        <table class="bordered table">
+            <tr>
+                <th>序号</th>
+                <th>客户名称</th>
+                <th>版本号</th>
+                <th>开始时间</th>
+                <th>结束时间</th>
+                <th>编译机</th>
+                <th>编译状态</th>
+                <!--
+                <th>模块列表</th>
+                <th>模块参数</th>
+                -->
+                <th>操作员</th>
+                <th>备注</th>
+                <th style="width: 50px;">操作</th>
+            </tr>
+            {% if records %}
+                {% for record in records %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ record.customer.name }}({% if record.customer.is_sys %}<span style="color: red">系统客户</span>{% else %}普通客户{% endif %})</td>
+                        <td>{{ record.version }}</td>
+                        <td>{{ record.start_time|date:'Y-m-d H:i:s' }}</td>
+                        <td>{{ record.end_time|date:'Y-m-d H:i:s' }}</td>
+                        <td>{{ record.machine.name }}({{ record.machine.type|parse_machine_type }})</td>
+                        <td>{{ record.status|parse_compile_status }}</td>
+                        <!--
+                        <td>{% for module in record.modules %}{{ module.name }}<br>{% endfor %}</td>
+                        <td>{% for item in record.module_raw_path %}{{ item.name }}:{{ item.value }}<br>{% endfor %}</td>
+                        -->
+                        <td>{{ record.operate_user.username }}</td>
+                        <td>{{ record.remark }}</td>
+                        <td>
+                            <div class="btn" style="float: none;margin: 1px" title="删除" cmd="del" value="{{ record.id }}">删除</div>
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="10">暂无编译记录</td>
+                </tr>
+            {% endif %}
+        </table>
+    </div>
+{% endblock %}

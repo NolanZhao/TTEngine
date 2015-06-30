@@ -1,0 +1,402 @@
+﻿Namespace = ttservice
+ServiceName = FtCommon
+
+Includes = (
+	idata/IData.h,
+    idata/IDataBson.h,
+	idata/IDataBson.h,
+    Protocol/rpc_Structs_Def.h
+)
+
+CppIncludes = (
+    Protocol/rpc_Structs.h,    idata/IDataCreator.h,
+    boost/assign/list_of.hpp,
+)
+
+LoginResponse :(
+	TradingDay:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	LoginTime:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	BrokerID:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	UserID:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	SystemName:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	FrontID:#i| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	SessionID:#i| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	MaxOrderRef:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	SHFETime:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	DCETime:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	CZCETime:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	FFEXTime:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	MarginPriceType:#i| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; //保证金价格类型
+	Algorithm:#i| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;	//盈亏算法
+	AvailIncludeCloseProfit:#i| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; //可用是否包含平仓盈利
+	
+){ptr}
+
+OrderReq : (
+	m_accountInfo:CAccountInfoPtr| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	InstrumentID:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	OffsetFlag:#i| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	HedgeFlag:#i| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	Direction:#i| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	Price:#d| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	Volume:#d| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	OrderPriceType:#i| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	OrderRef:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	ExchangeID:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;//拥兵那边需要
+){ptr}
+
+# 初始化数据
+OrderDetail :(
+	BrokerID:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	InstrumentID:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	OrderRef:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	AccountID:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	OrderPriceType:#i| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	Direction:#i| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	CombOffsetFlag:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	CombHedgeFlag:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	LimitPrice:#d| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	VolumeTotalOriginal:#i| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	TimeCondition:#i| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	GTDDate:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	VolumeCondition:#i| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	MinVolume:#i| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	StopPrice:#d| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	ForceCloseReason:#i| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	IsAutoSuspend:#i| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	BusinessUnit:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	RequestID:#i| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	OrderLocalID:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	ExchangeID:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	ParticipantID:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	ClientID:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	ExchangeInstID:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	TraderID:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	InstallID:#i| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	OrderSubmitStatus:#i| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	NotifySequence:#i| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	TradingDay:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	SettlementID:#i| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	OrderSysID:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	OrderSource:#i| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	OrderStatus:#i| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	OrderType:#i| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	VolumeTraded:#i| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	VolumeTotal:#i| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	InsertDate:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	InsertTime:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	ActiveTime:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	SuspendTime:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	UpdateTime:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	CancelTime:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	ActiveTraderID:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	ClearingPartID:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	SequenceNo:#i| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	FrontID:#i| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	SessionID:#i| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	UserProductInfo:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	StatusMsg:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	UserForceClose:#i| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	ActiveUserID:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	BrokerOrderSeq:#i| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	ErrorID:#i| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	ErrorMsg:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+){ptr}
+
+QueryOrderReq : (
+	ExchangeID:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	InstrumentID:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	OrderSysID:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	InsertTimeStart:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	InsertTimeEnd:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+){ptr}
+
+QueryAccountReq:(
+	non:#i| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+){ptr}
+
+CancelReq : (
+	FrontID:#i| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	SessionID:#i| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	OrderSysID:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	RequestID:#i| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	OrderRef:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	ExchangeID:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	InstrumentID:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;//自有柜台需要
+){ptr}
+
+AccountDetail :(
+	PreMortgage:#d| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	PreCredit:#d| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	PreDeposit:#d| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	PreBalance:#d| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	PreMargin:#d| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	InterestBase:#d| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	Interest:#d| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	Deposit:#d| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	Withdraw:#d| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	FrozenMargin:#d| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	FrozenCash:#d| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	FrozenCommission:#d| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	CurrMargin:#d| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	CashIn:#d| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	Commission:#d| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	CloseProfit:#d| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	PositionProfit:#d| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	Balance:#d| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	Available:#d| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	WithdrawQuota:#d| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	Reserve:#d| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	TradingDay:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	SettlementID:#i| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	Credit:#d| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	Mortgage:#d| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	ExchangeMargin:#d| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	DeliveryMargin:#d| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	ExchangeDeliveryMargin:#d| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+){ptr}
+
+DealDetail:(
+	BrokerID:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	InstrumentID:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	OrderRef:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	AccountID:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	ExchangeID:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	TradeID:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	Direction:#i| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	OrderSysID:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	ParticipantID:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	ClientID:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	TradingRole:#i| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	OffsetFlag:#i| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	HedgeFlag:#i| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	Price:#d| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	Volume:#i| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	TradeDate:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	TradeTime:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	TradeType:#i| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	PriceSource:#i| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	TraderID:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	OrderLocalID:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	BusinessUnit:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	SequenceNo:#i| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	TradingDay:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	SettlementID:#i| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	BrokerOrderSeq:#i| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	TradeSource:#i| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+){ptr}
+
+PositionDetail :(
+	InstrumentID:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	BrokerID:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	HedgeFlag:#i| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	Direction:#i| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	OpenDate:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	TradeID:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	Volume:#i| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	OpenPrice:#d| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	TradingDay:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	SettlementID:#i| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	TradeType:#i| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	CombInstrumentID:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	ExchangeID:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	CloseProfitByDate:#d| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	CloseProfitByTrade:#d| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	PositionProfitByDate:#d| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	PositionProfitByTrade:#d| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	Margin:#d| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	ExchMargin:#d| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	MarginRateByMoney:#d| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	MarginRateByVolume:#d| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	LastSettlementPrice:#d| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	SettlementPrice:#d| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	CloseVolume:#i| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	CloseAmount:#d| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	PositionProfit:#d| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	FloatProfit:#d| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	CloseProfit:#d| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	OpenCost:#d| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	PositionCost:#d| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+){ptr}
+
+ExchangeDetail :(
+	ExchangeID:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	ExchangeName:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	ExchangeProperty:#i| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+){ptr}
+
+InstrumentDetail:(
+	ExchangeID:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	ProductID:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	InstrumentID:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	InstrumentName:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	ExchangeInstID:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	ProductClass:#i| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	DeliveryYear:#i| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	DeliveryMonth:#i| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	MaxMarketOrderVolume:#i| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	MinMarketOrderVolume:#i| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	MaxLimitOrderVolume:#i| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	MinLimitOrderVolume:#i| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	VolumeMultiple:#i| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	PriceTick:#d| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	CreateDate:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	OpenDate:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	ExpireDate:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	StartDelivDate:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	EndDelivDate:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	InstLifePhase:#i| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	IsTrading:#i| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	PositionType:#i| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	PositionDateType:#i| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	LongMarginRatio:#d| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	ShortMarginRatio:#d| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+){ptr}
+
+MarginRateDetail :(
+	InstrumentID:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	HedgeFlag:#i| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	LongMarginRatioByMoney:#d| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	LongMarginRatioByVolume:#d| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	ShortMarginRatioByMoney:#d| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	ShortMarginRatioByVolume:#d| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	IsRelative:#i| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	TradeDate:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+){ptr}
+
+CommissionRateDetail :(
+	InstrumentID:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	OpenRatioByMoney:#d| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	OpenRatioByVolume:#d| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	CloseRatioByMoney:#d| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	CloseRatioByVolume:#d| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	CloseTodayRatioByMoney:#d| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	CloseTodayRatioByVolume:#d| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	TradeDate:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+){ptr}
+
+BankDetail:(
+	BankID:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	BankBranchID:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	BankName:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;   
+){ptr}
+
+BankAmountDetail:(
+	BankAccount:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	UseAmount:#d| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	FetchAmount:#d| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+){ptr}
+
+TransferDetail :(
+	success:#b| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	bankID:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	bankBrchID:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	bankAccount:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	bankBranchID:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	transDirect:#i| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	directDesp:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	tradeAmount:#d| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	custFee:#d| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	errorID:#i| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 		
+){ptr}
+
+InstrumentStatusDetail:(
+	ExchangeID:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	ExchangeInstID:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	SettlementGroupID:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	InstrumentID:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	InstrumentStatus:#i| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	TradingSegmentSN:#i| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	EnterTime:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	EnterReason:#i| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+) {ptr}
+
+TradingNoticeInfo : (	
+	BrokerID:#s| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; #经纪公司代码	
+	InvestorID:#s| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; #投资者代码	
+	SendTime:#s| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; #发送时间	
+	FieldContent:#s| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; #消息正文	
+	SequenceSeries:#i| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; #序列系列号	
+	SequenceNo:#i| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; #序列号	
+){ptr}
+
+QueryInstrumentMarginRateReq : (
+	InstrumentID:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	HedgeFlag:#i| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	ExchangeID:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;//自有柜台需要
+){ptr}
+QueryInstrumentCommissionRateReq:(
+	InstrumentID:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	ExchangeID:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;//自有柜台需要
+){ptr}
+
+QueryBankAmountReq:(
+	bankID:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	bankBranchID:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	bankPassword:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	fundPassword:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+){ptr}
+
+
+UpdateUserPasswordReq:(
+	account:CAccountInfoPtr| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	OldPassword:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	NewPassword:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+){ptr}
+
+UpdateTradingAccountPasswordReq:(
+	account:CAccountInfoPtr| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	AccountID:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	OldPassword:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	NewPassword:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+){ptr}
+QueryTransferSerialReq:(
+	bankID:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	fundAccount:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+){ptr}
+
+QuerySettlementInfoReq:(
+	account:CAccountInfoPtr| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	TradingDay:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+){ptr}
+BankTransferReq : (
+	direction:#i| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	bankID:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	bankBranchID:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	bankAccount:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	bankPassword:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	fundPassword:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+	amount:#d| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ; 
+){ptr}
+
+SettlementDetail:(
+	TradingDay:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	SettlementID:#i| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	BrokerID:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	InvestorID:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	SequenceNo:#i| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	Content:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+){ptr}
+
+InverstorDetail :(
+	InvestorID:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	BrokerID:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	InvestorGroupID:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	InvestorName:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	IdentifiedCardNo:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	IsActive:#i| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	Telephone:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	Address:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	OpenDate:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	Mobile:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	sCommModelID:#S| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+){ptr}
+
+CTPConnInfo : (
+    name:#s| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    name_zh:#s| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    brokerId:#s| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    investorId:#s| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    password:#s| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+    addrs:[#s]| |name= | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+){ptr}

@@ -1,0 +1,35 @@
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svn/svnrepos/!svn/ver/185809/server5/deploy/trunk/TTEngine/demo
+END
+views.py
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svn/svnrepos/!svn/ver/185809/server5/deploy/trunk/TTEngine/demo/views.py
+END
+__init__.py
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svn/svnrepos/!svn/ver/167901/server5/deploy/trunk/TTEngine/demo/__init__.py
+END
+models.py
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svn/svnrepos/!svn/ver/185809/server5/deploy/trunk/TTEngine/demo/models.py
+END
+urls.py
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svn/svnrepos/!svn/ver/185809/server5/deploy/trunk/TTEngine/demo/urls.py
+END
+pojo.py
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svn/svnrepos/!svn/ver/167979/server5/deploy/trunk/TTEngine/demo/pojo.py
+END

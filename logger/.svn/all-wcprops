@@ -1,0 +1,17 @@
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/svn/svnrepos/!svn/ver/173151/server5/deploy/trunk/TTEngine/logger
+END
+__init__.py
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svn/svnrepos/!svn/ver/166419/server5/deploy/trunk/TTEngine/logger/__init__.py
+END
+models.py
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svn/svnrepos/!svn/ver/173151/server5/deploy/trunk/TTEngine/logger/models.py
+END

@@ -1,0 +1,13 @@
+操作步骤如下
+1: 从迅投服务器下载更新包和portal安装包， 假设包名为guolianan_real_192.168.2.204_20140701_install.tar.gz
+2: 检查客户机是否有/home/rzrk/update目录， 没有则创建之
+3: 修改/home/rzrk/keepalived/conf/keepalived.conf， 将其中的keepalived/scripts全部修改为server/monitor
+4: echo "backup" > /home/rzrk/keepalived/conf/host.status， 重启机器， 注意， 如果是备用机可不做此操作
+5: mkdir _update
+6: tar -xzf guolianan_real_192.168.2.204_20140701_install.tar.gz -C _update
+7: cd /home/rzrk/update/_update
+8: ./update.sh 0
+9: 观察./update.sh 0的执行结果， 如果客户本地有内容修改（检查结果在check.json中）， 通知迅投管理人员， 更新客户相应的数据信息, 然后执行./update.sh 1
+10: 执行数据库更新脚本
+11: 更新portal
+12: 执行service keepalived restart

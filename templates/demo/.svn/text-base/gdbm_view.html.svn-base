@@ -1,0 +1,118 @@
+{% extends "root.html" %}
+{% load rzrk_tags %}
+
+{% block title %}{% settings_value "MAIN_PROJECT_NAME" %}-Redis数据库{% endblock %}
+{% block rootJsAndCss %}
+    <!-- jsoneditor -->
+    <link rel="stylesheet" type="text/css" href="/media/js/json_editor/jsoneditor.css">
+    <script src="/media/js/json_editor/jsoneditor.js"></script>
+    <!-- ace code editor -->
+    <script type="text/javascript" src="/media/js/json_editor/lib/ace/ace.js"></script>
+    <script type="text/javascript" src="/media/js/json_editor/lib/ace/mode-json.js"></script>
+    <script type="text/javascript" src="/media/js/json_editor/lib/ace/theme-textmate.js"></script>
+    <script type="text/javascript" src="/media/js/json_editor/lib/ace/theme-jsoneditor.js"></script>
+    <!-- json lint -->
+    <script type="text/javascript" src="/media/js/json_editor/lib/jsonlint/jsonlint.js"></script>
+    <style>
+        #json_dialog {
+            height: 500px;
+            width: 800px;
+        }
+
+        #search_value_tip {
+            position: absolute;
+            margin-left: -516px;
+            margin-top: 34px;
+            border: 1px dashed red;
+            display: none;
+         }
+    </style>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('body').on('click', 'button[type=json_dialog_close]', function () {
+                easyDialog.close();
+                $("#json_dialog").html('<button type="json_dialog_close">关闭</button>');
+            });
+            //查询按钮
+            $('.inner').on('click', '#do_search', function () {
+                var search_value = $("#search_value").val().trim();
+                var host = $("#host").val().trim();
+                var port = $("#port").val().trim();
+
+                if (search_value == '') {
+                    dialog_error('', '参数不可为空!');
+                    return false;
+                }
+
+                var url = '/demo/gdbm/view/?search_key=' + search_value + '&host=' + host + '&port=' + port;
+                window.location.href = url.replace('+', '%2b');
+            });
+
+        });
+
+        function open_dialog(content) {
+            content = content.replace(/\\/g, '\\\\');
+            var content = JSON.parse(content);
+            var container = document.getElementById('json_dialog');
+            var options = {
+                name: 'jsonEditor',
+                mode: 'code',
+                modes: ['code'],
+                error: function (err) {
+                    alert(err.toString());
+                }
+            };
+            var editor = new jsoneditor.JSONEditor(container, options, content);
+            easyDialog.open({
+                container: 'json_dialog',
+                overlay: false
+            });
+        }
+    </script>
+{% endblock %}
+{% block rootBody %}
+    <div class="title_1"><span>GDBM数据库</span></div>
+    <div class="inner">
+        <div id="json_dialog" style="display: none">
+            <button type="json_dialog_close">关闭</button>
+        </div>
+{#        <form method="post" enctype="multipart/form-data" action="/demo/uploadFile/">#}
+{#            {% csrf_token %}#}
+{#            <input id="uploadPackageFile" type="file" name="uploadFile">#}
+{#            <input type="submit" value="上传">#}
+{#        </form>#}
+{#        <br>#}
+{#        <br>#}
+        <div class="btn_line">
+            <span class="like_table">
+                <span style="margin-left: 7px;margin-top: 7px;">KEY 查询:</span>
+                <input type="text" id="search_value" style="margin-top: 5px;margin-left: 5px" value="{% if search_key %}{{ search_key }}{% else %}details*{% endif %}">
+            </span>
+            <span class="like_table">
+                <span style="margin-left: 7px;margin-top: 7px;">HOST:</span>
+                <input type="text" id="host" style="margin-top: 5px;margin-left: 5px" value="{% if host %}{{ host }}{% else %}192.168.1.112{% endif %}">
+            </span>
+            <span class="like_table">
+                <span style="margin-left: 7px;margin-top: 7px;">PORT:</span>
+                <input type="text" id="port" style="margin-top: 5px;margin-left: 5px" value="{% if port %}{{ port }}{% else %}6379{% endif %}">
+                <span class="btn" id="do_search">查询</span>
+            </span>
+        </div>
+        <table class="bordered table">
+            <tr>
+                <th>序号</th>
+                <th>键</th>
+                <th>值</th>
+            </tr>
+            {% for result in results %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td><span id="{{ result.0 }}">{{ result.0 }}</span></td>
+                    <td>
+                        <button onclick="open_dialog('{{ result.1 }}')">详情</button>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+{% endblock %}

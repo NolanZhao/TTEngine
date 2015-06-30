@@ -1,0 +1,77 @@
+{% extends "root.html" %}
+{% load rzrk_tags %}
+
+{% block title %}{% settings_value "MAIN_PROJECT_NAME" %}-欢迎{% endblock %}
+{% block rootJsAndCss %}
+    <style>
+        .like_table span {
+            width: 180px;
+        }
+
+        .like_table input {
+            margin-left: 10px;
+        }
+    </style>
+    <script type="text/javascript">
+        $(document).ready(function () {
+        });
+    </script>
+{% endblock %}
+{% block rootBody %}
+    <div class="title_1">
+        <span>分支创建</span>
+    </div>
+    <div class="inner">
+        <div class="btn_line">
+            <div class="btn" id="page_back">返回</div>
+        </div>
+        <form action="/programBranch/create/" method="POST">
+            <table class="bordered table">
+                <tr>
+                    <th width="150px;">原始路径:</th>
+                    <td>
+                        <span class="like_table">
+                            <input type="text" name="src_branch" id="src_branch" value="{{ src_branch }}">
+                        </span>
+                    </td>
+                </tr>
+                <tr>
+                    <th>目标路径:</th>
+                    <td>
+                        <span class="like_table">
+                            <input type="text" name="dst_branch" id="dst_branch" value="{{ dst_branch }}">
+                        </span>
+                    </td>
+                </tr>
+                <tr>
+                    <th>指令版本:</th>
+                    <td title = "指令版本号 不为 -1 时，将锁定其外链版本号">
+                        <span class="like_table">
+                            <input type="text" name="src_version" id="src_version" value="{{ src_version }}">
+                        </span>
+                    </td>
+                </tr>
+                <tr>
+                    <th>客户标记:</th>
+                    <td>
+                        <span class="like_table">
+                            <input type="text" name="customer_tag" id="customer_tag" value="{% if customer_tag %}{{ customer_tag }}{% endif %}">
+                        </span>
+                    </td>
+                </tr>
+                <tr>
+                    <th>请选择分支:</th>
+                    <td>
+                        <span class="like_table">
+                            {% for branche in  branches %}
+                                <input type="checkbox" name="svn_branches" value="{{ branche }}">
+                                <span>{{ branche }}</span><br><br>
+                            {% endfor %}
+                        </span>
+                    </td>
+                </tr>
+            </table>
+            <input type="submit" name="submit" value="提交" class="btn" style="line-height: 20px">
+        </form>
+    </div>
+{% endblock %}

@@ -1,0 +1,164 @@
+
+<table class="bordered table_small" type="dialog_table" style="margin-top: 10px;">
+
+ <tr type="head">
+        <th>机器</th>
+        <th style="width: 30px;">程序名</th>
+        <th style="width: 180px;">分支</th>
+        <th style="width: 55px;">客户版本</th>
+        <th style="width: 55px;">分支版本</th>
+        <th style="width: 245px;">关键更新</th>
+
+    </tr>
+  {% for machine in machines %}
+     <tr>
+            <td rowspan="{{ LEN }}" style="width: 100px;">{{ machine.name  }} </td>
+
+     {% if portal_svn_info %}
+       {% for portal_info in portal_svn_info %}
+            <td><span class="program_name">Portal</span></td>
+        <td>
+            {% if portal_info.svn_url %}
+            {{ portal_info.svn_url }}
+             {% else %}
+                {{ '-' }}
+            {% endif %}
+        </td>
+        <td>
+            {% if portal_info.previous_revision %}
+            <span>{{ portal_info.previous_revision }}</span>
+            {% else  %}<span>{{ '-' }}</span>
+            {% endif %}
+        </td>
+        <td>
+             {% if portal_info.current_revision %}
+            {{ portal_info.current_revision }}
+            {% else  %}<span>{{ '-' }}</span>
+            {% endif %}
+            {% if portal_is_old %}
+             {{ '[新]' }}
+             {% else %}
+            {{ '' }}
+            {% endif %}
+        </td>
+
+        <td>
+             {% if portal_info.key_submits  %}
+                       {%   for  key_submit in portal_info.key_submits %}
+                            {{ key_submit.start }}{{ ' - '}}{{  key_submit.end }}{{' - '}}{{  key_submit.remark }}
+                  </br>
+                     {% endfor %}
+                     {%else%}
+                       <span>{{  '-' }}</span>
+               {% endif %}
+        </td>
+        {% endfor %}
+     {% else %}
+
+           <td>
+               <span class="program_name">Portal</span>
+           </td>
+           <td>{{ '-' }}</td>
+           <td>{{ '-' }}</td>
+           <td>{{ '-' }}</td>
+           <td>{{ '-' }}</td>
+
+     {% endif %}
+
+
+       {% if cus_status.server_svn_info %}
+         {% for server_info in cus_status.server_svn_info %}
+              {% if forloop.first %}
+         <tr>
+           <td rowspan="{{ cus_status.server_svn_info|length }}" class="program_name"> Server</td>
+
+               <td>
+                 {% if server_info.server_svn_url %}
+                <span>{{ server_info.server_svn_url }}</span>
+                  {% else  %}<span>{{ '-' }}</span>
+                {% endif %}
+                </td>
+                <td>
+                    {% if server_info.server_previous_revision %}
+                    <span>{{ server_info.server_previous_revision }}</span>
+                    {% else  %}<span>{{ '-' }}</span>
+                    {% endif %}
+                </td>
+                <td>
+                     {% if server_info.server_current_revision %}
+                    {{ server_info.server_current_revision }}
+                    {% else  %}{{ '-' }}
+                    {% endif %}
+                     {% if server_is_old %}
+                         {{ '[新]' }}
+                         {% else %}
+                        {{ '' }}
+                      {% endif %}
+                </td>
+                <td>
+                 {%  if server_info.key_submits|length  %}
+                           {%   for  key_submit in server_info.key_submits %}
+                                {{ key_submit.start }}{{ ' - '}}{{  key_submit.end }}{{' - '}}{{  key_submit.remark }}
+                           </br>
+                           {% endfor %}
+                         {%else%}
+                           <span>{{  '-' }}</span>
+                 {% endif %}
+                  </td>
+            </tr>
+             {% else %}
+             <tr>
+               <td>
+                 {% if server_info.server_svn_url %}
+                <span>{{ server_info.server_svn_url }}</span>
+                  {% else  %}<span>{{ '-' }}</span>
+                {% endif %}
+                </td>
+                <td>
+                    {% if server_info.server_previous_revision %}
+                    <span>{{ server_info.server_previous_revision }}</span>
+                    {% else  %}<span>{{ '-' }}</span>
+                    {% endif %}
+                </td>
+                <td>
+                     {% if server_info.server_current_revision %}
+                    {{ server_info.server_current_revision }}
+                    {% else  %}<span>{{ '-' }}</span>
+                    {% endif %}
+                   {% if server_is_old %}
+                         {{ '[新]' }}
+                         {% else %}
+                        {{ '' }}
+                      {% endif %}
+                </td>
+                <td>
+                 {%  if server_info.key_submits|length  %}
+                           {%   for  key_submit in server_info.key_submits %}
+                                {{ key_submit.start }}{{ ' - '}}{{  key_submit.end }}{{' - '}}{{  key_submit.remark }}
+                           </br>
+                           {% endfor %}
+                         {%else%}
+                           <span>{{  '-' }}</span>
+                 {% endif %}
+                  </td>
+                 </tr>
+             {% endif %}
+             {% endfor %}
+
+       {% else %}
+       <tr>
+           <td>
+               <span class="program_name">Server</span>
+           </td>
+           <td>{{ '-' }}</td>
+           <td>{{ '-' }}</td>
+           <td>{{ '-' }}</td>
+           <td>{{ '-' }}</td>
+       </tr>
+       {% endif %}
+  </tr>
+
+
+ {% endfor %}
+
+</table>

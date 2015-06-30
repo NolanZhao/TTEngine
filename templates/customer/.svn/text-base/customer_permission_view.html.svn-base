@@ -1,0 +1,52 @@
+{% extends "root.html" %}
+{% load rzrk_tags %}
+
+{% block title %}{% settings_value "MAIN_PROJECT_NAME" %}-客户权限项查看{% endblock %}
+{% block rootJsAndCss %}
+    {% if not is_view %}
+        <script type="text/javascript">
+            $(document).ready(function () {
+                $("#customer_permission_edit").bind('click', function () {
+                    window.location.href = '/customer/permission/edit/';
+                });
+            });
+        </script>
+    {% endif %}
+{% endblock %}
+{% block rootBody %}
+    <div class="title_1"><span>客户权限项查看</span></div>
+    <div class="inner">
+        <div class="btn_line">
+            <div class="btn" id="customer_permission_edit">权限项编辑</div>
+        </div>
+        <table class="bordered table" id="settings_table">
+            {% if settings|length > 0 %}
+                {% for setting in settings %}
+                    <tr>
+                        <td type="setting">
+                            <div class="content">
+                                <span type="important" class="like_table">
+                                    <span>名称:</span>
+                                    <span>{{ setting.name }}</span>
+                                </span>
+                                <span type="more" class="like_table">
+                                    <span>默认值:</span>
+                                    <span>[{{ setting.value_type }}]</span>
+                                    <span>{{ setting.value }}</span>
+                                </span>
+                                <span type="more" class="like_table">
+                                    <span>备注:</span>
+                                    <span>{% if setting.remark %}{{ setting.remark }}{% else %}暂无{% endif %}</span>
+                                </span>
+                            </div>
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td type="setting">暂无权限项</td>
+                </tr>
+            {% endif %}
+        </table>
+    </div>
+{% endblock %}

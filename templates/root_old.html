@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <title>{% block title %}{% endblock %}</title>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8">
+    <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="rzrkEngine">
+    <meta name="author" content="nerve">
+
+    <!-- 框架样式及JS -->
+    <link rel="stylesheet" type="text/css" href="/media/js/menu/amazonmenu.css">
+    <link rel="stylesheet" type="text/css" href="/media/css/main.css">
+    <script src="/media/js/menu/amazonmenu.js" type="text/javascript"></script>
+    <script src="/media/js/jq/jquery-2.1.0.min.js"></script>
+    <script src="/media/js/jq/jquery.form.min.js"></script>
+    <!-- easy_dialog start -->
+    <script src="/media/js/easydialog/easydialog.min.js" type="text/javascript"></script>
+    <link rel="stylesheet" type="text/css" href="/media/js/easydialog/easydialog.css">
+    <!-- easy_dialog end -->
+    <!--
+    <script src="/media/js/validate/jquery.validate.min.js"></script>
+    <script src="/media/js/validate/additional-methods.min.js"></script>
+    -->
+    <!-- tips start -->
+    <script src="/media/js/tips/imagesloaded.pkg.min.js" type="text/javascript"></script>
+    <script src="/media/js/tips/jquery.qtip.js" type="text/javascript"></script>
+    <link rel="stylesheet" type="text/css" href="/media/js/tips/jquery.qtip.css">
+    <!-- tips end -->
+
+    <script type="text/javascript">
+        // Textarea and select clone() bug workaround | Spencer Tipping
+        (function (original) {
+            jQuery.fn.clone = function () {
+                var result = original.apply(this, arguments),
+                        my_textareas = this.find('textarea').add(this.filter('textarea')),
+                        result_textareas = result.find('textarea').add(result.filter('textarea')),
+                        my_selects = this.find('select').add(this.filter('select')),
+                        result_selects = result.find('select').add(result.filter('select'));
+
+                for (var i = 0, l = my_textareas.length; i < l; ++i) $(result_textareas[i]).val($(my_textareas[i]).val());
+                for (var i = 0, l = my_selects.length; i < l; ++i) {
+                    for (var j = 0, m = my_selects[i].options.length; j < m; ++j) {
+                        if (my_selects[i].options[j].selected === true) {
+                            result_selects[i].options[j].selected = true;
+                        }
+                    }
+                }
+                return result;
+            };
+        })(jQuery.fn.clone);
+
+        jQuery(function () {
+            amazonmenu.init({
+                menuid: 'side_bar_menu'
+            })
+        });
+
+        $(document).ready(function () {
+            //返回按钮
+            $(".inner").on("click", "#page_back", function () {
+                window.history.back();
+            });
+        });
+
+        function dialog_success(head, content, func) {
+            easyDialog.open({
+                container: {
+                    header: '[成功] ' + head,
+                    content: content
+                },
+                overlay: false,
+                //autoClose: 2000,
+                callback: func
+            });
+        }
+
+        function dialog_error(head, content, func) {
+            easyDialog.open({
+                container: {
+                    header: '[失败] ' + head,
+                    content: content
+                },
+                overlay: false,
+                callback: func
+            });
+        }
+    </script>
+    {% block rootJsAndCss %}
+    {% endblock %}
+</head>
+<body class="">
+{% block root %}
+    {% include "include/header.html" %}
+    <div id="bodyDiv">
+        <div id="leftMenuDiv">
+            <nav id="side_bar_menu" class="amazonmenu">
+                <ul>
+                    <li>
+                        <a href="javascript:void(0)">模块管理</a>
+                        <ul>
+                            <li><a href="/module/list/">模块列表</a></li>
+                            <!--<li><a href="/module/log/">更新记录</a></li>-->
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="javascript:void(0)">客户管理</a>
+                        <ul>
+                            <li><a href="/customer/list/">客户列表</a></li>
+                            <li><a href="/customer/log/">更新记录</a></li>
+                            <li><a href="/customer/permission/view/">权限项配置</a></li>
+                        </ul>
+                    </li>
+                    <!--
+                    <li>
+                        <a href="javascript:void(0)">程序包管理</a>
+                        <ul>
+                            <li><a href="/package/list/">程序包列表</a></li>
+                        </ul>
+                    </li>
+                    -->
+                    <li>
+                        <a href="javascript:void(0)">Svn管理</a>
+                        <ul>
+                            <li><a href="/programBranch/list/">分支列表</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="javascript:void(0)">Portal管理</a>
+                        <ul>
+                            <li><a href="/portal/machine/view/">部属机配置</a></li>
+                            <li><a href="/portal/package/create/">生成程序包</a></li>
+                            <li><a href="/portal/package/list/">程序包列表</a></li>
+                            <li><a href="/portal/update/gen_sql/">生成升级脚本</a></li>
+                        </ul>
+                    </li>
+
+                    <li>
+                        <a href="javascript:void(0)">测试机管理</a>
+                        <ul>
+                            <li><a href="/customer/system/list/">测试机列表</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="javascript:void(0)">编译机管理</a>
+                        <ul>
+                            <!--<li><a href="/customer/compiling/list/">编译机查看</a></li>-->
+                            <li><a href="/customer/compiling/record/list/">编译机日志</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="javascript:void(0)">平台管理</a>
+                        <ul>
+                            <li><a href="/demo/platform/view/">平台管理</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="javascript:void(0)">快捷功能</a>
+                        <ul>
+                            <li><a href="/demo/redis/view/">Redis数据库</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+        <div id="rightMenuDiv">
+            {% block rootBody %}
+            {% endblock %}
+        </div>
+    </div>
+    {% include "include/footer.html" %}
+{% endblock root %}
+
+</body>
+</html>

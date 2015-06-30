@@ -1,0 +1,54 @@
+{% extends "root.html" %}
+{% load rzrk_tags %}
+
+{% block title %}{% settings_value "MAIN_PROJECT_NAME" %}-下载交易日列表和股票列表{% endblock %}
+{% block rootJsAndCss %}
+    <style>
+
+    </style>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#get").on("click", function () {
+                $.get('/demo/getStockAndTrade/', {}, function (resp) {
+                }, 'json');
+                window.open('/demo/StockAndTrade/', '_self');
+            });
+
+            $("#download").bind('click', function () {
+                window.open('/demo/downStockAndTrade/', '_self');
+            });
+
+
+        })
+    </script>
+{% endblock %}
+{% block rootBody %}
+    <div class="title_1">
+        <span>{% if is_sys %}系统{% endif %}下载交易日列表和股票列表</span>
+    </div>
+    <br>
+    <br>
+    <div>
+         <div class="btn" id="get">开始获取</div>
+         <div class="btn" id="download">打包下载到本地</div>
+    </div>
+{#    <table class="bordered table" style="margin-top: 35px;">#}
+{#            {% if dirs|length > 0 %}#}
+{#                <tr type="main">#}
+{#                    <th style="width: 40px;">序号</th>#}
+{#                    <th>文件名称</th>#}
+{#                    <th>下载</th>#}
+{#                </tr>#}
+{#                {% for file in dirs %}#}
+{#                    <tr type="main">#}
+{#                        <td>{{ forloop.counter }}</td>#}
+{#                        <td>{{ file }}</td>#}
+{#                        <td>#}
+{#                            <span class="btn" onclick="javascript:window.open('/demo/downStockAndTradeFile/?file={{ file }}')">下载</span>#}
+{#                        </td>#}
+{#                    </tr>#}
+{#                {% endfor %}#}
+{#            {% endif %}#}
+{#        </table>#}
+
+{% endblock %}

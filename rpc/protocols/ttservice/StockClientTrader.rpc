@@ -1,0 +1,18 @@
+﻿Namespace = ttservice
+ServiceName = StockClientTrader
+Includes = (
+    bson/src/bson.h,
+	Protocol/rpc_Broker.h,
+    Protocol/rpc_TTServiceCommon.h,
+    Protocol/rpc_StockCommon.h
+)
+#暂不使用
+# generated file relies on StockCommon.rpc
+# generated file relies on TTServiceCommon.rpc
+
+
+# account login
+login(account : CAccountInfo) => (success:#b, ErrorID:#i, ErrorMsg:#S, response:LoginResponse)
+logout(account : CAccountInfo) => (success:#b)
+
+ttKeepAlive() => (success:#b)

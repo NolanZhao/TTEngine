@@ -1,0 +1,11 @@
+{% extends "z_new/grid.html" %}
+{% block customScripts %}
+<script type="text/javascript">
+    window.cusId = '{{ cusId }}';
+</script>
+<script type="text/javascript" src="/media/js/modules/serverMonitor/logListDetailPage.js"></script>
+{% endblock %}
+
+{% block customContent %}
+<table id="logListDetail" title="" style="width:100%;"></table>
+{% endblock %}

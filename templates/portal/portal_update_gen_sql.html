@@ -1,0 +1,223 @@
+{% extends "root.html" %}
+{% load rzrk_tags %}
+
+{% block title %}{% settings_value "MAIN_PROJECT_NAME" %}-欢迎{% endblock %}
+{% block rootJsAndCss %}
+    <style type="text/css">
+        .select_style {
+            width: 100%;
+            height: 30px;
+            overflow: hidden;
+            background: url(/media/photo/select_icon.png) no-repeat 655px 5px;
+            border: 1px solid #ccc;
+            -moz-border-radius: 5px; /* Gecko browsers */
+            -webkit-border-radius: 5px; /* Webkit browsers */
+            border-radius: 5px;
+        }
+
+        .select_style select {
+            padding: 5px;
+            background: transparent;
+            width: 100%;
+            font-size: 16px;
+            border: none;
+            height: 30px;
+            -webkit-appearance: none; /*for Webkit browsers*/
+            font-family: '微软雅黑';
+        }
+    </style>
+    <script type="text/javascript">
+        var index = 0;
+
+        $(document).ready(function () {
+            $("#saveBtn").bind('click', gen_update_sql);
+
+            $('#old_select').bind('change', function () {
+                if ($(this).val() == '-1') {
+                    $('#upload_tr').show();
+                } else {
+                    $('#upload_file').val('');
+                    $('#upload_tr').hide();
+                }
+            });
+        });
+
+        function gen_update_sql() {
+            var $this = $(this);
+            //是否强制生成新脚本
+            var is_new = parseInt($("#is_new").val());
+
+            var btn_text = $this.text();
+
+            var old_id = $("#old_select").val();
+            var old_version = parseInt($("#old_select option:selected").attr("version"));
+
+            var new_id = $("#new_select").val();
+            var new_version = parseInt($("#new_select option:selected").attr("version"));
+
+            //旧版本号必须小于新版本号
+            if (old_version >= new_version) {
+                dialog_error('', '新版本号必须 >= 旧版本号');
+                return false;
+            }
+
+            //解除绑定按钮
+            $this.unbind();
+            //开始执行timer
+            var timer = setInterval(function () {
+                index = index == 0 ? 3 : --index;
+                $this.text(btn_text + get_repeat('.', index));
+            }, 1000);
+
+            var upload_file = $('#upload_file');
+            var path = upload_file.val();
+            var file_flag = path ? true : false;
+
+            if (file_flag) {
+                var ext = /\.[^\.]+$/.exec(path);
+
+                if (ext == null) {
+                    dialog_error('', '不能上传无后缀文件!');
+                    return;
+                }
+
+                //上传文件须为.sql文件
+                var enableArr = new Array(".sql");
+                var flag = false;
+                for (var temp in enableArr) {
+                    if (enableArr[temp] == ext[0]) {
+                        flag = true;
+                        break;
+                    }
+                }
+
+                if (!flag) {
+                    dialog_error('', '不支持的格式!');
+                    return;
+                }
+            }
+
+            //开始上传
+            var url = '/portal/update/gen_sql/';
+
+            if (file_flag) {
+                upload_file.wrap("<form action='" + url + "' method='post' enctype='multipart/form-data' style='display:none'></form>");
+                upload_file.parent().append("<input type='text' name='new_id' value='" + new_id + "'>");
+
+                $(upload_file.parent()).ajaxSubmit({
+                    url: url,
+                    type: 'post',
+                    dataType: 'json',
+                    timeout: 30 * 60 * 1000,
+                    beforeSend: function () {
+                    },
+                    uploadProgress: function (event, position, total, percentComplete) {
+                    },
+                    success: function (resp) {
+                        //重新绑定点击方法
+                        $this.bind('click', gen_update_sql);
+                        $this.text(btn_text);
+                        //关闭timer
+                        if (timer) {
+                            clearInterval(timer);
+                            timer = 0;
+                        }
+                        if (resp.success) {
+                            dialog_success('', resp.error);
+                            if (resp.id) {
+                                window.open('/portal/update/download/?id=' + resp.id, '_self');
+                            }
+                        } else {
+                            upload_file.parent().find("input[name=new_id]").remove();
+                            upload_file.unwrap();
+                            dialog_error('', resp.error);
+                        }
+                    },
+                    error: function (xhr) {
+                        dialog_error("上传异常!" + xhr);
+                    }
+                });
+            } else {
+                $.post('/portal/update/gen_sql/', {old_id: old_id, new_id: new_id, is_new: is_new}, function (resp) {
+                    //重新绑定点击方法
+                    $this.bind('click', gen_update_sql);
+                    $this.text(btn_text);
+                    //关闭timer
+                    if (timer) {
+                        clearInterval(timer);
+                        timer = 0;
+                    }
+                    if (resp.success) {
+                        dialog_success('', resp.error);
+                        if (resp.id) {
+                            window.open('/portal/update/download/?id=' + resp.id, '_self');
+                        }
+                    } else {
+                        dialog_error('', resp.error);
+                    }
+                }, 'json');
+            }
+        }
+
+        function get_repeat(str, num) {
+            if (num == 0) {
+                return '';
+            }
+            var result = str;
+            for (var index = 1; index < num; index++) {
+                result += str;
+            }
+            return result;
+        }
+    </script>
+{% endblock %}
+{% block rootBody %}
+    <div class="title_1">
+        <span>生成升级SQL脚本</span>
+    </div>
+    <div class="inner">
+        <table class="bordered table" id="settings_table">
+            <tr>
+                <td colspan="2">强制生成新脚本:
+                    <select id="is_new">
+                        <option value="1">是</option>
+                        <option value="0" selected="selected">否</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td style="width: 50%"><span style="color: green;font-size: 20px;font-weight: bolder">旧</span>版本</td>
+                <td style="width: 50%"><span style="color: red;font-size: 20px;font-weight: bolder">新</span>版本</td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="select_style">
+                        <select style="color: green" id="old_select">
+                            {% for pp in pps %}
+                                <option value="{{ pp.id }}" version="{{ pp.svn_version }}">{{ pp.svn_version }} | {{ pp.svn_url|parse_svn_url }} | {{ pp.portal_machine.host }}</option>
+                            {% endfor %}
+                            <option value="-1">直接上传建库脚本</option>
+                        </select>
+                    </div>
+                </td>
+                <td>
+                    <div class="select_style">
+                        <select style="color: red" id="new_select">
+                            {% for pp in pps %}
+                                <option value="{{ pp.id }}" version="{{ pp.svn_version }}">{{ pp.svn_version }} | {{ pp.svn_url|parse_svn_url }} | {{ pp.portal_machine.host }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </td>
+            </tr>
+            <tr id="upload_tr" style="display: none">
+                <td colspan="2">
+                    <input type="file" name="upload_file" id="upload_file">
+                </td>
+            </tr>
+        </table>
+        <div class="btn_line">
+            <span class="btn" id="saveBtn" title="点击生成升级脚本">生成</span>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,228 @@
+{% extends "root.html" %}
+{% load rzrk_tags %}
+
+{% block title %}{% settings_value "MAIN_PROJECT_NAME" %}-客户权限项{% endblock %}
+{% block rootJsAndCss %}
+    <style>
+        #addSetting {
+            position: fixed;
+            margin-left: 70px;
+            z-index: 2;
+        }
+    </style>
+    {% if not is_view %}
+        <script type="text/javascript">
+            $(document).ready(function () {
+                //添加设置项
+                $(".inner").on("click", "#addSetting", function () {
+                    addOne();
+                });
+                //删除按钮
+                $(".inner").on("click", "div[cmd=delDocument]", function () {
+                     var $this = $(this).parent().parent();
+                     var id = $this.find('input[name=setting_id]').val().trim();
+                      if (!id) {
+                        $this.remove();
+                        return;
+                    }
+
+                    easyDialog.open({
+                        container: {
+                            header: '确认',
+                            content: '确定删除此权限?',
+                            yesFn: function () {
+                                $.post('/customer/permission/del/', {'id': id}, function (resp) {
+                                    if (resp.success) {
+                                        $this.remove();
+                                        dialog_success('', resp.error)
+                                    } else {
+                                        dialog_error('', resp.error)
+                                    }
+                                }, 'json');
+                            },
+                            noFn: true
+                        },
+                        overlay: false
+                    });
+                });
+                //切换值按钮
+                $(".inner").on("change", "select[name=value_type]", function () {
+                    var $this = $(this);
+                    var value_type = $this.val();
+                    if (value_type == 'Number') {
+                        var html = '';
+                        html += '<input type="text" name="setting_value" value="">';
+                        $this.next().remove();
+                        $this.parent().append(html);
+                    } else if (value_type == 'Boolean') {
+                        var html = '';
+                        html += '<select name="setting_value">';
+                        html += '<option value="true">True</option>';
+                        html += '<option value="false">False</option>';
+                        html += '</select>';
+                        $this.next().remove();
+                        $this.parent().append(html);
+                    }
+                });
+
+                //保存按钮
+                $("#saveBtn").bind("click", function () {
+                    //设置项列表
+                    var settings = $("td[type='setting']");
+                    var settings_list = [];
+                    $("td[type='setting']").each(function (index) {
+                        var $this = $(this);
+                        var setting_id = $this.find('input[name=setting_id]').val();
+                        var setting_name = $this.find('input[name=setting_name]').val();
+                        var setting_value = $this.find('[name=setting_value]').val();
+                        var setting_value_type = $this.find('select[name=value_type]').val();
+                        var setting_remark = $this.find('input[name=setting_remark]').val();
+                        settings_list.push({
+                            'setting_id': setting_id ? setting_id : null,
+                            'setting_name': setting_name,
+                            'setting_value': setting_value,
+                            'setting_value_type': setting_value_type,
+                            'setting_remark': setting_remark
+                        });
+                    });
+                    var json = JSON.stringify(settings_list);
+                    var url = "/customer/permission/edit/";
+                    //执行save操作
+                    $.post(url, {json: json}, function (resp) {
+                        alert(resp.error);
+                    }, 'json');
+                });
+            });
+
+            //添加一台机器
+            function addOne() {
+                var list = $("#settings_table");
+                var html = '';
+                html += '<tr>';
+                html += '<td type="setting">';
+                html += '<div class="btn_line">';
+                html += '<div class="s_btn" cmd="delDocument">-</div>';
+                html += '<div class="btn" cmd="" style="background-color: cornflowerblue;border: 1px solid cornflowerblue">原有</div>';
+                html += '<input type="hidden" name="setting_id" value="">';
+                html += '</div>';
+                html += '<div class="content">';
+                html += '<span type="important" class="like_table">';
+                html += '<span>名称:</span>';
+                html += '<input type="text" name="setting_name" value="">';
+                html += '</span>';
+                html += '<span type="more" class="like_table">';
+                html += '<span>默认值:</span>';
+                html += '<select style="width: 80px;margin-right: 20px" name="value_type">';
+                {% for item in value_type_list %}
+                    html += '<option value="{{ item }}">{{ item }}</option>';
+                {% endfor %}
+                html += '</select>';
+                {% if value_type_list.0 == 'Boolean' %}
+                    html += '<select name="setting_value">';
+                    html += '<option value="true">True</option>';
+                    html += '<option value="true">False</option>';
+                    html += '</select>';
+                {% elif value_type_list.0 == 'Number' %}
+                    html += '<input type="text" name="setting_value" value="{{ setting.value }}">';
+                {% endif %}
+                html += '</span>';
+                html += '<span type="important" class="like_table">';
+                html += '<span>备注:</span>';
+                html += '<input type="text" name="setting_remark" value="">';
+                html += '</span>';
+                html += '</div>';
+                html += '</td>';
+                html += '</tr>';
+                list.append(html)
+            }
+        </script>
+    {% endif %}
+{% endblock %}
+{% block rootBody %}
+    <div class="title_1"><span>客户权限设置</span></div>
+    <div class="inner">
+        <div class="btn_line">
+            <div class="btn" id="page_back">返回</div>
+            <div class="btn" id="addSetting">添加</div>
+        </div>
+        <table class="bordered table" id="settings_table">
+            {% if settings|length > 0 %}
+                {% for setting in settings %}
+                    <tr>
+                        <td type="setting">
+                            <div class="btn_line">
+                                <div class="s_btn" cmd="delDocument">-</div>
+                                <div class="btn" cmd="" style="background-color: cornflowerblue;border: 1px solid cornflowerblue">原有</div>
+                                <input type="hidden" name="setting_id" value="{{ setting.id }}">
+                            </div>
+                            <div class="content">
+                                <span type="important" class="like_table">
+                                    <span>名称:</span>
+                                    <input type="text" name="setting_name" value="{{ setting.name }}">
+                                </span>
+                                <span type="more" class="like_table">
+                                    <span>默认值:</span>
+                                    <select style="width: 80px;margin-right: 20px" name="value_type">
+                                        {% for item in value_type_list %}
+                                            <option value="{{ item }}" {% if setting.value_type == item %}selected="selected" {% endif %}>{{ item }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    {% if setting.value_type == 'Boolean' %}
+                                        <select name="setting_value">
+                                            <option value="true" {% if setting.value == 'true' %}selected="selected"{% endif %}>True</option>
+                                            <option value="false" {% if setting.value == 'false' %}selected="selected"{% endif %}>False</option>
+                                        </select>
+                                    {% elif setting.value_type == 'Number' %}
+                                        <input type="text" name="setting_value" value="{{ setting.value }}">
+                                    {% endif %}
+                                </span>
+                                <span type="important" class="like_table">
+                                    <span>备注:</span>
+                                    <input type="text" name="setting_remark" value="{% if setting.remark %}{{ setting.remark }}{% else %}{% endif %}">
+                                </span>
+                            </div>
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td type="setting">
+                        <div class="btn_line">
+                            <div class="s_btn" cmd="delDocument" >-</div>
+                            <input type="hidden" name="setting_id" value="">
+                        </div>
+                        <div class="content">
+                            <span type="important" class="like_table">
+                                <span>名称:</span>
+                                <input type="text" name="setting_name" value="">
+                            </span>
+                            <span type="more" class="like_table">
+                                <span>默认值:</span>
+                                <select style="width: 80px;margin-right: 20px" name="value_type">
+                                    {% for item in value_type_list %}
+                                        <option value="{{ item }}">{{ item }}</option>
+                                    {% endfor %}
+                                </select>
+                                {% if value_type_list.0 == 'Boolean' %}
+                                    <select name="setting_value">
+                                        <option value="true">True</option>
+                                        <option value="false">False</option>
+                                    </select>
+                                {% elif value_type_list.0 == 'Number' %}
+                                    <input type="text" name="setting_value" value="">
+                                {% endif %}
+                            </span>
+                            <span type="important" class="like_table">
+                                <span>备注:</span>
+                                <input type="text" name="setting_remark" value="">
+                            </span>
+                        </div>
+                    </td>
+                </tr>
+            {% endif %}
+        </table>
+        <div class="btn_line">
+            <div class="btn" id="saveBtn">保存</div>
+        </div>
+    </div>
+{% endblock %}

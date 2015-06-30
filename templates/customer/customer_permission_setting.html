@@ -1,0 +1,92 @@
+{% extends "root.html" %}
+{% load rzrk_tags %}
+
+{% block title %}{% settings_value "MAIN_PROJECT_NAME" %}-客户权限项查看{% endblock %}
+{% block rootJsAndCss %}
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            // 局部重载，使之可以编辑
+                //edit
+            $(".inner").on("click", "div[cmd=edit]", function () {
+                var $this = $(this).parent().parent();
+                var list = $this.find('td');
+                var length = list.length;
+                list.each(function(index, obj){
+                    if(index>1 && index<length-1){
+                        var value = $(obj).text().trim();
+                        var html = "<input style=\"width:100px\" type=\"text\" value=\"";
+                        html += value;
+                        html += "\">";
+                        $(obj).html(html);
+                    }
+                });
+                $(this).attr('cmd', 'update');
+                $(this).text('更新');
+            });
+
+            $(".inner").on("click", "div[cmd=update]", function () {
+                var cust_id = $(this).attr('id');
+                var $this = $(this).parent().parent();
+                var list = $this.find('td');
+                var length = list.length;
+                var ret_list = '';
+                list.each(function(index, obj){
+                    if(index>1 && index<length-1){
+                        var value = $($(obj).find('input')[0]).val();
+                        ret_list += value;
+                        ret_list += ',';
+                        $(obj).html(value);
+                    }
+                });
+                var params={
+                    'values': ret_list,
+                    'id': cust_id
+                };
+                $.post('/customer/permission_setting/update/', params, function(resp){
+                    if(resp.success){
+                        $('div[cmd=update]').text('编辑');
+                        $('div[cmd=update]').attr('cmd', 'edit');
+                    }else{
+                        dialog_error('', resp.error);
+                    }
+                }, 'json');
+
+            });
+        });
+//$($($('tr')[2]).find('td')[2]).text().trim();
+    </script>
+{% endblock %}
+{% block rootBody %}
+    <div class="title_1"><span>客户权限表查看</span></div>
+    <div class="inner">
+        <table class="bordered table" style="margin-top: 35px">
+            <tr>
+                <th style="width: 40px;">序号</th>
+                <th>客户名称</th>
+                {% for setting in settings %}
+                    <th>
+                    {% if setting.remark %}
+                        {{ setting.remark }}
+                    {% else %}
+                        {{ setting.name }}
+                    {% endif %}
+                    </th>
+                {% endfor %}
+                <th>操作</th>
+            </tr>
+            {% for customer in customers %}
+                <tr id="tr{{ forloop.counter }}">
+                    <td>{{ forloop.counter }}</td>
+                    <td><span>{{ customer.name }}</span></td>
+                    {% for setting in settings2 %}
+                        <td>
+                        {{ customer.permissions|access:setting }}
+                        </td>
+                    {% endfor %}
+                    <td><div class='btn' id ="{{ customer.id }}" cmd="edit">编辑</div></td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+{% endblock %}

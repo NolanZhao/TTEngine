@@ -1,0 +1,19 @@
+{% block rootBody %}
+
+    <div style="background-color: #f7f7f7; margin-left: auto; margin-right: auto; min-width: 1000px; max-width: 1080px; WORD-BREAK: break-all; WORD-WRAP: break-word">
+    <table class="bordered table">
+            <tr>
+                <th style="background-color: lightblue; width: 200">版本号</th>
+                <th style="background-color: lightblue; width: 200">作者</th>
+                <th style="background-color: lightblue">信息</th>
+            </tr>
+            {% for result in results %}
+                <tr>
+                    <td style="background-color: #e7e7e7;"><span id="{{ result.0 }}">{{ result.0 }}</span></td>
+                    <td><span id="{{ result.1 }}">{{ result.1 }}</span></td>
+                    <td><span id="{{ result.2 }}">{{ result.2 }}</span></td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+{% endblock %}

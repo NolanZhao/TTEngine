@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+    <meta http-equiv="Cache-control" content="no-store">
+    <title>迅投资产管理平台门户</title>
+    <link rel="stylesheet" href="/media/js/libs/jquery-easyui-1.4.1/themes/icon.css" />
+    <link rel="stylesheet" href="/media/js/libs/jquery-easyui-1.4.1/themes/default/easyui.css" id="themes"/>
+    <script type="text/javascript" src="/media/js/libs/jquery-2.1.1.min.js"></script>
+    <script type="text/javascript" src="/media/js/libs/jquery-easyui-1.4.1/jquery.easyui.min.js"></script>
+    <script type="text/javascript" src="/media/js/libs/jquery-easyui-1.4.1/datagrid-scrollview.js"></script>
+    <script type="text/javascript" src="/media/js/libs/jquery-validation-1.13.1/jquery.validate.min.js"></script>
+    <script type="text/javascript" src="/media/js/libs/jquery.hotkeys-0.7.9.min.js"></script>
+    <script type="text/javascript" src="/media/js/modules/z_new/grid.js"></script>
+    <link rel="stylesheet" href="/media/js/modules/z_new/css/grid.css" />
+    {% block customScripts %}
+    {% endblock %}
+</head>
+<body>
+    {% block top %}
+    {% endblock %}
+    {% block customContent %}
+    {% endblock %}
+    {% block bottom %}
+    {% endblock %}
+</body>
+</html>

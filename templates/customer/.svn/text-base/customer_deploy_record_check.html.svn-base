@@ -1,0 +1,295 @@
+{% extends "customer_common_button.html"  %}
+{% load rzrk_tags %}
+
+{% block title %} {% settings_value "MAIN_PROJECT_NAME" %}-欢迎{% endblock %}
+{% block rootJsAndCss %}
+    <style type="text/css">
+        .select_style {
+            width: 100%;
+            height: 30px;
+            overflow: hidden;
+            background: url(/media/photo/select_icon.png) no-repeat 655px 5px;
+            border: 1px solid #ccc;
+            -moz-border-radius: 5px; /* Gecko browsers */
+            -webkit-border-radius: 5px; /* Webkit browsers */
+            border-radius: 5px;
+        }
+
+        .select_style select {
+            padding: 5px;
+            background: transparent;
+            width: 100%;
+            font-size: 16px;
+            border: none;
+            height: 30px;
+            -webkit-appearance: none; /*for Webkit browsers*/
+            font-family: '微软雅黑';
+        }
+        .status {
+            margin-top: -5px;
+            margin-left: 0px !important;
+            min-width: 10px !important;
+            width: 34px !important;
+            cursor: pointer;
+        }
+
+        .status:hover {
+            background-color: #C2DFFF;
+        }
+
+    </style>
+    <script type="text/javascript">
+         var status_dict = {
+            1: ['成功', '✔', 'green'],
+            2: ['失败', '✖', 'blue'],
+            3: ['运行中', '☂', 'red'],
+            4: ['未知', '▬', 'gray']
+         };
+        $(document).ready(function () {
+            //检查按钮
+            $("#do_check").bind('click', update_check);
+           //保存按钮
+           $("#page_save").bind("click", function () {
+                //获取参数
+                var cus_id = '{{ customer.id }}';
+                var check_user = $('#check_user').val();
+                var start_time = $('#start_time').val();
+                var end_time = $('#end_time').val();
+                var remark = $('#remark').val();
+
+                var params = {
+                    cus_id: cus_id,
+                    check_user: check_user,
+                    start_time: start_time,
+                    end_time: end_time,
+                    remark: remark
+                };
+
+                var json = JSON.stringify(params);
+                $.post('/customer/deploy/record/check/create/', {json: json}, function (resp) {
+                    if (resp.success) {
+                            dialog_success('', resp.error, function () {
+                              deploy_status();
+                              window.location.href = '/customer/deploy/record/list/?cus_id={{ customer.id }}';
+                        });
+
+                    } else {
+                        dialog_error('', resp.error);
+                    }
+                });
+            });
+        });
+    function update_check(){
+        var $this = $(this);
+        var id = $this.attr('value');
+        $this.text("开始检查...");
+        $.post('/customer/deploy/record/checkupdate/',{id: id} ,function (resp){
+                  if (resp.success){
+                      dialog_success('', resp.error);
+                      var status = resp.data;
+                      var xt_status_obj = $("#xt_status").parent().find('span[type=xt]');
+                      var nginx_status_obj = $("#ng_status").parent().find('span[type=nginx]');
+                      var python_status_obj = $("#py_status").parent().find('span[type=python]');
+                      var lua_status_obj = $("#lua_status").parent().find('span[type=lua]');
+                      var nginx_service_obj = $("#nginx_server").parent().find('span[type=server]');
+                      var nginx_nginx_obj = $("#nginx_nginx").parent().find('span[type=Ng_nginx]');
+                      var mysql_status_obj = $("#mysql_status").parent().find('span[type=mysql]');
+                      var keepalived_status_obj = $("keepalived_status").parent().find('span[type=keepalived]');
+
+                      gen_status(xt_status_obj, status.xt);
+                      gen_status(nginx_status_obj, status.nginx);
+                      gen_status(python_status_obj, status.python);
+                      gen_status(lua_status_obj, status.lua);
+                      gen_status(nginx_service_obj, status.server);
+                      gen_status(nginx_nginx_obj, status.ng_nginx);
+                      gen_status(mysql_status_obj, status.mysql);
+                      if(status.keepalived != -1)
+                      {
+                          gen_status(keepalived_status_obj, status.keepalived);
+                      }
+                      $this.text("检查");
+                  }else{
+                      dialog_error('', resp.error);
+                      var status = resp.data;
+                      var xt_status_obj = $("#xt_status").parent().find('span[type=xt]');
+                      var nginx_status_obj = $("#ng_status").parent().find('span[type=nginx]');
+                      var python_status_obj = $("#py_status").parent().find('span[type=python]');
+                      var lua_status_obj = $("#lua_status").parent().find('span[type=lua]');
+                      var nginx_service_obj = $("#nginx_server").parent().find('span[type=server]');
+                      var nginx_nginx_obj = $("#nginx_nginx").parent().find('span[type=Ng_nginx]');
+                      var mysql_status_obj = $("#mysql_status").parent().find('span[type=mysql]');
+                      var keepalived_status_obj = $("#keepalived_status").parent().find('span[type=keepalived]');
+
+                      gen_status(xt_status_obj, status.xt);
+                      gen_status(nginx_status_obj, status.nginx);
+                      gen_status(python_status_obj, status.python);
+                      gen_status(lua_status_obj, status.lua);
+                      gen_status(nginx_service_obj, status.server);
+                      gen_status(nginx_nginx_obj, status.ng_nginx);
+                      if(status.mysql != -1)
+                      {
+                          gen_status(mysql_status_obj, status.mysql);
+                      }
+                      gen_status(mysql_status_obj, status.mysql);
+                      if(status.keepalived != -1)
+                      {
+                          gen_status(keepalived_status_obj, status.keepalived);
+                      }
+                      $this.text("检查");
+                  }
+        });
+    }
+
+
+    function deploy_status() {
+        var res = {'cus_id': '{{customer.id}}'};
+        var params = JSON.stringify(res);
+        var url = '/customer/compare/';
+        $.get(url, {json: params}, function (resp) {
+            if (resp.success) {
+                dialog_success('', resp.error);
+            } else {
+                dialog_error('', resp.error);
+            }
+        }, 'json');
+    }
+
+
+     function gen_status(select_obj, status){
+                select_obj.empty();
+                var select_html = '';
+                if (status == 0) {
+                    select_obj.html('[' + status_dict[1][1] + ']');
+                    select_html += status_dict[1][1];
+                }else if (status == 1){
+                    select_obj.html('[' + status_dict[2][1] + ']');
+                    select_html += status_dict[2][1];
+                }else if (status == 2){
+                    select_obj.html('[' + status_dict[4][1] + ']');
+                    select_html += status_dict[4][1];
+                }
+                select_obj.attr('title', select_html);
+                select_obj.show();
+                select_obj.qtip();
+            }
+    </script>
+{% endblock %}
+    {% block title_1 %}<span style="float: left"><span class="cus_name" value="{{ customer.id }}">{{ customer.name }}</span> - 客户升级检查</span>{% endblock %}
+    {% block extratitle_1 %}
+            <div class="btn" id="page_save">保存</div>
+    {% endblock %}
+    {% block content %}
+                <tr>
+                    <th style="width: 150px;">客户名称:</th>
+                    <td>{{ customer.name }}</td>
+                </tr>
+                <tr>
+                <th>升级机器:</th>
+                <td>
+                    {% for machine in machines %}
+                        <span style="border: 1px solid gray;cursor: cell;{% if not forloop.first %}margin-left: 10px;{% endif %}">{{ machine.name }}{% if machine.type == 1 %}<span title="编译机">(编)</span>{% elif machine.type == 2 %}<span title="测试机">(测)</span>{% endif %}</span>
+                    {% endfor %}
+                </td>
+                </tr>
+                <tr>
+                    <th>升级检查项:</th>
+                    {% if machine_num == 1 %}
+                        <td>
+                            <span class="like_table" >
+                                <span>Xt服务检查</span>
+                                <span type="xt" class="status" title="" id="xt_status"></span>
+                            </span>
+                            <span class="like_table" >
+                                <span>Nginx服务检查</span>
+                                <span type="nginx" class="status" title="" id="ng_status"></span>
+                            </span>
+                            <span class="like_table" >
+                                <span>Python服务检查</span>
+                                <span type="python" class="status" title="" id="py_status"></span>
+                            </span>
+                            <span class="like_table" >
+                                <span>Lua服务检查</span>
+                                <span type="lua" class="status" title="" id="lua_status"></span>
+                            </span>
+                            <span class="like_table" >
+                                <span>监控XtService</span>
+                                <span type="server" class="status" title="" id="nginx_server"></span>
+                            </span>
+                            <span class="like_table" >
+                                <span>监控nginx</span>
+                                <span type="Ng_nginx" class="status" title="" id="nginx_nginx"></span>
+                            </span>
+                        </td>
+                    {% elif machine_num == 2 %}
+                         <td>
+                            <span class="like_table" >
+                                <span>Xt服务检查</span>
+                                <span type="xt" class="status" title="" id="xt_status"></span>
+                            </span>
+                            <span class="like_table" >
+                                <span>Nginx服务检查</span>
+                                <span type="nginx" class="status" title="" id="ng_status"></span>
+                            </span>
+                            <span class="like_table" >
+                                <span>Python服务检查</span>
+                                <span type="python" class="status" title="" id="py_status"></span>
+                            </span>
+                            <span class="like_table" >
+                                <span>Lua服务检查</span>
+                                <span type="lua" class="status" title="" id="lua_status"></span>
+                            </span>
+                             <span class="like_table" >
+                                <span>监控XtService</span>
+                                <span type="server" class="status" title="" id="nginx_server"></span>
+                            </span>
+                            <span class="like_table" >
+                                <span>监控nginx</span>
+                                <span type="Ng_nginx" class="status" title="" id="nginx_nginx"></span>
+                            </span>
+                            <span class="like_table" >
+                                <span>数据库检查</span>
+                                <span type="mysql" class="status" title="" id="mysql_status"></span>
+                            </span>
+                            <span class="like_table" >
+                                <span>Keepalived双机切换检查</span>
+                                <span type="keepalived" class="status" title="" id="keepalived_status"></span>
+                            </span>
+                        </td>
+                    {% endif %}
+                </tr>
+                <tr>
+                <th>升级检查人员</th>
+                <td><input type="text" id="check_user" style="width: 500px"></td>
+                </tr>
+                <tr>
+                <th>起始时间</th>
+                <td><input type="text" id="start_time" style="width: 500px" value="{{ start_time }}"></td>
+                </tr>
+                <tr>
+                    <th>结束时间</th>
+                    <td><input type="text" id="end_time" style="width: 500px" value="{{ end_time }}"></td>
+                </tr>
+               <tr>
+                    <th>升级检查备注:</th>
+                          <td>
+                                <textarea  id="remark" style="width:100%;height:150px"></textarea>
+                          </td>
+               </tr>
+    {% endblock %}
+{% block floorcontent %}
+            <div class="btn" id="do_check" value={{ customer.id }}>检查</div>
+    <div id="dialog_table" class="easyDialog_wrapper" style="display: none; margin: 0px; min-width: 1080px; width: auto; min-height: 300px; max-height: 500px;">
+        <div class="easyDialog_content">
+            <h4 class="easyDialog_title" id="easyDialogTitle" style="cursor: move;">
+                <a href="javascript:void(0)" title="关闭窗口" class="close_btn" id="closeBtn_rzrk">×</a>
+                <span type="dialog_title"></span>
+            </h4>
+
+            <div class="easyDialog_text" style="min-height: 300px; max-height: 415px; overflow: auto;">
+                <table class="bordered table_small" type="dialog_table">
+                </table>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

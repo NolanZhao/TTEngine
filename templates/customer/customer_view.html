@@ -1,0 +1,107 @@
+{% extends "root.html" %}
+{% load rzrk_tags %}
+
+{% block title %}{% settings_value "MAIN_PROJECT_NAME" %}-欢迎{% endblock %}
+{% block rootJsAndCss %}
+    <script type="text/javascript" src="/media/js/angular/angular.min.js"></script>
+    <script type="text/javascript" src="/media/js/controllers/CompilerViewController.js"></script>
+    <script type="text/javascript">
+        var compilers = {{ machine_json|safe }};
+    </script>
+    <style type="text/css">
+        .table {
+            table-layout: fixed;
+            font-size: 12px;
+            font-family: "微软雅黑";
+            border-collapse: collapse;
+        }
+
+        .table label {
+            margin-bottom: 0;
+        }
+
+        .table .text-right {
+            text-align: right;
+        }
+
+        .table .text-center {
+            text-align: center;
+        }
+
+        .table td {
+            padding: 5px 10px;
+        }
+
+        .table td ul {
+            list-style: none;
+            padding: 0;
+        }
+    </style>
+{% endblock %}
+{% block rootBody %}
+    <div ng-app="CompilerView" ng-controller="CompilerViewController">
+        <table class="table table-bordered">
+            <colgroup>
+                <col style="width: 150px;"/>
+                <col/>
+            </colgroup>
+            <tboey>
+                <tr>
+                    <td class="text-right"><label>编译机：</label></td>
+                    <td>
+                        <select name="" id="" ng-model="compiler" ng-options="op.machine.name for op in compilers"
+                                ng-change="statusChange($index)">
+                            <option value="">-- 请选择 --</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="text-right"><label>编译状态：</label></td>
+                    <td><span ng-bind="compiler.record.status | statusCase"></span></td>
+                </tr>
+                <tr>
+                    <td class="text-right"><label>客户名称：</label></td>
+                    <td><span ng-bind="compiler.record.customer.name"></span></td>
+                </tr>
+                <tr>
+                    <td class="text-right"><label>用户类型：</label></td>
+                    <td><span ng-bind="compiler.record.customer.is_sys | isSysCase"></span></td>
+                </tr>
+                <tr>
+                    <td class="text-right"><label>备　　注：</label></td>
+                    <td><span ng-bind="compiler.record.remark"></span></td>
+                </tr>
+                <tr>
+                    <td class="text-right"><label>操作人：</label></td>
+                    <td><span ng-bind="compiler.record.operate_user.username"></span></td>
+                </tr>
+                <tr>
+                    <td class="text-right"><label>开始时间：</label></td>
+                    <td><span ng-bind="compiler.record.start_time.$date"></span></td>
+                </tr>
+                <tr>
+                    <td class="text-right"><label>编译参数：</label></td>
+                    <td>
+                        <ul>
+                            <li ng-repeat="parameter in compiler.record.module_raw_path"><span ng-bind="parameter.name"></span> ：<span ng-bind="parameter.value"></span></li>
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="text-right"><label>模块列表：</label></td>
+                    <td>
+                        <ul>
+                            <li ng-repeat="module in compiler.record.modules"><a target="_self" ng-href="{[{ module.name | moduleLinkCase }]}" ng-bind="module.name"></a></li>
+                        </ul>
+                    </td>
+                </tr>
+                <tr ng-show="compiler.record.status == 3">
+                    <td class="text-right"></td>
+                    <td>
+                        <button>下载编译包</button>
+                    </td>
+                </tr>
+            </tboey>
+        </table>
+    </div>
+{% endblock %}

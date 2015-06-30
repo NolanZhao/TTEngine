@@ -1,0 +1,53 @@
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svn/svnrepos/!svn/ver/185905/server5/deploy/trunk/TTEngine/templates/portal
+END
+portal_uploadfile_gen_sql.html
+K 25
+svn:wc:ra_dav:version-url
+V 107
+/svn/svnrepos/!svn/ver/185905/server5/deploy/trunk/TTEngine/templates/portal/portal_uploadfile_gen_sql.html
+END
+portal_machine_view.html
+K 25
+svn:wc:ra_dav:version-url
+V 101
+/svn/svnrepos/!svn/ver/169606/server5/deploy/trunk/TTEngine/templates/portal/portal_machine_view.html
+END
+portal_package_create.html
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/svn/svnrepos/!svn/ver/171724/server5/deploy/trunk/TTEngine/templates/portal/portal_package_create.html
+END
+portal_update_sql.html
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/svn/svnrepos/!svn/ver/180102/server5/deploy/trunk/TTEngine/templates/portal/portal_update_sql.html
+END
+portal_quick_gen_sql.html
+K 25
+svn:wc:ra_dav:version-url
+V 102
+/svn/svnrepos/!svn/ver/180101/server5/deploy/trunk/TTEngine/templates/portal/portal_quick_gen_sql.html
+END
+portal_package_list.html
+K 25
+svn:wc:ra_dav:version-url
+V 101
+/svn/svnrepos/!svn/ver/184028/server5/deploy/trunk/TTEngine/templates/portal/portal_package_list.html
+END
+portal_package_input.html
+K 25
+svn:wc:ra_dav:version-url
+V 102
+/svn/svnrepos/!svn/ver/169871/server5/deploy/trunk/TTEngine/templates/portal/portal_package_input.html
+END
+portal_update_gen_sql.html
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/svn/svnrepos/!svn/ver/185069/server5/deploy/trunk/TTEngine/templates/portal/portal_update_gen_sql.html
+END

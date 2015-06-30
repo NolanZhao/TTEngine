@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svn/svnrepos/!svn/ver/184566/server5/deploy/trunk/TTEngine/templates/customer/include
+END
+customer_state_list.html
+K 25
+svn:wc:ra_dav:version-url
+V 111
+/svn/svnrepos/!svn/ver/175682/server5/deploy/trunk/TTEngine/templates/customer/include/customer_state_list.html
+END
+customer_svn_log_read.html
+K 25
+svn:wc:ra_dav:version-url
+V 113
+/svn/svnrepos/!svn/ver/184566/server5/deploy/trunk/TTEngine/templates/customer/include/customer_svn_log_read.html
+END
+customer_package_file_read.html
+K 25
+svn:wc:ra_dav:version-url
+V 118
+/svn/svnrepos/!svn/ver/184260/server5/deploy/trunk/TTEngine/templates/customer/include/customer_package_file_read.html
+END
+customer_tips_list.html
+K 25
+svn:wc:ra_dav:version-url
+V 110
+/svn/svnrepos/!svn/ver/170343/server5/deploy/trunk/TTEngine/templates/customer/include/customer_tips_list.html
+END

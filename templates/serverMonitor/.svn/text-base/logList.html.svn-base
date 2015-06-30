@@ -1,0 +1,10 @@
+{% extends "z_new/grid.html" %}
+{% block customScripts %}
+<script type="text/javascript" src="/media/js/modules/serverMonitor/logList.js"></script>
+{% endblock %}
+
+{% block customContent %}
+<div style="position: absolute;top: 10px;left: 10px;right: 10px;bottom: 0;">
+    <table id="logList" title="" style="width:100%;"></table>
+</div>
+{% endblock %}

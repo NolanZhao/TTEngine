@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="content-type" content="text/html;charset=utf-8">
+    <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="rzrkEngine">
+    <meta name="author" content="nerve">
+
+    <!-- 框架样式及JS -->
+    <script src="/media/js/jq/jquery-2.1.0.min.js"></script>
+    <script src="/media/js/jq/jquery.form.min.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="/media/css/main.css">
+
+    <!-- easy_dialog start -->
+    <script src="/media/js/easydialog/easydialog.min.js" type="text/javascript"></script>
+    <link rel="stylesheet" type="text/css" href="/media/js/easydialog/easydialog.css">
+    <!-- easy_dialog end -->
+
+    <!-- menu start -->
+    <link rel="stylesheet" type="text/css" href="/media/js/menu2/menu.css">
+    <script src="/media/js/menu2/scriptbreaker-multiple-accordion-1.js" type="text/javascript"></script>
+    <!-- menu end -->
+
+    <!-- tips start -->
+    <script src="/media/js/tips/imagesloaded.pkg.min.js" type="text/javascript"></script>
+    <script src="/media/js/tips/jquery.qtip.js" type="text/javascript"></script>
+    <link rel="stylesheet" type="text/css" href="/media/js/tips/jquery.qtip.css">
+    <!-- tips end -->
+
+    <script type="text/javascript">
+        // Textarea and select clone() bug workaround | Spencer Tipping
+        (function (original) {
+            jQuery.fn.clone = function () {
+                var result = original.apply(this, arguments),
+                        my_textareas = this.find('textarea').add(this.filter('textarea')),
+                        result_textareas = result.find('textarea').add(result.filter('textarea')),
+                        my_selects = this.find('select').add(this.filter('select')),
+                        result_selects = result.find('select').add(result.filter('select'));
+
+                for (var i = 0, l = my_textareas.length; i < l; ++i) $(result_textareas[i]).val($(my_textareas[i]).val());
+                for (var i = 0, l = my_selects.length; i < l; ++i) {
+                    for (var j = 0, m = my_selects[i].options.length; j < m; ++j) {
+                        if (my_selects[i].options[j].selected === true) {
+                            result_selects[i].options[j].selected = true;
+                        }
+                    }
+                }
+                return result;
+            };
+        })(jQuery.fn.clone);
+
+        $(document).ready(function () {
+            // 设置屏幕宽度
+            $('#rightMenuDiv').css('width', (document.documentElement.clientWidth - 225) + 'px');
+            // 点击跳转到客户查看页面
+            $('body').on('click', '.cus_name', function () {
+                window.location.href = '/customer/view/?cus_id=' + $(this).attr('value');
+            });
+            //返回按钮
+            $("#page_back").bind("click", function () {
+                window.history.back();
+            });
+            //menu菜单
+            /*
+             $(".topnav").accordion({
+             accordion: true,
+             speed: 300,
+             closedSign: '[+]',
+             openedSign: '[-]'
+             });
+             */
+            //tips
+            $('span[title]').qtip();
+            $('a[title]').qtip();
+            //自定义弹出框关闭按钮
+            $('.closeBtn_rzrk').bind('click', function () {
+                $(this).parent().parent().parent().hide();
+            });
+            //登出方法
+            $('.logout').bind('click', function () {
+                window.location.href = '/logout/';
+            });
+
+            // 创建分支
+            $(".title_1").on("click", ".btn[cmd=createTag]", function () {
+                window.open("/programBranch/create/?customerTag=" + $(this).attr("tag"), '_self');
+            });
+              // 创建分支
+            $(".inner").on("click", ".btn[cmd=createTag]", function () {
+            window.open("/programBranch/create/?customerTag=" + $(this).attr("tag"), '_self');
+           });
+
+
+            //tips删除按钮
+            $("body").on("click", ".btn[cmd=tip_del]", function () {
+                var $this = $(this);
+                if (!$this.attr('value')) {
+                    $this.parent().parent().remove();
+                    return;
+                }
+                var tip_id = $this.attr('value');
+                var url = '/customer/tips/del/';
+                if (confirm('确认删除该备注?')) {
+                    $.post(url, {id: tip_id}, function (resp) {
+                        if (resp.success) {
+                            alert(resp.error);
+                            $this.parent().parent().remove();
+                        } else {
+                            alert(resp.error);
+                        }
+                    });
+                }
+            });
+
+            //tips添加按钮
+            $("body").on("click", "#addTips", function () {
+                var cus_id = $(this).attr('value');
+                var $this = $(this).parent().parent().find('tr[type=head]');
+                var html = '';
+                html += '<tr>';
+                html += '<td colspan="2">';
+                html += '<textarea name="content" value="" style="width: 100%; height: 150px;"></textarea>';
+                html += '</td>';
+                html += '<td>';
+                html += '<input type="file" name="upload_file" class="tips_file">';
+                html += '</td>';
+                html += '<td>';
+                html += '<span class="btn" cmd="tip_save" style="line-height:20px;" value="' + cus_id + '">保存</span>';
+                html += '<span class="btn" cmd="tip_del" style="line-height:20px;">删除</span>';
+                html += '</td>';
+                html += '</tr>';
+                $this.after(html);
+            });
+
+            //tips保存按钮
+            $("body").on("click", ".btn[cmd=tip_save]", function () {
+                var $this = $(this).parent().parent();
+                var cus_id = $(this).attr('value');
+                var content = $this.find('textarea').val();
+
+                var file_input = $this.parent().parent().find('input[type=file]');
+                var path = file_input.val();
+                var file_flag = (path) ? true : false;
+
+                var url = '/customer/tips/create/';
+                //上传文件
+                if (file_flag) {
+                    file_input.wrap("<form action='" + url + "' method='post' enctype='multipart/form-data' style='display:none'></form>");
+                    file_input.parent().append("<input type='text' name='cus_id' value='" + cus_id + "'>");
+                    file_input.parent().append("<input type='text' name='content' value='" + content + "'>");
+
+                    $(file_input.parent()).ajaxSubmit({
+                        url: url,
+                        type: 'post',
+                        dataType: 'json',
+                        // 上传时间限制30分钟
+                        timeout: 30 * 60 * 1000,
+                        beforeSend: function () {
+                        },
+                        uploadProgress: function (event, position, total, percentComplete) {
+                        },
+                        success: function (resp) {
+                            if (resp.success) {
+                                var data = resp.data;
+                                var html = '';
+                                html += '<tr>';
+                                html += '<td><xmp>' + data.content + '</xmp></td>';
+                                html += '<td>' + data.create_user + '</td>';
+                                html += '<td>' + data.create_time + '</td>';
+                                html += '<td>';
+                                html += '<span class="btn" cmd="tip_del" style="line-height: 20px;" value="' + data.id + '">删除</span>';
+                                html += '<span class="btn" style="line-height: 20px;" onclick="javascript:window.open(\'/customer/tips/edit/?id=' + data.id + '\',\'_blank\')">编辑</span>';
+                                if (data.download) {
+                                    html += '<span class="btn" cmd="tip_download" style="line-height: 20px;" onclick="javascript:window.open(\'/customer/tips/download/?id=' + data.id + '\',\'_self\')">下载</span>';
+                                }
+                                html += '</td>';
+                                html += '</tr>';
+                                $this.replaceWith(html);
+                            } else {
+                                dialog_error('', resp.error);
+                            }
+                            file_input.parent().find("input[name=cus_id]").remove();
+                            file_input.parent().find("input[name=content]").remove();
+                            file_input.unwrap();
+                        },
+                        error: function (xhr) {
+                            dialog_error('', "上传异常!" + xhr);
+                        }
+                    });
+
+
+                } else {
+                    $.post(url, {cus_id: cus_id, content: content}, function (resp) {
+                        if (resp.success) {
+                            var data = resp.data;
+                            var html = '';
+                            html += '<tr>';
+                            html += '<td><xmp>' + data.content + '</xmp></td>';
+                            html += '<td>' + data.create_user + '</td>';
+                            html += '<td>' + data.create_time + '</td>';
+                            html += '<td><span class="btn" cmd="tip_del" style="line-height: 20px;" value="' + data.id + '">删除</span>';
+                            html += '<span class="btn" style="line-height: 20px;" onclick="javascript:window.open(\'/customer/tips/edit/?id=' + data.id + '\',\'_blank\')">编辑</span>';
+                            html += '</td>';
+                            html += '</tr>';
+                            $this.replaceWith(html);
+                        } else {
+                            dialog_error('', resp.error);
+                        }
+                    });
+                }
+            });
+
+            //tips删除按钮
+            $(".title_1").on("click", ".btn[cmd=delCustomer]", function () {
+                dialog_confirm('确认删除', "是否删除客户[" + $(this).attr("cus_name") + "]", function () {
+                    var url = "/customer/del/";
+                    $.post(url, {cus_id: this.id}, function (resp) {
+                        if (resp.success) {
+                            dialog_success('', resp.error, function () {
+                                window.location.reload();
+                            });
+                        } else {
+                            dialog_error('', resp.error);
+                        }
+                    });
+                });
+            });
+
+          //tips删除按钮
+        $(".inner").on("click", ".btn[cmd=delCustomer]", function () {
+
+            if (confirm("是否删除客户[" + $(this).attr("cus_name") + "]")) {
+                var url = "/customer/del/";
+                $.post(url, {cus_id: this.id}, function (resp) {
+                    if (resp.success) {
+                        alert(resp.error);
+                        window.location.reload();
+                    } else {
+                        alert(resp.error);
+                    }
+                });
+            }
+        });
+        //tips
+        $(".title_1").on("click", ".btn[cmd=cus_tips]", function () {
+            var $this = $(this);
+            var cus_id = this.id;
+            var cus_name = $this.attr('cus_name');
+
+            var url = '/customer/tips/';
+
+            $.get(url, {'cus_id': cus_id}, function (resp) {
+                if (resp.success) {
+                    var data = resp.data;
+                    var dialog_title = $('span[type=dialog_title]');
+                    dialog_title.html('<span class="cus_name" value="' + cus_id + '">' + cus_name + '</span>' + ' - 备注');
+                    var dialog_table = $('#dialog_table .easyDialog_text');
+                    dialog_table.empty();
+                    dialog_table.append(data);
+                    easyDialog.open({
+                        container: 'dialog_table',
+                        overlay: false
+                    });
+                } else {
+                    alert(resp.error);
+                }
+            });
+        });
+
+        //tips添加按钮
+        $("body").on("click", "#addTips", function () {
+            var cus_id = $(this).attr('value');
+            var $this = $(this).parent().parent().find('tr[type=head]');
+            var html = '';
+            html += '<tr>';
+            html += '<td colspan="2">';
+            html += '<textarea name="content" value="" style="width: 100%; height: 150px;"></textarea>';
+            html += '</td>';
+            html += '<td>';
+            html += '<input type="file" name="upload_file" class="tips_file">';
+            html += '</td>';
+            html += '<td>';
+            html += '<span class="btn" cmd="tip_save" style="line-height:20px;" value="' + cus_id + '">保存</span>';
+            html += '<span class="btn" cmd="tip_del" style="line-height:20px;">删除</span>';
+            html += '</td>';
+            html += '</tr>';
+            $this.after(html);
+        });
+
+        //tips删除按钮
+        $("body").on("click", ".btn[cmd=tip_del]", function () {
+            var $this = $(this);
+            if (!$this.attr('value')) {
+                $this.parent().parent().remove();
+                return;
+            }
+            var tip_id = $this.attr('value');
+            var url = '/customer/tips/del/';
+            if (confirm('确认删除该备注?')) {
+                $.post(url, {id: tip_id}, function (resp) {
+                    if (resp.success) {
+                        alert(resp.error);
+                        $this.parent().parent().remove();
+                    } else {
+                        alert(resp.error);
+                    }
+                });
+            }
+        });
+
+        //tips保存按钮
+        $("body").on("click", ".btn[cmd=tip_save]", function () {
+            var $this = $(this).parent().parent();
+            var cus_id = $(this).attr('value');
+            var content = $this.find('textarea').val();
+
+            var file_input = $this.parent().parent().find('input[type=file]');
+            var path = file_input.val();
+            var file_flag = (path) ? true : false;
+
+            var url = '/customer/tips/create/';
+
+            //上传文件
+            if (file_flag) {
+                file_input.wrap("<form action='" + url + "' method='post' enctype='multipart/form-data' style='display:none'></form>");
+                file_input.parent().append("<input type='text' name='cus_id' value='" + cus_id + "'>");
+                file_input.parent().append("<input type='text' name='content' value='" + content + "'>");
+
+                $(file_input.parent()).ajaxSubmit({
+                    url: url,
+                    type: 'post',
+                    dataType: 'json',
+                    // 上传时间限制30分钟
+                    timeout: 30 * 60 * 1000,
+                    beforeSend: function () {
+                    },
+                    uploadProgress: function (event, position, total, percentComplete) {
+                    },
+                    success: function (resp) {
+                        if (resp.success) {
+                            var data = resp.data;
+                            var html = '';
+                            html += '<tr>';
+                            html += '<td><xmp>' + data.content + '</xmp></td>';
+                            html += '<td>' + data.create_user + '</td>';
+                            html += '<td>' + data.create_time + '</td>';
+                            html += '<td>';
+                            html += '<span class="btn" cmd="tip_del" style="line-height: 20px;" value="' + data.id + '">删除</span>';
+                            html += '<span class="btn" style="line-height: 20px;" onclick="javascript:window.open(\'/customer/tips/edit/?id=' + data.id + '\',\'_blank\')">编辑</span>';
+                            if (data.download) {
+                                html += '<span class="btn" cmd="tip_download" style="line-height: 20px;" onclick="javascript:window.open(\'/customer/tips/download/?id=' + data.id + '\',\'_self\')">下载</span>';
+                            }
+                            html += '</td>';
+                            html += '</tr>';
+                            $this.replaceWith(html);
+                        } else {
+                            alert(resp.error);
+                        }
+                        file_input.parent().find("input[name=cus_id]").remove();
+                        file_input.parent().find("input[name=content]").remove();
+                        file_input.unwrap();
+                    },
+                    error: function (xhr) {
+                        alert("上传异常!" + xhr);
+                    }
+                });
+
+            } else {
+                $.post(url, {cus_id: cus_id, content: content}, function (resp) {
+                    if (resp.success) {
+                        var data = resp.data;
+                        var html = '';
+                        html += '<tr>';
+                        html += '<td><xmp>' + data.content + '</xmp></td>';
+                        html += '<td>' + data.create_user + '</td>';
+                        html += '<td>' + data.create_time + '</td>';
+                        html += '<td><span class="btn" cmd="tip_del" style="line-height: 20px;" value="' + data.id + '">删除</span>';
+                        html += '<span class="btn" style="line-height: 20px;" onclick="javascript:window.open(\'/customer/tips/edit/?id=' + data.id + '\',\'_blank\')">编辑</span>';
+                        html += '</td>';
+                        html += '</tr>';
+                        $this.replaceWith(html);
+                    } else {
+                        alert(resp.error);
+                    }
+                });
+            }
+        });
+
+        //编辑按钮
+        $(".title_1").on("click", ".btn[cmd=editCustomer]", function () {
+            window.open("/customer/edit/?cus_id=" + this.id, '_self');
+        });
+
+
+        //添加按钮
+        $(".inner").on("click", "#addCustomer", function () {
+            {% if is_sys %}
+                window.open("/customer/system/create/", '_self');
+            {% else %}
+                window.open("/customer/create/", "_self");
+            {% endif %}
+        });
+        })
+
+        function dialog_success(head, content, func, clost_time) {
+            easyDialog.open({
+                container: {
+                    header: '[成功] ' + head,
+                    content: content
+                },
+                overlay: false,
+                autoClose: clost_time,
+                callback: func
+            });
+        }
+
+        function dialog_error(head, content, func) {
+            easyDialog.open({
+                container: {
+                    header: '[失败] ' + head,
+                    content: content
+                },
+                overlay: false,
+                callback: func
+            });
+        }
+
+        function dialog_confirm(header, content, yes_func) {
+            easyDialog.open({
+                container: {
+                    header: header,
+                    content: content,
+                    yesFn: yes_func,
+                    noFn: true
+                },
+                overlay: false
+            });
+        }
+
+    </script>
+    {% block rootJsAndCss %}
+    {% endblock %}
+</head>
+{% load rzrk_tags %}
+<body class="">
+{% block root %}
+    <div id="bodyDiv">
+        <div id="rightMenuDiv">
+           <div class="title_1">
+        {% block title_1 %}{% endblock %}
+            <div>
+                     <span class="btn" cmd="delCustomer" title="删除" id="{{ customer.id }}" cus_name="{{ customer.name }}">删除</span>
+                     <span class="btn" cmd="editCustomer" title="编辑" id="{{ customer.id }}" cus_name="{{ customer.name }}">修改</span>
+                     <span class="btn" cmd="cus_tips" title="备注" id="{{ customer.id }}" cus_name="{{ customer.name }}">备注</span>
+                     <span class="btn" cmd="createTag" title="创建分支" id="{{ customer.id }}" tag="{{ customer.tag }}">创建分支</span>
+                     <span class="btn" title="编译" onclick="javascript:window.open('/customer/compiling/?cus_id={{ customer.id }}','_self')">更新编译</span>
+                     <span class="btn" title="客户端编译打包" onclick="javascript:window.open('/customer/client/compiling/?cus_id={{ customer.id }}','_self')">客户端</span>
+                     <span class="btn" onclick="javascript:window.open('/customer/package/{{ customer.id }}/','_self')" title="客户包">客户包</span>
+                     <span class="btn" cmd="viewVersion" onclick="javascript:window.open('/customer/deploy/record/list/?cus_id={{ customer.id }}','_self')">升级记录</span>
+                     <span class="btn" cmd=onekey_update title=一键更新" onclick="javascript:window.open('/customer/onekey_update/?cus_id={{ customer.id }}','_self')">一键更新</span>
+            </div>
+           </div>
+              <div class="inner">
+                <div class="btn_line">
+                   <div class="btn" id="page_back">返回</div>
+                     {% block extratitle_1 %}{% endblock %}
+                </div>
+                <table class="bordered table">
+                {% block content %}{% endblock %}
+                </table>
+              <div class="btn_line">
+                  {% block floorcontent %}{% endblock %}
+              </div>
+              </div>
+        </div>
+    </div>
+    {% include "include/footer.html" %}
+{% endblock root %}
+
+</body>
+</html>

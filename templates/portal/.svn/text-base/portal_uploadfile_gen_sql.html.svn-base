@@ -1,0 +1,101 @@
+{% extends "root.html" %}
+{% load rzrk_tags %}
+
+{% block title %}{% settings_value "MAIN_PROJECT_NAME" %}-文件列表{% endblock %}
+{% block rootJsAndCss %}
+    <style>
+
+    </style>
+    <script type="text/javascript">
+         $(document).ready(function () {
+
+            $("#saveBtn").bind("click", function () {
+
+                //开始执行timer
+                var btn_text = $(this).text();
+                $(this).text("正在生成...");
+
+
+                $.post('/portal/update/uploadfile_gen_sql/', {}, function (resp) {
+                    if (resp.success) {
+                            window.open('/portal/update/download/?id=' + resp.id, '_self');
+                        } else {
+
+                        }
+                    }, 'json');
+            });
+
+
+             $("#old_sql_upload").bind("click", function () {
+                 var filePath = $("#uploadOldSQLFile").val().replace(/(^\s*)|(\s*$)/g, "");
+                 if(filePath==""){
+                   alert("文件为空！请先选择文件！");
+                 }
+                 else{
+                     alert("上传成功！")
+                 }
+
+             });
+
+             $("#new_sql_upload").bind("click", function () {
+                 var filePath = $("#uploadNewSQLFile").val().replace(/(^\s*)|(\s*$)/g, "");
+                 if(filePath==""){
+                   alert("文件为空！请先选择文件！");
+                 }
+                 else{
+                     alert("上传成功！")
+                 }
+
+             });
+
+        });
+
+        function get_repeat(str, num) {
+            if (num == 0) {
+                return '';
+            }
+            var result = str;
+            for (var index = 1; index < num; index++) {
+                result += str;
+            }
+            return result;
+        }
+
+
+
+
+
+    </script>
+{% endblock %}
+{% block rootBody %}
+    <table class="bordered table" id="settings_table">
+        <tr>
+            <td colspan="2"  style="background-color: lightskyblue;font-weight: bold">
+                <span>注意:请分别上传旧版本SQL和新版本SQL！选择文件后点击“上传文件”，然后在选择另一个，再点击“上传文件” ，生成过程比较慢，请耐心等待！</span>
+            </td>
+        </tr>
+        <tr>
+            <th>上传旧版本SQL</th>
+            <th>上传新版本SQL</th>
+        <tr>
+            <td>
+                <form method="post" enctype="multipart/form-data" action="/portal/update/uploadFile/">
+                    {% csrf_token %}
+                    <input id="uploadOldSQLFile" type="file" name="uploadFile_old">
+                    <input type="submit" id="old_sql_upload" value="上传文件">
+                </form>
+            </td>
+            <td>
+                <form method="post" enctype="multipart/form-data" action="/portal/update/uploadFile/">
+                    {% csrf_token %}
+                    <input id="uploadNewSQLFile" type="file" name="uploadFile_new">
+                    <input type="submit" id="new_sql_upload" value="上传文件">
+                </form>
+            </td>
+        </tr>
+    </table>
+
+    <div class="btn_line">
+        <span class="btn" id="saveBtn" title="点击生成升级脚本">生成</span>
+    </div>
+{% endblock %}

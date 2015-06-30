@@ -1,0 +1,17 @@
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svn/svnrepos/!svn/ver/171151/server5/deploy/trunk/TTEngine/windows/script/install/sign
+END
+mycert.pfx
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/svn/svnrepos/!svn/ver/171151/server5/deploy/trunk/TTEngine/windows/script/install/sign/mycert.pfx
+END
+signtool.exe
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/svn/svnrepos/!svn/ver/171151/server5/deploy/trunk/TTEngine/windows/script/install/sign/signtool.exe
+END

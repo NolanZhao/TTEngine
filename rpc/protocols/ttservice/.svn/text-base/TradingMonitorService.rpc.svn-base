@@ -1,0 +1,45 @@
+﻿Namespace = ttservice
+ServiceName = TradingMonitorService
+Includes = (
+    bson/src/bson.h,
+	Protocol/rpc_FtCommon_Def.h,
+    Protocol/rpc_TTServiceCommon_Def.h,
+    Protocol/rpc_ClientTrader.h,
+)
+
+CppIncludes = (
+	Protocol/rpc_FtCommon.h,
+	Protocol/rpc_Structs.h,
+    Protocol/rpc_TTServiceCommon.h,
+    net/RPCEngine.h
+)
+
+login() => (success:#i)
+
+TradingMonitorServiceSetting :(
+	m_nMainAccountTimeInterval:#i;
+	m_nMainAccountAlarmCount:#i;
+	m_nSubAccountTimeInterval:#i;
+	m_nSubAccountAlarmCount:#i;
+	m_nMainAccountEnabled:#i;
+	m_nSubAccountEnabled:#i;
+	m_nPositionEnabled:#i;
+	m_nPositionEnabledSub:#i;
+)
+querySettings() => ( settings : TradingMonitorServiceSetting)
+queryAccounts() => ( accounts : [CAccountInfoPtr] )
+queryRawPosition(account : CAccountInfoPtr) => (content:[IDataPtr])
+queryData(account : CAccountInfoPtr, typeId:#i) => (content:[IDataPtr], keys:[#s])
+queryLastDealTime(account : CAccountInfoPtr) => (timeTag:#i)
+
+enum_ALARMTYPE : (
+	ALARMTYPE_ORDER : 0;   // 委托
+	ALARMTYPE_POSITION :1; //持仓
+	ALARMTYPE_POSITION_SUB :2; //子账号持仓
+)
+sendAlarmMsg(eType:ALARMTYPE, strMsg:#s, account : CAccountInfoPtr) => (success :#b)
+
+=> pushData(account : CAccountInfoPtr, data:IDataPtr, baseId:#i, key:#s)
+=> pushDatas(account : CAccountInfoPtr, datas:[IDataPtr], baseIds:[#i], keys:[#s])
+=> pushSetting(settings:TradingMonitorServiceSetting)
+=> pushAccounts(accounts:[CAccountInfoPtr])

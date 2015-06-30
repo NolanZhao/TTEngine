@@ -1,0 +1,73 @@
+{% extends "root.html" %}
+{% load rzrk_tags %}
+
+{% block title %}{% settings_value "MAIN_PROJECT_NAME" %}-监控模块编辑{% endblock %}
+{% block rootJsAndCss %}
+    <style>
+    </style>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#saveBtn").bind("click", function () {
+                var setting_id = $('input[name=setting_id]').val();
+                var setting_name = $('input[name=setting_name]').val();
+                var setting_detail = $('#setting_detail').val();
+                var name_type = $("#saveBtn").attr('name');
+                var params = {
+                    setting_id: setting_id,
+                    setting_name: setting_name,
+                    setting_detail: setting_detail,
+                    name_type:name_type
+                };
+                var json = JSON.stringify(params);
+                $.post('/serverMonitor/monitorModule_save/', {json: json}, function (resp) {
+                    if (resp.success) {
+                        dialog_success('', resp.error, function () {
+                            window.location.href = '/serverMonitor/monitorModule/';
+                        });
+                    } else {
+                        dialog_error('', resp.error);
+                    }
+                });
+            });
+
+            //返回页面
+            $('#page_back').bind('click',function(){
+                  window.location.href = '/serverMonitor/monitorModule/';
+            });
+        });
+    </script>
+{% endblock %}
+{% block rootBody %}
+    <div class="title_1">监控模块项编辑</div>
+    <div class="inner">
+        <div class="btn_line">
+            <div class="btn" id="page_back">返回</div>
+        </div>
+        <table class="bordered table" id="table">
+            <tr>
+                <th style="width: 150px">监控模块名称:</th>
+                <td>
+                    <span class="like_table">
+                        <input type="hidden" name="setting_id" value="{% if not is_extends %}{{ setting.id }}{% endif %}">
+                        <input type="text" style="height: 25px" name="setting_name" value="{% if setting.module %}{{ setting.module }}{% endif %}" id="log_type">
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <th>详细描述:</th>
+                <td>
+                    <span class="like_table">
+                        <textarea type="text" id="setting_detail" value="{{ setting.description }}" style="width:400px">{% if setting %}{{ setting.description }}{% endif %} </textarea>
+                    </span>
+                </td>
+            </tr>
+        </table>
+        <div class="btn_line">
+            {% if action_type == 'sermonitor_add' %}
+                 <div class="btn" id="saveBtn" name="add">保存</div>
+            {% elif action_type == 'sermonitor_edit' %}
+                  <div class="btn" id="saveBtn" name="edit">保存</div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

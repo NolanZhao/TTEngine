@@ -1,0 +1,418 @@
+{% extends "root.html" %}
+{% load rzrk_tags %}
+
+{% block title %}{% settings_value "MAIN_PROJECT_NAME" %}-欢迎{% endblock %}
+{% block rootJsAndCss %}
+    <script type="text/javascript">
+        $(document).ready(function () {
+            //添加文件按钮
+            $(".inner").on("click", "div[cmd=addFile]", function () {
+                addOneFileInfo();
+            });
+            $(".inner").on("click", "div[cmd=addFileCopy]", function () {
+                var file_list_item = $("tr[type=file_info_list] td");
+                var $this = $(this);
+                var clone_obj = $this.parent().parent().clone();
+                //去掉ID字段
+                clone_obj.find('input[name=fileInfo_id]').val('')
+                file_list_item.append(clone_obj);
+            });
+            //添加文件按钮
+            $(".inner").on("click", "div[cmd=addRunInfo]", function () {
+                addOneRunInfo();
+            });
+            //大小按钮
+            $(".inner").on("click", "div[cmd=hideMost]", function () {
+                var $this = $(this);
+                var text = $this.text();
+                var importantSpan = $this.parent().parent().find("div[class=content] span[type=important]");
+                var moreSpan = $this.parent().parent().find("div[class=content] span[type=more]");
+                if (text == "小") {
+                    moreSpan.hide();
+                    $this.text("大");
+                } else if (text == "大") {
+                    moreSpan.show();
+                    $this.text("小");
+                } else {
+                    alert("悟空不要调皮!");
+                }
+            });
+            //删除按钮
+            $(".inner").on("click", "div[cmd=delDocument]", function () {
+                $(this).parent().parent().remove();
+            });
+
+            //保存按钮
+            $("#saveBtn").bind("click", function () {
+                var moduleName = $("input[name=module_name]").val();
+                var moduleHead = $("input[name=module_head]").val();
+                var moduleId = $("input[name=module_id]").val();
+                var module_remark = $("input[name=module_remark]").val();
+                var module_group = $("select[name=module_group]").val();
+                //模块文件列表
+                var result = {
+                    "moduleId": moduleId ? moduleId : null,
+                    "moduleName": moduleName,
+                    "moduleHead": moduleHead,
+                    "module_remark": module_remark,
+                    "module_group": module_group,
+                    "fileInfoList": [],
+                    "runInfoList": []
+                };
+                var fileInfoListObj = $("div[type=file_info]");
+                //初始化文件信息
+                for (var i = 0; i < fileInfoListObj.size(); i++) {
+                    var $item = $(fileInfoListObj[i]);
+                    var fileInfoId = $item.find("input[name=fileInfo_id]").val().trim();
+                    var filePath = $item.find("input[name=filePath]").val();
+                    var rawPath = $item.find("input[name=rawPath]").val();
+                    //自动跳过必要参数为空情况
+                    if (filePath.trim() == '' || rawPath.trim() == '') {
+                        continue;
+                    }
+                    var fileInfo = {
+                        "fileInfoId": fileInfoId ? fileInfoId : null,
+                        "filePath": filePath,
+                        "mod": $item.find("select[name=mod]").val(),
+                        "file_type": parseInt($item.find("select[name=file_type]").val()),
+                        "descript": $item.find("input[name=descript]").val(),
+                        "rawPath": rawPath,
+                        "remark": $item.find("input[name=remark]").val()
+                    };
+                    result["fileInfoList"].push(fileInfo);
+                }
+                //初始化运行信息
+                var runInfoListObj = $("div[type=run_info]");
+                for (var i = 0; i < runInfoListObj.size(); i++) {
+                    var $item = $(runInfoListObj[i]);
+                    var runInfoId = $item.find("input[name=runInfo_id]").val().trim();
+                    var run_info_name = $item.find("input[name=run_info_name]").val();
+                    if (run_info_name.trim() == '') {
+                        continue;
+                    }
+                    var runInfo = {
+                        "runInfoId": runInfoId ? runInfoId : null,
+                        "run_info_name": run_info_name,
+                        "workingDir": $item.find("input[name=workingDir]").val(),
+                        "runParam": $item.find("input[name=runParam]").val(),
+                        "timerParam": $item.find("input[name=timerParam]").val(),
+                        "runType": parseInt($item.find("select[name=runType]").val())
+                    };
+                    result["runInfoList"].push(runInfo);
+                }
+                var json = JSON.stringify(result);
+                var url = "/module/create/";
+                //执行save操作
+                $.post(url, {json: json}, function (resp) {
+                    if (resp.success) {
+                        alert(resp.error);
+                        window.location.href = '/module/group/';
+                    } else {
+                        alert(resp.error);
+                    }
+                }, 'json');
+            });
+
+            //删除按钮
+            $(".inner").on("click", ".btn[cmd=delModule]", function () {
+                if (confirm("是否删除模块[" + $(this).attr("module_name") + "]")) {
+                    var url = "/module/del/";
+                    $.post(url, {moduleId: this.id}, function (resp) {
+                        if (resp.success) {
+                            alert(resp.error);
+                            window.location.href = '/module/list/';
+                        } else {
+                            alert(resp.error);
+                        }
+                    });
+                }
+            });
+            //编辑按钮
+            $(".inner").on("click", ".btn[cmd=editModule]", function () {
+                window.open("/module/edit/?module_id=" + this.id, '_self');
+            });
+            //添加模块按钮(复制)
+            $(".inner").on("click", ".btn[cmd=addModuleQuick]", function () {
+                window.open("/module/create/?p_id=" + this.id + "", '_self');
+            });
+        });
+        //添加文件输入框
+        function addOneFileInfo() {
+            var file_list_item = $("tr[type=file_info_list] td");
+            var html = '';
+            html += '<div type="file_info" style="border: 1px dashed gray;float: left;width: 100%;">';
+            html += '<div class="btn_line">';
+            html += '   <div class="s_btn" cmd="delDocument">-</div>';
+            html += '   <div class="s_btn" cmd="hideMost">小</div>';
+            html += '   <div class="s_btn" cmd="addFileCopy">+</div>';
+            html += '</div>';
+            html += '<div class="content">';
+            html += '   <span type="important" class="like_table">';
+            html += '       <span>文件路径:</span>';
+            html += '       <input type="text" name="filePath" value="">';
+            html += '       <input type="hidden" name="fileInfo_id" value="">';
+            html += '   </span>';
+            html += '   <span type="more" class="like_table">';
+            html += '       <span>原始路径:</span>';
+            html += '       <input type="text" name="rawPath" value="">';
+            html += '   </span>';
+            html += '   <span type="more" class="like_table">';
+            html += '      <span>权限:</span>';
+            html += '      <select name="mod">';
+            html += '          <option value="644">644 - [rw-r--r--]</option>';
+            html += '          <option value="755">755 - [rwxr-xr-x]</option>';
+            html += '      </select>';
+            html += '   </span>';
+            html += '   <span type="more" class="like_table">';
+            html += '      <span>文件类型:</span>';
+            html += '      <select name="file_type">';
+            html += '          <option value="0">{{ 0|parse_file_type }}</option>';
+            html += '          <option value="1">{{ 1|parse_file_type }}</option>';
+            html += '          <option value="2">{{ 2|parse_file_type }}</option>';
+            html += '          <option value="3">{{ 3|parse_file_type }}</option>';
+            html += '          <option value="4">{{ 4|parse_file_type }}</option>';
+            html += '      </select>';
+            html += '   </span>';
+            html += '   <span type="more" class="like_table">';
+            html += '      <span>描述信息:</span>';
+            html += '      <input type="text" name="descript" value="">';
+            html += '   </span>';
+            html += '   <span type="more" class="like_table">';
+            html += '      <span>备注:</span>';
+            html += '      <input type="text" name="remark" value="">';
+            html += '   </span>';
+            html += '</div>';
+            html += '</div>';
+            file_list_item.append(html)
+        }
+        //添加运行信息输入框
+        function addOneRunInfo() {
+            var run_list_item = $("tr[type=run_info_list] td");
+            var html = '';
+            html += '<div type="run_info" style="border: 1px dashed gray;float: left;width: 100%">';
+            html += '<div class="btn_line">';
+            html += '   <div class="s_btn" cmd="delDocument">-</div>';
+            html += '   <div class="s_btn" cmd="hideMost">小</div>';
+            html += '   <div class="s_btn" cmd="addRunInfo">+</div>';
+            html += '</div>';
+            html += '<div class="content">';
+            html += '   <span type="important" class="like_table">';
+            html += '       <span>运行名称:</span>';
+            html += '       <input type="text" name="run_info_name" value="">';
+            html += '       <input type="hidden" name="runInfo_id" value="">';
+            html += '   </span>';
+            html += '   <span type="more" class="like_table">';
+            html += '       <span>运行目录:</span>';
+            html += '       <input type="text" name="workingDir" value="">';
+            html += '   </span>';
+            html += '   <span type="more" class="like_table">';
+            html += '       <span>运行参数:</span>';
+            html += '       <input type="text" name="runParam" value="">';
+            html += '   </span>';
+            html += '   <span type="more" class="like_table">';
+            html += '      <span>运行类型:</span>';
+            html += '      <select name="runType">';
+            html += '          <option value="0">不运行</option>';
+            html += '          <option value="1">安装时运行</option>';
+            html += '          <option value="2">主机一直运行</option>';
+            html += '          <option value="3">定时运行</option>';
+            html += '          <option value="4">一直运行</option>';
+            html += '      </select>';
+            html += '   </span>';
+            html += '   <span type="more" class="like_table">';
+            html += '      <span>定时器参数:</span>';
+            html += '      <input type="text" name="timerParam" value="">';
+            html += '   </span>';
+            html += '</div>';
+            html += '</div>';
+            run_list_item.append(html)
+        }
+
+        //获取文件个数
+        function getFileInfoLength() {
+            return getItemLength("div[type=file_info]")
+        }
+
+        //获取运行信息个数
+        function getRunInfoLength() {
+            return getItemLength("div[type=run_info]")
+        }
+
+        function getItemLength(select) {
+            return $(select).size();
+        }
+    </script>
+{% endblock %}
+{% block rootBody %}
+    <div class="title_1"><span>模块{% if is_edit %}编辑{% elif is_view %}查看{% else %}录入{% endif %}</span></div>
+    <div class="inner">
+        <div class="btn_line">
+            <div class="btn" id="page_back">返回</div>
+            {% if not is_view %}
+                <div class="btn" cmd="addFile" style="position: fixed;z-index: 2;margin-left: 80px;">添加模块文件</div>
+                <div class="btn" cmd="addRunInfo" style="position: fixed;z-index: 2;margin-left: 195px;">添加运行信息</div>
+            {% else %}
+                <span class="btn" cmd="addModuleQuick" title="复制此模块内容并创建新模块" id="{{ module.id }}">复制</span>
+                <span class="btn" cmd="delModule" title="删除模块" id="{{ module.id }}" module_name="{{ module.name }}">删除</span>
+                <span class="btn" cmd="editModule" title="编辑模块" id="{{ module.id }}" module_name="{{ module.name }}">修改</span>
+            {% endif %}
+        </div>
+        <table class="bordered table">
+            <tr>
+                <th style="width: 150px;">模块名称:</th>
+                <td>
+                    <span class="like_table">
+                        <input type="text" name="module_name" value="{% if is_extends %}copy from {{ module.name }}{% else %}{{ module.name }}{% endif %}" {% if is_view %}disabled="disabled" {% endif %}>
+                        <input type="hidden" name="module_id" value="{% if not is_extends %}{{ module.id }}{% endif %}">
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <th>负责人:</th>
+                <td>
+                    <span class="like_table">
+                        <input type="text" name="module_head" value="{{ module.head }}" {% if is_view %}disabled="disabled" {% endif %}>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <th>文字说明:</th>
+                <td>
+                    <span class="like_table">
+                        <input type="text" name="module_remark" value="{% if module.remark %}{{ module.remark }}{% endif %}" {% if is_view %}disabled="disabled" {% endif %}>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                <th>所属分组:</th>
+                <td>
+                    <span class="like_table">
+                        <select  name="module_group">
+                            {% if is_view %}
+                                {% for group in groups %}
+                                    <option value="{{ group.name }}" disabled="disabled" {% if module.group == group.name  %}selected = "selected"{% endif %}>{{ group.name }}</option>
+                                {% endfor %}
+                            {% else %}
+                                {% for group in groups %}
+                                    <option value="{{ group.name }}">{{ group.name }}</option>
+                                {% endfor %}
+                            {% endif %}
+                        </select>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <th colspan="2" style="color: blue">模块文件:</th>
+            </tr>
+            <tr type="file_info_list">
+                <td colspan="2">
+                    {% if is_edit or is_view or is_extends %}
+                        {% for fileInfo_item in module.files %}
+                            <div type="file_info" style="border: 1px dashed gray;float: left;width: 100%;">
+                                {% if not  is_view %}
+                                    <div class="btn_line">
+                                        <div class="s_btn" cmd="delDocument">-</div>
+                                        <div class="s_btn" cmd="hideMost">小</div>
+                                        <div class="s_btn" cmd="addFileCopy">+</div>
+                                    </div>
+                                {% endif %}
+                                <div class="content">
+                                    <span type="important" class="like_table">
+                                        <span>文件路径:</span>
+                                        <input type="text" name="filePath" value="{{ fileInfo_item.filePath }}" {% if is_view %}disabled="disabled" {% endif %}>
+                                        <input type="hidden" name="fileInfo_id" value="{% if not is_extends %}{{ fileInfo_item.id }}{% endif %}" {% if is_view %}disabled="disabled" {% endif %}>
+                                    </span>
+                                    <span type="more" class="like_table">
+                                        <span>原始路径:</span>
+                                        <input type="text" name="rawPath" value="{{ fileInfo_item.rawPath }}" {% if is_view %}disabled="disabled" {% endif %}>
+                                    </span>
+                                    <span type="more" class="like_table">
+                                        <span>权限:</span>
+                                        <select name="mod" {% if is_view %}disabled="disabled"{% endif %}>
+                                            <option value="644" {% if fileInfo_item.mod == 644 %}selected="selected"{% endif %}>644 - [rw-r--r--]</option>
+                                            <option value="755" {% if fileInfo_item.mod == 755 %}selected="selected"{% endif %}>755 - [rwxr-xr-x]</option>
+                                        </select>
+                                    </span>
+                                    <span type="more" class="like_table">
+                                        <span>文件类型:</span>
+                                        <select name="file_type" {% if is_view %}disabled="disabled"{% endif %}>
+                                            <option value="0" {% if fileInfo_item.fileType == 0 %}selected="selected" {% endif %}>{{ 0|parse_file_type }}</option>
+                                            <option value="1" {% if fileInfo_item.fileType == 1 %}selected="selected" {% endif %}>{{ 1|parse_file_type }}</option>
+                                            <option value="2" {% if fileInfo_item.fileType == 2 %}selected="selected" {% endif %}>{{ 2|parse_file_type }}</option>
+                                            <option value="3" {% if fileInfo_item.fileType == 3 %}selected="selected" {% endif %}>{{ 3|parse_file_type }}</option>
+                                            <option value="4" {% if fileInfo_item.fileType == 4 %}selected="selected" {% endif %}>{{ 4|parse_file_type }}</option>
+                                        </select>
+                                    </span>
+                                    <span type="more" class="like_table">
+                                        <span>描述信息:</span>
+                                        <input type="text" name="descript" value="{{ fileInfo_item.descript }}" {% if is_view %}disabled="disabled" {% endif %}>
+                                    </span>
+                                    <span type="more" class="like_table">
+                                        <span>备注:</span>
+                                        <input type="text" name="remark" value="{{ fileInfo_item.remark }}" {% if is_view %}disabled="disabled" {% endif %}>
+                                    </span>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <th colspan="2" style="color: blue">模块运行信息:</th>
+            </tr>
+            <tr type="run_info_list">
+                <td colspan="2">
+                    {% if is_edit or is_view or is_extends %}
+                        {% for runInfo_item in module.runInfos %}
+                            <div type="run_info" style="border: 1px dashed gray;float: left;width: 100%">
+                                {% if not  is_view %}
+                                    <div class="btn_line">
+                                        <div class="s_btn" cmd="delDocument">-</div>
+                                        <div class="s_btn" cmd="hideMost">小</div>
+                                        <div class="s_btn" cmd="addRunInfo">+</div>
+                                    </div>
+                                {% endif %}
+                                <div class="content">
+                                    <span type="important" class="like_table">
+                                        <span>运行名称:</span>
+                                        <input type="text" name="run_info_name" value="{{ runInfo_item.run_info_name }}" {% if is_view %}disabled="disabled" {% endif %}>
+                                        <input type="hidden" name="runInfo_id" value="{% if not is_extends %}{{ runInfo_item.id }}{% endif %}" {% if is_view %}disabled="disabled" {% endif %}>
+                                    </span>
+                                    <span type="more" class="like_table">
+                                        <span>运行目录:</span>
+                                        <input type="text" name="workingDir" value="{{ runInfo_item.workingDir }}" {% if is_view %}disabled="disabled" {% endif %}>
+                                    </span>
+                                    <span type="more" class="like_table">
+                                        <span>运行参数:</span>
+                                        <input type="text" name="runParam" value="{{ runInfo_item.runParam }}" {% if is_view %}disabled="disabled" {% endif %}>
+                                    </span>
+                                    <span type="more" class="like_table">
+                                        <span>运行类型:</span>
+                                        <select name="runType" {% if is_view %}disabled="disabled"{% endif %}>
+                                            <option value="0" {% if runInfo_item.runType == 0 %}selected="selected"{% endif %}>不运行</option>
+                                            <option value="1" {% if runInfo_item.runType == 1 %}selected="selected"{% endif %}>安装时运行</option>
+                                            <option value="2" {% if runInfo_item.runType == 2 %}selected="selected"{% endif %}>主机一直运行</option>
+                                            <option value="3" {% if runInfo_item.runType == 3 %}selected="selected"{% endif %}>定时运行</option>
+                                            <option value="4" {% if runInfo_item.runType == 4 %}selected="selected"{% endif %}>一直运行</option>
+                                        </select>
+                                    </span>
+                                    <span type="more" class="like_table">
+                                        <span>定时器参数:</span>
+                                        <input type="text" name="timerParam" value="{{ runInfo_item.timerParam }}" {% if is_view %}disabled="disabled" {% endif %}>
+                                    </span>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                    {% endif %}
+                </td>
+            </tr>
+        </table>
+        {% if not  is_view %}
+            <div class="btn_line">
+                <div class="btn" id="saveBtn">保存</div>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

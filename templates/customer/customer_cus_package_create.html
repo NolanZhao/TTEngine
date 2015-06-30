@@ -1,0 +1,142 @@
+{% extends "customer_common_button.html" %}
+{% load rzrk_tags %}
+
+{% block title %}{% settings_value "MAIN_PROJECT_NAME" %}-欢迎{% endblock %}
+{% block rootJsAndCss %}
+    <style>
+        .like_table span {
+            width: 180px;
+        }
+
+        .like_table input {
+            margin-left: 10px;
+        }
+    </style>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            {% if is_edit %}
+                //编辑客户包
+                $(".inner").on("click", "#saveBtn", function () {
+                    //获取参数
+                    var remark = $("#remark").val();
+                    remark = remark == '请填写备注' ? '' : remark;
+                    var cus_package_id = '{{ customer_package.id }}';
+
+                    var portal_upgrade_sql = $('#portal_upgrade_sql').val();
+
+                    var result = {
+                        'cus_package_id': cus_package_id,
+                        'portal_upgrade_sql': portal_upgrade_sql,
+                        'remark': remark
+                    };
+
+                    var json = JSON.stringify(result);
+                    $.post('/customer/cus_package_edit/', {json: json}, function (resp) {
+                        if (resp.success) {
+                            dialog_success('', resp.error, function () {
+                                window.location.href = '/customer/package/{{ customer.id }}/';
+                            });
+                        } else {
+                            dialog_error('', resp.error);
+                        }
+                    }, 'json');
+                });
+            {% else %}
+                //创建客户包
+                $(".inner").on("click", "#saveBtn", function () {
+                    //获取参数
+                    var remark = $("#remark").val();
+                    remark = remark == '请填写备注' ? '' : remark;
+
+                    var portal_package = $('#portal_package').val();
+                    var server_package = $('#server_package').val();
+                    var portal_upgrade_sql = $('#portal_upgrade_sql').val();
+
+                    var result = {
+                        'cus_id': '{{ customer.id }}',
+                        'portal_package': portal_package,
+                        'server_package': server_package.split(','),
+                        'portal_upgrade_sql': portal_upgrade_sql,
+                        'remark': remark
+                    };
+
+                    var json = JSON.stringify(result);
+                    $.post('/customer/cus_package_create/', {json: json}, function (resp) {
+                        if (resp.success) {
+                            dialog_success('', resp.error, function () {
+                                window.location.href = '/customer/package/{{ customer.id }}/';
+                            });
+                        } else {
+                            dialog_error('', resp.error);
+                        }
+                    }, 'json');
+                });
+            {% endif %}
+        });
+    </script>
+{% endblock %}
+        {% block title_1 %}
+        <span style="float: left"><span class="cus_name" value="{{ customer.id }}">{{ customer.name }}</span> - {% if is_edit %}编辑{% else %}创建{% endif %}客户包</span>
+        {% endblock %}
+        {% block content %}
+            <tr>
+                <th style="width: 150px;">客户名称:</th>
+                <td>{{ customer.name }}</td>
+            </tr>
+            <tr>
+                <th>机器列表:</th>
+                <td>
+                    {% for machine in machines %}
+                        <span style="border: 1px solid gray">{{ machine.name }}</span>
+                        <br/>
+                    {% endfor %}
+                </td>
+            </tr>
+            <tr>
+                <th>Portal包:</th>
+                <td>
+                    {% if is_edit %}
+                        {{ customer_package.portal_package.svn_url }}:{{ customer_package.portal_package.svn_version }}
+                    {% else %}
+                        <select id="portal_package" style="width: 500px;">
+                            {% for package in portal_packages %}
+                                <option value="{{ package.id }}">{{ package.svn_version }} : [{{ package.get_branch_tag }}]</option>
+                            {% endfor %}
+                        </select>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <th>Server包:</th>
+                <td>
+                    {% if is_edit %}
+                        {% for package in customer_package.machine_packages %}
+                            {{ forloop.counter }}: [{{ package.version }} - {{ package.create_time|date:'Y-m-d H:i:s' }}]<br>
+                        {% endfor %}
+                    {% else %}
+                        <select id="server_package" style="width: 1000px;">
+                            {% for package_arr in install_package_page %}
+                                <option value="{% for item in package_arr %}{{ item.id }}{% if not forloop.last %},{% endif %}{% endfor %}">{% for package in package_arr %}[{{ package.version }}]{% endfor %} - {{ package_arr.0.create_time|date:'Y-m-d H:i:s' }}</option>
+                            {% endfor %}
+                        </select>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <th>升级脚本:</th>
+                <td>
+                    <textarea id="portal_upgrade_sql" style="width: 100%;height: 200px">{% if customer_package.portal_upgrade_sql %}{{ customer_package.portal_upgrade_sql }}{% endif %}</textarea>
+                </td>
+            </tr>
+            <tr>
+                <th>备注:</th>
+                <td>
+                    <textarea id="remark" style="width: 100%;height: 200px">{% if is_edit %}{{ customer_package.remark }}{% else %}请填写备注{% endif %}</textarea>
+                </td>
+            </tr>
+            {% endblock %}
+{% block floorcontent %}
+        <div class="btn_line">
+            <div class="btn" id="saveBtn">{% if is_edit %}保存{% else %}创建{% endif %}客户包</div>
+        </div>
+   {% endblock %}

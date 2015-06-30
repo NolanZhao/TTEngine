@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/svn/svnrepos/!svn/ver/185069/server5/deploy/trunk/TTEngine/portal
+END
+views.py
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svn/svnrepos/!svn/ver/185069/server5/deploy/trunk/TTEngine/portal/views.py
+END
+__init__.py
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svn/svnrepos/!svn/ver/167979/server5/deploy/trunk/TTEngine/portal/__init__.py
+END
+models.py
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svn/svnrepos/!svn/ver/185069/server5/deploy/trunk/TTEngine/portal/models.py
+END
+urls.py
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svn/svnrepos/!svn/ver/185069/server5/deploy/trunk/TTEngine/portal/urls.py
+END

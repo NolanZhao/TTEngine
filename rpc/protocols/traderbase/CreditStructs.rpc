@@ -1,0 +1,117 @@
+﻿
+Namespace = ttservice
+ServiceName = CreditStructs
+Includes = (
+    idata/IDataBson.h,
+	Protocol/rpc_ExtraEnums.h,
+    Protocol/rpc_Structs.h    idata/IDataCreator.h,
+)
+
+CppIncludes = (    idata/IDataCreator.h,
+    boost/assign/list_of.hpp,
+)
+
+# 格式说明 :
+# fieldTag : fieldType [= defaultValue] | index | name | isKey||; [// comment]
+# 如:
+# m_nPlatformID : #i = 5 | 1 | 平台号 |1 ||;//注释
+###################################################################################################################################################
+########################################################    以下是通用结构   ######################################################################
+###################################################################################################################################################
+
+#标的描述
+CStkSubjects : (
+    m_nPlatformID : #i = 0|  | name=平台号 | isKey=iskey|precision=2|flag= |invisible=1 | property= | func= ; // 目前主要用于区别不同的行情, 根据此来选择对应行情
+    m_strBrokerID : #s| |name=经纪公司编号 | isKey =iskey | precision = | flag =  | invisible=1| property= | func= ;
+    m_strBrokerName : #S| |name=证券公司,期货公司,经纪公司,证券公司 | isKey = | precision = | flag =  | invisible= | property= | func= ;
+	m_strExchangeID:#S | |name=交易所 | isKey =1 | precision = | flag =  | invisible=  | property= | func= ;
+	m_strInstrumentID:#S | |name=证券代码 | isKey =1 | precision = | flag =  | invisible=  | property= | func= ;
+	m_strInstrumentName:#S | |name=股票名称 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	m_dSloRatio:#d | |name=融券保证金比例 | isKey = | precision =2 | flag =  | invisible=  | property= | func= ;
+	m_eSloStatus:EXTSubjectsStatus=SUBJECTS_STATUS_NOT | |name=融券状态| isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	m_nEnableAmount:#i | |name=融券可融数量 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	m_dFinRatio:#d | |name=融资保证金比例 | isKey = | precision =2 | flag =  | invisible=  | property= | func= ;
+	m_eFinStatus:EXTSubjectsStatus=SUBJECTS_STATUS_NOT | |name=融资状态 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	m_dAssureRatio:#d=1.0 | |name=担保品折算比例 | isKey = | precision =2 | flag =  | invisible=  | property= | func= ;
+	m_eAssureStatus:EXTSubjectsStatus=SUBJECTS_STATUS_NOT | |name=是否可做担保 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	m_dFinRate:#d=0 | |name=融资日利率 | isKey = | precision =8 | flag =  | invisible=  | property= | func= ;
+	m_dSloRate:#d=0 | |name=融券日利率 | isKey = | precision =8 | flag =  | invisible=  | property= | func= ;
+	m_dFinPenaltyRate:#d=0 | |name=融资日罚息利率 | isKey = | precision =8 | flag =  | invisible=  | property= | func= ;
+	m_dSloPenaltyRate:#d=0 | |name=融券日罚息利率 | isKey = | precision =8 | flag =  | invisible=  | property= | func= ;
+	m_strAccountID:#s| |name=资金账号,账号,账号,资金账号| isKey =iskey | precision = | flag =  | invisible=  | property= | func=;
+){ptr}
+
+#合约
+CStkCompacts:(
+    m_accountInfo:CAccountInfoPtr| |name= | isKey =1 | precision = | flag =  | invisible=  | property= | func= ;
+	m_strExchangeID:#S | |name=交易所 | isKey =1 | precision = | flag =  | invisible=  | property= | func= ;
+	m_strInstrumentID:#S | |name=证券代码 | isKey =1 | precision = | flag =  | invisible=  | property= | func= ;
+	m_strExchangeName:#S | |name=交易所名称 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	m_strInstrumentName:#S | |name=股票名称 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	m_nOpenDate:#i | |name=合约开仓日期 | isKey =1 | precision = | flag =  | invisible=  | property= | func= ;
+	m_strCompactId:#S | |name=合约编号 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	m_dCrdtRatio:#d | |name=融资融券保证金比例 | isKey = | precision =2 | flag =  | invisible=  | property= | func= ;
+	m_strEntrustNo:#s | |name=委托编号 | isKey =1 | precision = | flag =  | invisible=  | property= | func= ;
+	m_dEntrustPrice:#d | |name=委托价格 | isKey = | precision =3 | flag =  | invisible=  | property= | func= ;
+	m_nEntrustVol:#i | |name=委托数量 | isKey = | precision = | flag =  | invisible=  | property=[SUMSTAT] | func= ;
+	m_nBusinessVol:#i | |name=合约开仓数量 | isKey = | precision = | flag =  | invisible=  | property=[SUMSTAT] | func= ;
+	m_dBusinessBalance:#d | |name=合约开仓金额 | isKey = | precision =2 | flag =  | invisible=  | property=[SUMSTAT] | func= ;
+	m_dBusinessFare:#d | |name=合约开仓费用 | isKey = | precision =2 | flag =  | invisible=  | property=[SUMSTAT] | func= ;
+	m_eCompactType:EXTCompactType | |name=合约类型 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	m_eCompactStatus:EXTCompactStatus | |name=合约状态 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	m_dRealCompactBalance:#d | |name=未还合约金额 | isKey = | precision =2 | flag =  | invisible=  | property=[SUMSTAT] | func= ;
+	m_nRealCompactVol:#i | |name=未还合约数量 | isKey = | precision = | flag =  | invisible=  | property=[SUMSTAT] | func= ;
+	m_dRealCompactFare:#d | |name=未还合约费用 | isKey = | precision =2 | flag =  | invisible=  | property=[SUMSTAT] | func= ;
+	m_dRealCompactInterest:#d | |name=未还合约利息 | isKey = | precision =2 | flag =  | invisible=  | property=[SUMSTAT] | func= ;
+	m_dRepaidInterest:#d | |name=已还利息 | isKey = | precision =2 | flag =  | invisible=  | property=[SUMSTAT] | func= ;
+	m_nRepaidVol:#i | |name=已还数量 | isKey = | precision = | flag =  | invisible=  | property=[SUMSTAT] | func= ;
+	m_dRepaidBalance:#d | |name=已还金额 | isKey = | precision =2 | flag =  | invisible=  | property=[SUMSTAT] | func= ;
+	m_dCompactInterest:#d | |name=合约总利息 | isKey = | precision =2 | flag =  | invisible=  | property=[SUMSTAT] | func= ;
+	m_dUsedBailBalance:#d | |name=占用保证金 | isKey = | precision =2 | flag =  | invisible=  | property=[SUMSTAT] | func= ;
+	m_dYearRate:#d | |name=合约年利率 | isKey = | precision =4 | flag =  | invisible=  | property= | func= ;
+	m_nRetEndDate:#i | |name=归还截止日 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	m_strDateClear:#S | |name=了结日期 | isKey = | precision = | flag =  | invisible=  | property= | func= ;
+	m_strPositionStr:#S | |name=定位串 | isKey = | precision = | flag =  | invisible=1  | property= | func= ;
+	m_xtTag:CXtOrderTagPtr| |name=迅投标签 | isKey = | precision = | flag =  | invisible=1  | property= | func= ; // 迅投标签
+	m_dPrice:#d | |name=最新价 | isKey = | precision = | flag =  | invisible=1  | property= | func= ;
+	m_nOpenTime:#i | |name=合约开仓时间 | isKey = | precision = | flag =  | invisible=1  | property= | func= ;//开仓的时间，不展示，部分券商可能用的上
+	m_nCancelVol:#i=0 | |name=合约撤单数量 | isKey = | precision = | flag =  | invisible=1  | property= | func= ;//合约对应的委托的撤单数量
+	m_nOrderPriceType:EBrokerPriceType| |name=报价类型 | isKey = | precision = | flag =  | invisible=1 | property= | func= ; //类型，例如市价单 限价单
+	m_nOffsetFlag:EOffset_Flag_Type| |name=操作,开平,买卖,操作 | isKey = | precision = | flag =  | invisible=1 | property= | func= ;
+){ptr}
+
+#资金
+CCreditAccountDetail | CAccountDetail:(
+	m_dFundAsset:#d | |name=现金资产 | isKey = | precision = | flag =  | invisible=1  | property= | func= ;//现金资产可不是可用资金
+	m_dAssureAsset:#d | |name=净资产 | isKey = | precision =2 | flag =  | invisible=  | property=[SUMSTAT] | func= ;
+	m_dTotalDebit:#d | |name=总负债 | isKey = | precision =2 | flag =  | invisible=  | property=[SUMSTAT] | func= ;
+	m_dPerAssurescaleValue:#d | |name=个人维持担保比例 | isKey = | precision =2 | flag =FDF_PERCENTAGE  | invisible=  | property= | func= ;
+	m_dEnableBailBalance:#d | |name=可用保证金 | isKey = | precision =2 | flag =  | invisible=  | property=[SUMSTAT] | func= ;
+	m_dUsedBailBalance:#d | |name=已用保证金 | isKey = | precision =2 | flag =  | invisible=  | property=[SUMSTAT] | func= ;
+	m_dAssureEnbuyBalance:#d | |name=可买担保品资金 | isKey = | precision =2 | flag =  | invisible=  | property=[SUMSTAT] | func= ;
+	m_dFinEnbuyBalance:#d | |name=可买标的券资金 | isKey = | precision =2 | flag =  | invisible=  | property=[SUMSTAT] | func= ;
+	m_dSloEnrepaidBalance:#d | |name=可还券资金 | isKey = | precision =2 | flag =  | invisible=  | property=[SUMSTAT] | func= ;
+	m_dFinEnrepaidBalance:#d | |name=可还款资金 | isKey = | precision =2 | flag =  | invisible=  | property=[SUMSTAT] | func= ;
+	m_dFinMaxQuota:#d | |name=融资授信额度 | isKey = | precision =2 | flag =  | invisible=  | property=[SUMSTAT] | func= ;
+	m_dFinEnableQuota:#d | |name=融资可用额度 | isKey = | precision =2 | flag =  | invisible=  | property=[SUMSTAT] | func= ;
+	m_dFinUsedQuota:#d | |name=融资已用额度 | isKey = | precision =2 | flag =  | invisible=  | property=[SUMSTAT] | func= ;
+	m_dFinUsedBail:#d | |name=融资已用保证金额 | isKey = | precision =2 | flag =  | invisible=  | property=[SUMSTAT] | func= ;
+	m_dFinCompactBalance:#d | |name=融资合约金额 | isKey = | precision =2 | flag =  | invisible=  | property=[SUMSTAT] | func= ;
+	m_dFinCompactFare:#d | |name=融资合约费用 | isKey = | precision =2 | flag =  | invisible=  | property=[SUMSTAT] | func= ;
+	m_dFinCompactInterest:#d | |name=融资合约利息 | isKey = | precision =2 | flag =  | invisible=  | property=[SUMSTAT] | func= ;
+	m_dFinMarketValue:#d | |name=融资市值 | isKey = | precision =2 | flag =  | invisible=  | property=[SUMSTAT] | func= ;
+	m_dFinIncome:#d | |name=融资合约盈亏 | isKey = | precision =2 | flag =  | invisible=  | property=[SUMSTAT] | func=[getColor] ;
+	m_dSloMaxQuota:#d | |name=融券授信额度 | isKey = | precision =2 | flag =  | invisible=  | property=[SUMSTAT] | func= ;
+	m_dSloEnableQuota:#d | |name=融券可用额度 | isKey = | precision =2 | flag =  | invisible=  | property=[SUMSTAT] | func= ;
+	m_dSloUsedQuota:#d | |name=融券已用额度 | isKey = | precision =2 | flag =  | invisible=  | property=[SUMSTAT] | func= ;
+	m_dSloUsedBail:#d | |name=融券已用保证金额 | isKey = | precision =2 | flag =  | invisible=  | property=[SUMSTAT] | func= ;
+	m_dSloCompactBalance:#d | |name=融券合约金额 | isKey = | precision =2 | flag =  | invisible=  | property=[SUMSTAT] | func= ;
+	m_dSloCompactFare:#d | |name=融券合约费用 | isKey = | precision =2 | flag =  | invisible=  | property=[SUMSTAT] | func= ;
+	m_dSloCompactInterest:#d | |name=融券合约利息 | isKey = | precision =2 | flag =  | invisible=  | property=[SUMSTAT] | func= ;
+	m_dSloMarketValue:#d | |name=融券市值 | isKey = | precision =2 | flag =  | invisible=  | property=[SUMSTAT] | func= ;
+	m_dSloIncome:#d | |name=融券合约盈亏 | isKey = | precision =2 | flag =  | invisible=  | property=[SUMSTAT] | func=[getColor] ;
+	m_dOtherFare:#d=0 | |name=其它费用 | isKey = | precision =2 | flag =  | invisible=  | property=[SUMSTAT] | func= ;
+	m_dUnderlyMarketValue:#d | |name=标的证券市值 | isKey = | precision =2 | flag =  | invisible=  | property=[SUMSTAT] | func= ;
+	m_dFinEnableBalance :#d | |name=可融资金额 | isKey = | precision =2 | flag =  | invisible=  | property=[SUMSTAT] | func= ;
+	m_dDiffEnableBailBalance:#d=0 | |name=可用保证金调整值 | isKey = | precision =3 | flag =  | invisible=1  | property= | func= ;
+){ptr, lua}

@@ -1,0 +1,356 @@
+﻿Namespace = ttservice
+ServiceName = ExtraEnums
+Includes = (  
+    lua/lua.hpp
+)
+
+###################################################################################################################################################
+########################################################    以下是通用枚举   ######################################################################
+###################################################################################################################################################
+
+enum_EItemProperty : (
+    TIME_TEXT : 0;
+    SUMSTAT : 1;
+    ALIGN_LEFT : 2;
+    ALIGN_CENTER : 3;
+    ALIGN_RIGHT : 4;
+    TIMETAG : 5; // 把timeNULL的时间转成xxx年x月x日11:22:33字样
+    FLASH_CHANGE : 6;	// 数值变化闪烁背景提示
+    DISPLAY_LIMIT_ZERO   : 7;   // 限制某列不得显示小于0的数值，如果小于0，则显示0，注意，这只影响显示，对实际的数据不做任何改动
+)
+
+enum_EXTOrderTagProperty : (
+    NORMAL    : 0;
+    STOP_LOSS : 1;
+)
+
+enum_EXTPlatForm : (
+    PLATFORM_ZTSP    : 10001;//中投实盘
+    PLATFORM_ZTMN    : 11001;//中投模拟
+    PLATFORM_ZJSP    : 10002;//中金实盘
+    PLATFORM_CJSP    : 10004;//长江实盘
+    PLATFORM_DFSP    : 10003;//东方实盘
+    PLATFORM_DFMN    : 11003;//东方模拟
+    PLATFORM_ZXSP    : 10005;//中信实盘
+    PLATFORM_ZXMN    : 11005;//中信模拟
+    PLATFORM_QLSP    : 10006;//齐鲁实盘
+    PLATFORM_HUATAISP    : 10007;//华泰实盘
+    PLATFORM_GXSP    : 10008;//国信实盘
+    PLATFORM_XTGPMN  : 11009;//迅投自有股票
+    PLATFORM_SWSP    : 10010;//申银万国实盘
+    PLATFORM_SWMN    : 11010;//申银万国模拟
+    PLATFORM_GTSP    : 10011;//国泰君安实盘
+    PLATFORM_UFXSP   : 10012;//UFX实盘
+    PLATFORM_UFXMN   : 11012;//UFX模拟
+    PLATFORM_GZSP    : 10013;//广州证券实盘
+    PLATFORM_GZMN    : 11013;//广州证券模拟
+    PLATFORM_GDSP    : 10014;//光大证券实盘
+    PLATFORM_GDMN    : 11014;//光大证券模拟
+    PLATFORM_SXSP    : 10015;//山西证券实盘
+    PLATFORM_SXMN    : 11015;//山西证券模拟
+    PLATFORM_HAITONGSP    : 10016;//海通证券新API实盘
+    PLATFORM_HAITONGMN    : 11016;//海通证券新API模拟  
+    PLATFORM_HAITONGSPXSP : 10017;//海通证券SPX接口实盘
+    PLATFORM_HAITONGSPXMN : 11017;//海通证券SPX接口模拟 
+    PLATFORM_YHSP    : 10018;//银河证券实盘
+    PLATFORM_YHMN    : 11018;//银河证券模拟           
+    PLATFORM_XTGJHQ  : 10000;//迅投高级行情
+    PLATFORM_CTPSP   : 20001;//华海期货实盘
+    PLATFORM_CTPMN   : 21001;//华海期货模拟    
+    PLATFORM_HHSP    : 20002;//华海期货实盘
+    PLATFORM_HHMN    : 21002;//华海期货模拟
+    PLATFORM_XTXHMN  : 21009;//迅投自有期货
+)
+
+enum_EXTQueryMode : (
+    QUERYMODE_ALL		       : 0;//全市场
+    QUERYMODE_FOR_EACH_MARKET  : 1;//分市场查询
+    QUERYMODE_ONLY_START	   : 2;//只在启动的时候查询一次
+)
+
+enum_EXTSubjectsStatus : (
+    SUBJECTS_STATUS_NORMAL|正常 : 48;//正常
+    SUBJECTS_STATUS_PAUSE|暂停 : 49;//暂停
+    SUBJECTS_STATUS_NOT|非标的 : -1; //非标的
+)
+
+enum_EXTCompactType : (
+	COMPACT_TYPE_ALL : 32;//不限制
+    COMPACT_TYPE_FIN : 48;//融资
+    COMPACT_TYPE_SLO : 49;//融券
+)
+
+enum_EXTCompactStatus : (
+	COMPACT_STATUS_ALL    :32;//不限制
+    COMPACT_STATUS_UNDONE : 48;//未归还
+    COMPACT_STATUS_PART_DONE : 49;//部分归还
+    COMPACT_STATUS_DONE : 50;//已归还
+    COMPACT_STATUS_DONE_BY_SELF : 51;//自行了结
+    COMPACT_STATUS_DONE_BY_HAND : 52;//手工了结
+    COMPACT_STATUS_NOT_DEBT : 53;//未形成负债
+)
+
+enum_EXTSMTQueryMode : (
+    QUERY_SMT_MODE_DETAIL : 48;//明细
+    QUERY_SMT_MODE_STATISTICS : 49;//汇总
+)
+
+enum_EXTSortDirection : (
+    SORT_DIRECTION_ASC : 48;//正序
+    SORT_DIRECTION_DESC : 49;//倒序
+)
+
+enum_EXTRealStatus : (
+    REAL_STATUS_BIZ : 48;//成交
+    REAL_STATUS_JUNK : 50;//废单
+    REAL_STATUS_CONFIRM : 52;//确认
+)
+
+enum_EXTCrdtrateKind : (
+	CREDTRATE_KIND_FIN : 49;//融资利率
+	CREDTRATE_KIND_SLO : 50;//融券利率
+	CREDTRATE_KIND_FIN_PENALTY : 51;//融资罚息利率
+	CREDTRATE_KIND_SLO_PENALTY : 52;//融券罚息利率
+)
+
+enum_EXTStkBrokerError : (
+    ERR_SUCC                   : 0;    // 成功
+    ERR_CONNECTION             : 10;   // 连接错误
+    ERR_INVALID_DATA           : 11;   // 无效数据
+    ERR_FUNC_UNDEF             : 12;   // 未定义功能，尚不支持 
+    ERR_PROTOCOL_CONVERT       : 13;   // 协议转换错误
+    ERR_SESSION_INEXIST        : 14;   // 会话不存在
+    ERR_NOT_LOGIN              : 15;   // 账号未登录
+    ERR_DISCONNECTED_SECU      : 16;   // 至券商连接断开
+    ERR_INVALID_PARAM          : 17;   // 无效参数，解析有误
+    ERR_COMMUNICATION		   : 101;  // 通讯错误
+    ERR_NOT_CHECK_IN           : 110;  // 尚未签入系统
+    ERR_NO_SUBSEQUENT_PACK     : 111;  // 无后续数据包
+    ERR_LOGIN_FAILED           : 301;  // 帐户登录失败
+    ERR_ACC_STATUS_INVALID     : 302;  // 您的帐户状态不正常
+    ERR_CARD_INEXIST           : 303;  // 磁卡号不存在
+    ERR_SECU_ACC_INEXIST       : 304;  // 股东代码不存在
+    ERR_FUND_ACC_INEXIST       : 305;  // 资产帐号不存在
+    ERR_USER_CODE_INEXIST      : 306;  // 用户代码不存在
+    ERR_MARKET_INEXIST         : 307;  // 交易市场不存在
+    ERR_MOD_PWD_FAILED         : 308;  // 修改密码失败
+    ERR_PASSWORD               : 309;  // 密码错误
+    ERR_OPER_FAILED            : 310;  // 操作失败
+    ERR_EXT_INST_INEXIST       : 311;  // 外部机构不存在
+    ERR_BANK_PWD               : 312;  // 银行密码错
+    ERR_PWD_INVALID            : 313;  // 密码有误
+    ERR_NO_AUTHORITY           : 314;  // 无此权限
+    ERR_ACCT_INEXIST           : 315;  // 无此账号，通用账号
+    ERR_SECU_INEXIST           : 401;  // 此股票不存在
+    ERR_TRADE_UNDO             : 402;  // 您未作指定交易
+    ERR_INVALID_ENTRUST_TYPE   : 403;  // 此股不能进行此类委托
+    ERR_ENTRUST_FAILED         : 404;  // 委托失败特别的恒生系的所有委托失败都会到这个错误，包括未做指定
+    ERR_INSUFF_ENBALE_FUND     : 405;  // 可用金额不足
+    ERR_INSUFF_SECU_VOL        : 406;  // 股票余量不足
+    ERR_STOCK_SUSPENDED        : 407;  // 股票停牌
+    ERR_MARKET_CLOSED          : 408;  // 已闭市
+    ERR_INVALID_PRICE          : 409;  // 委托价格超过涨跌停范围
+    ERR_ORDER_NOT_FOUND        : 420;  // 无此委托
+    ERR_NO_CANCEL              : 421;  // 此委托不能撤单
+    ERR_ORDER_CANCELD          : 422;  // 此委托已撤单
+    ERR_NO_RECORDS             : 501;  // 无查询结果
+    ERR_QUERY_FAILED           : 502;  // 查询失败
+    ERR_TRSF_NOT_OPEN          : 601;  // 未开通银行转帐业务
+    ERR_BANK_TRST_NOT_OPEN     : 602;  // 未开通此银行转帐业务
+    ERR_BANK_WITHOUT_TRSF      : 603;  // 该银行尚未开通该项业务
+    ERR_BANK_INEXIST           : 605;  // 银行不存在
+    ERR_TRSF_FAILED            : 604;  // 转帐失败
+    ERR_INVEST_NOT_OPEN        : 701;  // 未开通存折炒股业务
+    ERR_RESET_COST_FAILED      : 801;  // 重置成本失败
+    ERR_OTHERS                 : 999;  // 其它错误    
+)
+
+enum_EXTRcCategoryID : (
+
+    XT_RCC_SYSTEM_CODE_ALL: 1;  //所有证券和期货
+
+    XT_RCC_SYSTEM_CODE_SECURITIES_START: 1001;
+    XT_RCC_SYSTEM_CODE_SECURITIES_ALL: 1001; //证券
+
+    XT_RCC_SYSTEM_CODE_SECURITIES_A;        //沪深A股
+    XT_RCC_SYSTEM_CODE_SECURITIES_SH_A;     //上海A
+    XT_RCC_SYSTEM_CODE_SECURITIES_SZ_A;     //深圳A
+    XT_RCC_SYSTEM_CODE_SECURITIES_SZ_ZB;    //深圳主板
+    XT_RCC_SYSTEM_CODE_SECURITIES_SZ_ZXB;   //深圳中小板
+    XT_RCC_SYSTEM_CODE_SECURITIES_SZ_CYB;   //深圳创业板
+    
+    XT_RCC_SYSTEM_CODE_SECURITIES_B;        //沪深B股
+    XT_RCC_SYSTEM_CODE_SECURITIES_SH_B;     //上海B
+    XT_RCC_SYSTEM_CODE_SECURITIES_SZ_B;     //深圳B
+
+    XT_RCC_SYSTEM_CODE_SECURITIES_ST;       //ST股
+    XT_RCC_SYSTEM_CODE_SECURITIES_7ST;      //*ST股
+    XT_RCC_SYSTEM_CODE_SECURITIES_S;        //S股
+    XT_RCC_SYSTEM_CODE_SECURITIES_SST;      //SST股
+    XT_RCC_SYSTEM_CODE_SECURITIES_S7ST;     //S*ST股
+
+    XT_RCC_SYSTEM_CODE_SECURITIES_BOND;     //付息国债
+    XT_RCC_SYSTEM_CODE_SECURITIES_BOND_SH;  //上海付息国债
+    XT_RCC_SYSTEM_CODE_SECURITIES_BOND_SZ;  //深圳付息国债
+    
+    XT_RCC_SYSTEM_CODE_SECURITIES_DISCOUNT_BOND;    //贴现国债
+    XT_RCC_SYSTEM_CODE_SECURITIES_DISCOUNT_BOND_SH; //上海贴现国债
+    XT_RCC_SYSTEM_CODE_SECURITIES_DISCOUNT_BOND_SZ; //深圳贴现国债
+    
+    XT_RCC_SYSTEM_CODE_SECURITIES_STD_BOND;     //标准券，沪深的国债逆回购交易完成后，产生的持仓统一叫标准券，唯独其交易代码和持仓代码不一致
+    XT_RCC_SYSTEM_CODE_SECURITIES_STD_BOND_SH;  //上海标准券，沪深的国债逆回购交易完成后，产生的持仓统一叫标准券，唯独其交易代码和持仓代码不一致
+    XT_RCC_SYSTEM_CODE_SECURITIES_STD_BOND_SZ;  //深圳标准券，沪深的国债逆回购交易完成后，产生的持仓统一叫标准券，唯独其交易代码和持仓代码不一致
+
+    XT_RCC_SYSTEM_CODE_SECURITIES_DFZ;      //地方债
+    XT_RCC_SYSTEM_CODE_SECURITIES_DFZ_SH;   //上海地方债
+    XT_RCC_SYSTEM_CODE_SECURITIES_DFZ_SZ;   //深圳地方债
+
+    XT_RCC_SYSTEM_CODE_SECURITIES_QYZ;      //企业债
+    XT_RCC_SYSTEM_CODE_SECURITIES_QYZ_SH;   //上海企业债
+    XT_RCC_SYSTEM_CODE_SECURITIES_QYZ_SZ;   //深圳企业债
+    
+    XT_RCC_SYSTEM_CODE_SECURITIES_GSZ;      //公司债
+    XT_RCC_SYSTEM_CODE_SECURITIES_GSZ_SH;   //上海公司债
+    XT_RCC_SYSTEM_CODE_SECURITIES_GSZ_SZ;   //深圳公司债
+    
+    XT_RCC_SYSTEM_CODE_SECURITIES_SMZ;      //私募债
+    
+    XT_RCC_SYSTEM_CODE_SECURITIES_KZZ;      //可转债
+    XT_RCC_SYSTEM_CODE_SECURITIES_KZZ_SH;   //上海可转债
+    XT_RCC_SYSTEM_CODE_SECURITIES_KZZ_SZ;   //深圳可转债
+    
+    XT_RCC_SYSTEM_CODE_SECURITIES_FLZ;      //分离债
+    XT_RCC_SYSTEM_CODE_SECURITIES_FLZ_SH;   //上海分离债
+    XT_RCC_SYSTEM_CODE_SECURITIES_FLZ_SZ;   //深圳分离债
+    
+    XT_RCC_SYSTEM_CODE_SECURITIES_ZHG;      //债券回购
+    XT_RCC_SYSTEM_CODE_SECURITIES_ZHG_SH;   //上海债券回购
+    XT_RCC_SYSTEM_CODE_SECURITIES_ZHG_SZ;   //深圳债券回购
+    
+    XT_RCC_SYSTEM_CODE_SECURITIES_YEAR_ZFZ; //一年内到期政府债
+    XT_RCC_SYSTEM_CODE_SECURITIES_YEAR_ZFZ_SH;  //上海一年内到期政府债
+    XT_RCC_SYSTEM_CODE_SECURITIES_YEAR_ZFZ_SZ;  //深圳一年内到期政府债
+    
+    XT_RCC_SYSTEM_CODE_SECURITIES_FBSJJ;    //封闭式基金
+    XT_RCC_SYSTEM_CODE_SECURITIES_FBSJJ_SH; //上海封闭式基金
+    XT_RCC_SYSTEM_CODE_SECURITIES_FBSJJ_SZ; //深圳封闭式基金
+    
+    XT_RCC_SYSTEM_CODE_SECURITIES_ETF;      //ETF
+    XT_RCC_SYSTEM_CODE_SECURITIES_ETF_SH;   //上海ETF
+    XT_RCC_SYSTEM_CODE_SECURITIES_ETF_SZ;   //深圳ETF
+    
+    XT_RCC_SYSTEM_CODE_SECURITIES_LOF;      //LOF
+    
+    XT_RCC_SYSTEM_CODE_SECURITIES_FJJJ;     //分级基金
+    
+    XT_RCC_SYSTEM_CODE_SECURITIES_FIX;      //固定收益类资产
+    XT_RCC_SYSTEM_CODE_SECURITIES_RIGHTS;   //权益类资产
+    XT_RCC_SYSTEM_CODE_SECURITIES_HBJJ;     //货币基金
+
+    XT_RCC_SYSTEM_CODE_SECURITIES_NEW;      //新股
+    
+    XT_RCC_SYSTEM_CODE_SECURITIES_KFSJJ;    //开放式基金 = 上海开放式基金 + 深圳开放式基金
+    XT_RCC_SYSTEM_CODE_SECURITIES_KFSJJ_SH; //上海开放式基金 = 上海ETF + 上海货币基金
+    XT_RCC_SYSTEM_CODE_SECURITIES_KFSJJ_SZ; //深圳开放式基金 = 深圳ETF + LOF + 分级基金
+
+    XT_RCC_SYSTEM_CODE_SECURITIES_LUA_START: 1501;             //lua Stock category ID Start Index, 补充在lua中判断的证券类型
+
+    XT_RCC_SYSTEM_CODE_FUTURES_START: 2001;
+    XT_RCC_SYSTEM_CODE_FUTURES_ALL: 2001;   //期货
+    
+    XT_RCC_SYSTEM_CODE_FUTURES_IF;  //股指期货
+    XT_RCC_SYSTEM_CODE_FUTURES_TF;  //国债期货
+    XT_RCC_SYSTEM_CODE_FUTURES_SP;  //商品期货
+    
+    XT_RCC_SYSTEM_CODE_FUTURES_CFFEX;   //中金所期货
+    XT_RCC_SYSTEM_CODE_FUTURES_SHFE;    //上期所期货
+    XT_RCC_SYSTEM_CODE_FUTURES_DCE;     //大商所期货
+    XT_RCC_SYSTEM_CODE_FUTURES_CZCE;    //郑商所期货
+    
+    XT_RCC_SYSTEM_CODE_FUTURES_MAJOR_INSTRUMENT;    // 主力合约
+    XT_RCC_SYSTEM_CODE_FUTURES_MINOR_INSTRUMENT;    // 次主力合约
+    XT_RCC_SYSTEM_CODE_FUTURES_3RD_INSTRUMENT;      // 第3主力合约
+    XT_RCC_SYSTEM_CODE_FUTURES_4TH_INSTRUMENT;      // 第4主力合约
+    XT_RCC_SYSTEM_CODE_FUTURES_5TH_INSTRUMENT;      // 第5主力合约
+    
+    XT_RCC_SYSTEM_CODE_FUTURES_WITHIN_MONTHLY_COMMODITY;    // 一个月内交割商品期货
+    
+    XT_RCC_SYSTEM_CODE_FUTURES_LUA_START: 2501;             //lua Future category ID Start Index, 补充在lua中判断的证券类型
+
+    XT_RCC_SYSTEM_SPECIAL_START : 3001;
+    XT_RCC_SYSTEM_SPECIAL_PRODUCT: 3001; //产品
+    
+    XT_RCC_CUSTOM_CATAGORY_START : 10001;     //在LUA中扩展的用户自定义的证券期货分类
+    
+    XT_RCC_3RD_PARTY_START: 20001;             //在LUA中扩展的第三方证券期货分类
+
+){lua}
+
+enum_EXTRcFieldID : (
+
+    XT_RCF_POSITION_BEGIN : 1;
+    XT_RCF_POSITION_MARKET_VALUE : 1;   // 持仓 市值
+    XT_RCF_POSITION_COST;           // 持仓 成本
+    XT_RCF_POSITION_MARGIN;         // 持仓 保证金
+    XT_RCF_POSITION_POSITION;       // 持仓 持仓量
+    XT_RCF_POSITION_MV_YESTERDAY_LONG;  // 持仓 昨多市值
+    XT_RCF_POSITION_MV_YESTERDAY_SHORT; // 持仓 昨空市值
+    XT_RCF_POSITION_MV_TODAY_LONG;  // 持仓 今多市值
+    XT_RCF_POSITION_MV_TODAY_SHORT; // 持仓 今空市值
+    XT_RCF_POSITION_MARGIN_YESTERDAY_LONG;  // 持仓 昨多保证金
+    XT_RCF_POSITION_MARGIN_YESTERDAY_SHORT; // 持仓 昨空保证金
+    XT_RCF_POSITION_MARGIN_TODAY_LONG;  // 持仓 今多保证金
+    XT_RCF_POSITION_MARGIN_TODAY_SHORT; // 持仓 今空保证金
+    XT_RCF_POSITION_MARGIN_SINGLE;      // 单边保证金
+    XT_RCF_POSITION_TODAY_DEAL_VOLUME;	// 持仓股今日成交量
+
+    XT_RCF_GROUP_BEGIN   : 1001;
+    XT_RCF_GROUP_MV_LOCK : 1001;  // 组合 锁定单价值
+    XT_RCF_GROUP_MV_HEDGE;   // 组合 跨品种套利单价值
+    XT_RCF_GROUP_MV_RENEW;   // 组合 跨期套利单价值
+    XT_RCF_GROUP_MV_LONG;    // 组合 趋势套利多单价值
+    XT_RCF_GROUP_MV_SHORT;   // 组合 趋势套利空单价值
+
+    XT_RCF_CODE_BEGIN : 2001;
+    XT_RCF_CODE_FLOAT_VOLUME : 2001; // 代码 流通股本
+    XT_RCF_CODE_TOTAL_VOLUME;                       // 代码 总股本
+    XT_RCF_CODE_TODAY_DEAL_VOLUME;                  // 今日总成交量
+
+    XT_RCF_PRODUCT_START    : 3001;
+    XT_RCF_PRODUCT_NET_VALUE : 3001;    // 产品 净值
+    XT_RCF_PRODUCT_PRE_NET_VALUE;   // 产品 昨净值
+    XT_RCF_PRODUCT_NAV;         // 产品 单位净值
+    XT_RCF_PRODUCT_PRE_NAV;     // 产品 昨单位净值
+    XT_RCF_PRODUCT_B_NAV;       // 产品 B基金单位净值
+    XT_RCF_PRODUCT_PRE_B_NAV;   // 产品 昨B基金单位净值
+    XT_RCF_PRODUCT_AVAILABLE;   // 产品 可用资金
+    XT_RCF_PRODUCT_SECURITIES_VALUE;// 产品 证券总权益
+    XT_RCF_PRODUCT_FUTURES_VALUE;   // 产品 期货总权益
+    
+){lua}
+
+enum_EXTRcLimitType : (
+    XT_RLT_SMALL;               // 限制不大于某值
+    XT_RLT_BIG;                 // 限制不大小某值
+){lua}
+
+enum_EXTRcLimitTypeEx : (
+    XT_RLT_EX_INVALID : -1;
+    XT_RLT_EX_BIGGER_THAN;
+    XT_RLT_EX_SMALLER_THAN;
+    XT_RLT_EX_BIGGER_EQUAL;
+    XT_RLT_EX_SMALLER_EQUAL;
+    XT_RLT_EX_NOT_EQUAL;
+){lua}
+
+enum_EXTAssetsRcType : (
+    XT_ASSETS_RC_TYPE_LAW;
+    XT_ASSETS_RC_TYPE_CONTRACT;
+    XT_ASSETS_RC_TYPE_OPERATION;
+){lua}
+
+enum_EXTRcIndexScope : (
+    XT_RIR_ALL;
+    XT_RIR_CODE;
+    XT_RIR_PRODUCT;
+){lua}

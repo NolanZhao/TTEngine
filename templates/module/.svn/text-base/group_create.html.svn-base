@@ -1,0 +1,54 @@
+{% extends "root.html" %}
+{% load rzrk_tags %}
+
+{% block title %}{% settings_value "MAIN_PROJECT_NAME" %}-欢迎{% endblock %}
+{% block rootJsAndCss %}
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            //保存按钮
+            $("#saveBtn").bind("click", function () {
+                var groupName = $("input[name=group_name]").val();
+                //模块文件列表
+                var result = {
+                    "groupName": groupName
+                };
+
+                var json = JSON.stringify(result);
+                var url = "/module/createGroup/";
+                //执行save操作
+                $.post(url, {json: json}, function (resp) {
+                    if (resp.success) {
+                        alert(resp.error);
+                        window.location.href = '/module/group/';
+                    } else {
+                        alert(resp.error);
+                    }
+                }, 'json');
+            });
+
+        });
+
+    </script>
+{% endblock %}
+{% block rootBody %}
+
+    <div class="inner">
+        <table class="bordered table">
+            <tr>
+                <th style="width: 150px;">分组名称</th>
+                <td>
+                    <span class="like_table">
+                        <input type="text" name="group_name" value="" {% if is_view %}disabled="disabled" {% endif %}>
+                    </span>
+                </td>
+            </tr>
+        </table>
+        {% if not  is_view %}
+            <div class="btn_line">
+                <div class="btn" id="saveBtn">保存</div>
+            </div>
+        {% endif %}
+    </div>
+
+{% endblock %}

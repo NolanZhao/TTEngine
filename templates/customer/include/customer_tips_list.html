@@ -1,0 +1,27 @@
+<div class="btn_line">
+    <div class="btn" id="addTips" style="position: fixed;margin-top: -20px;line-height: 20px" value="{{ customer.id }}">添加</div>
+</div>
+<table class="bordered table_small" type="dialog_table" style="margin-top: 10px;">
+    <tr type="head">
+        <th>内容</th>
+        <th style="width: 100px;">创建人</th>
+        <th style="width: 135px;">创建时间</th>
+        <th style="width: 195px;">操作</th>
+    </tr>
+    {% for tip in tips %}
+        <tr>
+            <td>
+                <xmp>{{ tip.content }}</xmp>
+            </td>
+            <td>{{ tip.create_user.username }}</td>
+            <td>{{ tip.create_time|date:'Y-m-d H:i:s' }}</td>
+            <td>
+                <span class="btn" cmd="tip_del" style="line-height: 20px;" value="{{ tip.id }}">删除</span>
+                <span class="btn" style="line-height: 20px;" onclick="javascript:window.open('/customer/tips/edit/?id={{ tip.id }}','_blank')">编辑</span>
+                {% if tip.file %}
+                    <span class="btn" cmd="tip_download" style="line-height: 20px;" onclick="javascript:window.open('/customer/tips/download/?id={{ tip.id }}','_self')">下载</span>
+                {% endif %}
+            </td>
+        </tr>
+    {% endfor %}
+</table>

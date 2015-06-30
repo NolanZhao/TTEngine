@@ -1,0 +1,77 @@
+{% extends "video_common.html" %}
+{% load rzrk_tags %}
+
+{% block title %}{% settings_value "MAIN_PROJECT_NAME" %}-欢迎{% endblock %}
+{% block rootJsAndCss %}
+    <style>
+
+
+    </style>
+
+    <script src="/media/js/jq/jquery-2.1.0.min.js"></script>
+    <script src="/media/js/ajaxfileupload/ajaxfileupload.js"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#videoUploadBtn").bind('click', function () {
+                window.location.href = '/demo/uploadVideo/';
+            });
+
+        });
+
+
+
+    </script>
+{% endblock %}
+{% block title_1 %}
+    <span style="float:left;"><span value="video">--*--公司培训视频--*--</span>
+    <span class="btn" id="videoUploadBtn">视频上传</span>
+{% endblock %}
+
+{% block content %}
+
+   <table style="background-color: lightyellow">
+
+    {% for video in videos %}
+            <tr style="background-color: lightskyblue">
+                <th colspan="3" style="width: 1000px; font-weight:bold; border-style: outset">{{ video.tittle }}</th>
+            </tr>
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td id="video">
+                    <div id="FlashFile">
+                        <object type="application/x-shockwave-flash" width="470px" height="403px"
+                        data="/media/js/flvplayer.swf?file=/{{ video.attachment_url }}">
+                            <param name="movie" value="/media/js/flvplayer.swf?file=/media/video/CtpServer01.flv&showfsbutton=true&autostart=true" />
+                            <param name="wmode" value="transparent" />
+                            <param name="quality" value="high" />
+                            <param name="allowfullscreen" value="true" />
+                        </object>
+                    </div>
+                </td>
+                <td id="videoTag" style="">
+                    <div>
+                        <span style="font-weight:bold">标题：</span>
+                        <span>{{ video.tittle }}</span>
+                    </div>
+
+                    <div>
+                        <span style="font-weight:bold">上传人：</span>
+                        <span>{{ video.create_user }}</span>
+                    </div>
+
+                    <div>
+                        <span style="font-weight:bold">上传时间：</span>
+                        <span>{{ video.create_time|date:'Y-m-d H:i:s' }}</span>
+                    </div>
+
+                    <div>
+                        <span style="font-weight:bold">描述：</span>
+                        <span>{{ video.description }}</span>
+                    </div>
+                </td>
+            </tr>
+    {% endfor %}
+    </table>
+
+{% endblock %}

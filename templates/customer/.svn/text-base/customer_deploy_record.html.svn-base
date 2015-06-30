@@ -1,0 +1,186 @@
+{% extends "customer_common_button.html" %}
+{% load rzrk_tags %}
+
+{% block title %}{% settings_value "MAIN_PROJECT_NAME" %}-欢迎{% endblock %}
+{% block rootJsAndCss %}
+    <style>
+    </style>
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            $("#saveBtn").bind("click", function () {
+                //获取参数
+                var cus_id = '{{ customer.id }}';
+                var portal_upgrade_sql = $('#portal_upgrade_sql').val();
+                var deploy_user = $('#deploy_user').val();
+                var start_time = $('#start_time').val();
+                var end_time = $('#end_time').val();
+                var remark = $('#remark').val();
+                var check_user = $('#check_user').val();
+                var is_checked = $('#is_checked').val();
+                var customer_package_id = $('#customer_package').val();
+                var $this = $(this);
+                var flag = $this.attr('name');
+
+                var params = {
+                    cus_id: cus_id,
+                    customer_package_id: customer_package_id,
+                    portal_upgrade_sql: portal_upgrade_sql,
+                    deploy_user: deploy_user,
+                    start_time: start_time,
+                    end_time: end_time,
+                    remark: remark,
+                    check_user:check_user,
+                    is_checked:is_checked
+                };
+
+                var json = JSON.stringify(params);
+                $.post('/customer/deploy/record/', {json: json}, function (resp) {
+                    if (resp.success) {
+                        dialog_success('', resp.error, function () {
+                             deploy_status();
+                             if (flag == 'unchecked_list'){
+                                 window.location.href = '/customer/all/deploy/record/unchecked/list/?cus_id={{ customer.id }}';
+                             }else if (flag == 'record_list'){
+                                 window.location.href = '/customer/deploy/record/list/?cus_id={{ customer.id }}';
+                             }else if(flag == 'all_record_list'){
+                                 window.location.href = '/customer/all/deploy/record/list/?cus_id={{ customer.id }}';
+                             }else if(flag == "add_record_list"){
+                                 window.location.href = '/customer/deploy/record/list/?cus_id={{ customer.id }}';
+                             }
+                        });
+                    } else {
+                        dialog_error('', resp.error);
+                    }
+                });
+            });
+
+            //客户包切换方法
+            $('#customer_package').bind('change', function () {
+                var customer_package_id = $('#customer_package').val();
+                $('span[type=customer_package_display]').hide();
+                $('#' + customer_package_id).show();
+            });
+
+            $('#customer_package').trigger('change');
+        });
+
+    function deploy_status() {
+        var res = {'cus_id': '{{customer.id}}'};
+        var params = JSON.stringify(res);
+        var url = '/customer/compare/';
+        $.get(url, {json: params}, function (resp) {
+            if (resp.success) {
+                dialog_success('', resp.error);
+            } else {
+                dialog_error('', resp.error);
+            }
+        }, 'json');
+    }
+    </script>
+{% endblock %}
+        {% block title_1 %}<span style="float: left"><span class="cus_name" value="{{ customer.id }}">{{ customer.name }}</span> - 添加升级记录</span>{% endblock %}
+         {% block content %}
+            <tr>
+                <th style="width: 150px;">客户名称:</th>
+                <td>
+                    <span>{{ customer.name }}</span> ({% if customer.is_sys %}<span style="color: red;font-weight: bolder">系统客户</span>{% else %}普通客户{% endif %})
+                    <input type="hidden" name="cus_id" id="cus_id" value="{{ customer.id }}">
+                </td>
+            </tr>
+            <tr>
+                <th>升级机器:</th>
+                <td>
+                    {% for machine in machines %}
+                        <span style="border: 1px solid gray;cursor: cell;{% if not forloop.first %}margin-left: 10px;{% endif %}">{{ machine.name }}{% if machine.type == 1 %}<span title="编译机">(编)</span>{% elif machine.type == 2 %}<span title="测试机">(测)</span>{% endif %}</span>
+                    {% endfor %}
+                </td>
+            </tr>
+            <tr>
+                <th rowspan="2">客户包</th>
+                <td>
+                    <select id="customer_package" style="width: 500px;">
+                        {% for item in packages %}
+                            <option value="{{ item.id }}">{{ item.name }} - {{ item.create_time|date:'Y-m-d H:i:s' }}</option>
+                        {% endfor %}
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    {% for item in packages %}
+                        <span id="{{ item.id }}" style="display: none" type="customer_package_display">
+                        {% for server_item in item.machine_packages %}
+                            Server包: {{ server_item.version }}
+                            <br>
+                        {% endfor %}
+                            Portal包: {{ item.portal_package.svn_url }}:{{ item.portal_package.svn_version }}
+                        <br>
+                        </span>
+                    {% endfor %}
+                </td>
+            </tr>
+            <tr>
+                <th>升级脚本</th>
+                <td>
+                    <textarea id="portal_upgrade_sql" style="width: 100%;height: 150px" >{{ portal_upgrade_sql }}</textarea>
+                </td>
+            </tr>
+            <tr>
+                <th>升级实施人员</th>
+                <td><input type="text" id="deploy_user" style="width: 500px"   value="{{ deploy_user }}"></td>
+            </tr>
+             <tr>
+                <th>是否升级检查</th>
+                <td>
+                    <select id="is_checked" style="width: 500px;">
+                       <option value="否" {% if is_checked == '否' %} selected = "is_checked" {% endif %}>否</option>
+                       <option value="是" {% if is_checked == '是' %} selected = "is_checked" {% endif %}>是</option>
+                    </select>
+                </td>
+             </tr>
+             <tr>
+                <th>升级检查人员</th>
+                <td>
+                    <select id="check_user" style="width: 500px;" >
+                        <option value="任意" {% if check_user == '任意' %} selected = "check_user" {% endif %}>任意</option>
+                        <option value="libing" {% if check_user == 'libing' %} selected = "check_user" {% endif %}>libing</option>
+                        <option value="limanli" {% if check_user == 'limanli' %} selected = "check_user" {% endif %}>limanli</option>
+                        <option value="liuchao" {% if check_user == 'liuchao' %} selected = "check_user" {% endif %}>liuchao</option>
+                        <option value="duanliangxin" {% if check_user == 'duanliangxin' %} selected = "check_user" {% endif %}>duanliangxin</option>
+                        <option value="majing" {% if check_user == 'majing' %} selected = "check_user" {% endif %}>majing</option>
+                        <option value="zhaoxu" {% if check_user == 'zhaoxu' %} selected = "check_user" {% endif %}>zhaoxu</option>
+                        <option value="duanxingxing" {% if check_user == 'duanxingxing' %} selected = "check_user" {% endif %}>duanxingxing</option>
+                        <option value="dingyiran" {% if check_user == 'dingyiran' %} selected = "check_user" {% endif %}>dingyiran</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <th>起始时间</th>
+                <td><input type="text" id="start_time" style="width: 500px" value="{{ start_time }}"></td>
+            </tr>
+            <tr>
+                <th>完成时间</th>
+                <td><input type="text" id="end_time" style="width: 500px" value="{{ end_time }}"></td>
+            </tr>
+            <tr>
+                <th>升级备注:</th>
+                <td>
+                    <textarea id="remark" style="width: 100%;height: 150px">{{ remake }}</textarea>
+                </td>
+            </tr>
+        <div class="btn_line">
+            {% if list_flag %}
+                {% if list_flag == "unchecked_list" %}
+                    <div class="btn" id="saveBtn" name="unchecked_list">保存</div>
+                {% elif list_flag == "record_list" %}
+                    <div class="btn" id="saveBtn" name="record_list">保存</div>
+                {% elif list_flag == "all_record_list" %}
+                    <div class="btn" id="saveBtn" name="all_record_list">保存</div>
+                {% endif %}
+            {% else %}
+                <div class="btn" id="saveBtn" name="add_record_list">保存</div>
+            {% endif %}
+        </div>
+  {% endblock %}
+

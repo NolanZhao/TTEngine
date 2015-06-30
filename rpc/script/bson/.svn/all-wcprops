@@ -1,0 +1,143 @@
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svn/svnrepos/!svn/ver/167575/server5/deploy/trunk/TTEngine/rpc/script/bson
+END
+time64_limits.h
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/svn/svnrepos/!svn/ver/167575/server5/deploy/trunk/TTEngine/rpc/script/bson/time64_limits.h
+END
+tz_util.py
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svn/svnrepos/!svn/ver/167575/server5/deploy/trunk/TTEngine/rpc/script/bson/tz_util.py
+END
+min_key.py
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svn/svnrepos/!svn/ver/167575/server5/deploy/trunk/TTEngine/rpc/script/bson/min_key.py
+END
+time64_config.h
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/svn/svnrepos/!svn/ver/167575/server5/deploy/trunk/TTEngine/rpc/script/bson/time64_config.h
+END
+max_key.py
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svn/svnrepos/!svn/ver/167575/server5/deploy/trunk/TTEngine/rpc/script/bson/max_key.py
+END
+__init__.py
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svn/svnrepos/!svn/ver/167575/server5/deploy/trunk/TTEngine/rpc/script/bson/__init__.py
+END
+son.py
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svn/svnrepos/!svn/ver/167575/server5/deploy/trunk/TTEngine/rpc/script/bson/son.py
+END
+encoding_helpers.c
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/svn/svnrepos/!svn/ver/167575/server5/deploy/trunk/TTEngine/rpc/script/bson/encoding_helpers.c
+END
+time64.c
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svn/svnrepos/!svn/ver/167575/server5/deploy/trunk/TTEngine/rpc/script/bson/time64.c
+END
+buffer.c
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svn/svnrepos/!svn/ver/167575/server5/deploy/trunk/TTEngine/rpc/script/bson/buffer.c
+END
+_cbsonmodule.c
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/svn/svnrepos/!svn/ver/167575/server5/deploy/trunk/TTEngine/rpc/script/bson/_cbsonmodule.c
+END
+timestamp.py
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/svn/svnrepos/!svn/ver/167575/server5/deploy/trunk/TTEngine/rpc/script/bson/timestamp.py
+END
+json_util.py
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/svn/svnrepos/!svn/ver/167575/server5/deploy/trunk/TTEngine/rpc/script/bson/json_util.py
+END
+encoding_helpers.h
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/svn/svnrepos/!svn/ver/167575/server5/deploy/trunk/TTEngine/rpc/script/bson/encoding_helpers.h
+END
+time64.h
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svn/svnrepos/!svn/ver/167575/server5/deploy/trunk/TTEngine/rpc/script/bson/time64.h
+END
+buffer.h
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svn/svnrepos/!svn/ver/167575/server5/deploy/trunk/TTEngine/rpc/script/bson/buffer.h
+END
+_cbsonmodule.h
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/svn/svnrepos/!svn/ver/167575/server5/deploy/trunk/TTEngine/rpc/script/bson/_cbsonmodule.h
+END
+code.py
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svn/svnrepos/!svn/ver/167575/server5/deploy/trunk/TTEngine/rpc/script/bson/code.py
+END
+errors.py
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svn/svnrepos/!svn/ver/167575/server5/deploy/trunk/TTEngine/rpc/script/bson/errors.py
+END
+py3compat.py
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/svn/svnrepos/!svn/ver/167575/server5/deploy/trunk/TTEngine/rpc/script/bson/py3compat.py
+END
+dbref.py
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svn/svnrepos/!svn/ver/167575/server5/deploy/trunk/TTEngine/rpc/script/bson/dbref.py
+END
+objectid.py
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svn/svnrepos/!svn/ver/167575/server5/deploy/trunk/TTEngine/rpc/script/bson/objectid.py
+END
+binary.py
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svn/svnrepos/!svn/ver/167575/server5/deploy/trunk/TTEngine/rpc/script/bson/binary.py
+END

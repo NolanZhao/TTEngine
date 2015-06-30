@@ -1,0 +1,101 @@
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svn/svnrepos/!svn/ver/167575/server5/deploy/trunk/TTEngine/rpc/protocols/idata
+END
+EqualChecker.h
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/svn/svnrepos/!svn/ver/167575/server5/deploy/trunk/TTEngine/rpc/protocols/idata/EqualChecker.h
+END
+PBCodec.h
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/svn/svnrepos/!svn/ver/167575/server5/deploy/trunk/TTEngine/rpc/protocols/idata/PBCodec.h
+END
+IDataBson.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/svn/svnrepos/!svn/ver/167575/server5/deploy/trunk/TTEngine/rpc/protocols/idata/IDataBson.cpp
+END
+IDataCreator.h
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/svn/svnrepos/!svn/ver/167575/server5/deploy/trunk/TTEngine/rpc/protocols/idata/IDataCreator.h
+END
+DataDesc.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/svn/svnrepos/!svn/ver/167575/server5/deploy/trunk/TTEngine/rpc/protocols/idata/DataDesc.cpp
+END
+IDataBson.h
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/svn/svnrepos/!svn/ver/167575/server5/deploy/trunk/TTEngine/rpc/protocols/idata/IDataBson.h
+END
+TypeManager.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/svn/svnrepos/!svn/ver/167575/server5/deploy/trunk/TTEngine/rpc/protocols/idata/TypeManager.cpp
+END
+DataDesc.h
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/svn/svnrepos/!svn/ver/167575/server5/deploy/trunk/TTEngine/rpc/protocols/idata/DataDesc.h
+END
+TypeManager.h
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/svn/svnrepos/!svn/ver/167575/server5/deploy/trunk/TTEngine/rpc/protocols/idata/TypeManager.h
+END
+IData.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/svn/svnrepos/!svn/ver/167575/server5/deploy/trunk/TTEngine/rpc/protocols/idata/IData.cpp
+END
+IDataCodec.h
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/svn/svnrepos/!svn/ver/167575/server5/deploy/trunk/TTEngine/rpc/protocols/idata/IDataCodec.h
+END
+IData.h
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svn/svnrepos/!svn/ver/167575/server5/deploy/trunk/TTEngine/rpc/protocols/idata/IData.h
+END
+Enums.rpc
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/svn/svnrepos/!svn/ver/167575/server5/deploy/trunk/TTEngine/rpc/protocols/idata/Enums.rpc
+END
+Makefile
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/svn/svnrepos/!svn/ver/167575/server5/deploy/trunk/TTEngine/rpc/protocols/idata/Makefile
+END
+IFieldParse.h
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/svn/svnrepos/!svn/ver/167575/server5/deploy/trunk/TTEngine/rpc/protocols/idata/IFieldParse.h
+END
+ExtraEnums.rpc
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/svn/svnrepos/!svn/ver/167575/server5/deploy/trunk/TTEngine/rpc/protocols/idata/ExtraEnums.rpc
+END

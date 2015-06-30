@@ -1,0 +1,167 @@
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svn/svnrepos/!svn/ver/185207/server5/deploy/trunk/TTEngine/templates/customer
+END
+customer_package.html
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/svn/svnrepos/!svn/ver/174358/server5/deploy/trunk/TTEngine/templates/customer/customer_package.html
+END
+customer_onekey_update.html
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/svn/svnrepos/!svn/ver/184027/server5/deploy/trunk/TTEngine/templates/customer/customer_onekey_update.html
+END
+customer_permission_edit.html
+K 25
+svn:wc:ra_dav:version-url
+V 108
+/svn/svnrepos/!svn/ver/179021/server5/deploy/trunk/TTEngine/templates/customer/customer_permission_edit.html
+END
+compiling_params_view.html
+K 25
+svn:wc:ra_dav:version-url
+V 105
+/svn/svnrepos/!svn/ver/167691/server5/deploy/trunk/TTEngine/templates/customer/compiling_params_view.html
+END
+customer_tips_create.html
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/svn/svnrepos/!svn/ver/172932/server5/deploy/trunk/TTEngine/templates/customer/customer_tips_create.html
+END
+customer_all_deploy_record_list_search.html
+K 25
+svn:wc:ra_dav:version-url
+V 122
+/svn/svnrepos/!svn/ver/180926/server5/deploy/trunk/TTEngine/templates/customer/customer_all_deploy_record_list_search.html
+END
+customer_create.html
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/svn/svnrepos/!svn/ver/181464/server5/deploy/trunk/TTEngine/templates/customer/customer_create.html
+END
+customer_view.html
+K 25
+svn:wc:ra_dav:version-url
+V 97
+/svn/svnrepos/!svn/ver/171350/server5/deploy/trunk/TTEngine/templates/customer/customer_view.html
+END
+customer_list.html
+K 25
+svn:wc:ra_dav:version-url
+V 97
+/svn/svnrepos/!svn/ver/185207/server5/deploy/trunk/TTEngine/templates/customer/customer_list.html
+END
+customer_remark_list.html
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/svn/svnrepos/!svn/ver/170342/server5/deploy/trunk/TTEngine/templates/customer/customer_remark_list.html
+END
+customer_list_log.html
+K 25
+svn:wc:ra_dav:version-url
+V 101
+/svn/svnrepos/!svn/ver/169007/server5/deploy/trunk/TTEngine/templates/customer/customer_list_log.html
+END
+customer_all_deploy_record_list.html
+K 25
+svn:wc:ra_dav:version-url
+V 115
+/svn/svnrepos/!svn/ver/180925/server5/deploy/trunk/TTEngine/templates/customer/customer_all_deploy_record_list.html
+END
+customer_package_create.html
+K 25
+svn:wc:ra_dav:version-url
+V 107
+/svn/svnrepos/!svn/ver/181918/server5/deploy/trunk/TTEngine/templates/customer/customer_package_create.html
+END
+customer_compile_record_list.html
+K 25
+svn:wc:ra_dav:version-url
+V 112
+/svn/svnrepos/!svn/ver/171350/server5/deploy/trunk/TTEngine/templates/customer/customer_compile_record_list.html
+END
+customer_package_download.html
+K 25
+svn:wc:ra_dav:version-url
+V 109
+/svn/svnrepos/!svn/ver/168558/server5/deploy/trunk/TTEngine/templates/customer/customer_package_download.html
+END
+customer_deploy_record_check_list.html
+K 25
+svn:wc:ra_dav:version-url
+V 117
+/svn/svnrepos/!svn/ver/180000/server5/deploy/trunk/TTEngine/templates/customer/customer_deploy_record_check_list.html
+END
+customer_permission_view.html
+K 25
+svn:wc:ra_dav:version-url
+V 108
+/svn/svnrepos/!svn/ver/169218/server5/deploy/trunk/TTEngine/templates/customer/customer_permission_view.html
+END
+customer_deploy_record_list.html
+K 25
+svn:wc:ra_dav:version-url
+V 111
+/svn/svnrepos/!svn/ver/180709/server5/deploy/trunk/TTEngine/templates/customer/customer_deploy_record_list.html
+END
+customer_package_view.html
+K 25
+svn:wc:ra_dav:version-url
+V 105
+/svn/svnrepos/!svn/ver/173474/server5/deploy/trunk/TTEngine/templates/customer/customer_package_view.html
+END
+customer_permission_setting.html
+K 25
+svn:wc:ra_dav:version-url
+V 111
+/svn/svnrepos/!svn/ver/172602/server5/deploy/trunk/TTEngine/templates/customer/customer_permission_setting.html
+END
+customer_client_compile.html
+K 25
+svn:wc:ra_dav:version-url
+V 107
+/svn/svnrepos/!svn/ver/173646/server5/deploy/trunk/TTEngine/templates/customer/customer_client_compile.html
+END
+customer_package_list.html
+K 25
+svn:wc:ra_dav:version-url
+V 105
+/svn/svnrepos/!svn/ver/184917/server5/deploy/trunk/TTEngine/templates/customer/customer_package_list.html
+END
+customer_deploy_record_check.html
+K 25
+svn:wc:ra_dav:version-url
+V 112
+/svn/svnrepos/!svn/ver/181289/server5/deploy/trunk/TTEngine/templates/customer/customer_deploy_record_check.html
+END
+customer_cus_package_create.html
+K 25
+svn:wc:ra_dav:version-url
+V 111
+/svn/svnrepos/!svn/ver/173064/server5/deploy/trunk/TTEngine/templates/customer/customer_cus_package_create.html
+END
+customer_compile.html
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/svn/svnrepos/!svn/ver/184587/server5/deploy/trunk/TTEngine/templates/customer/customer_compile.html
+END
+customer_all_deploy_unchecked_list.html
+K 25
+svn:wc:ra_dav:version-url
+V 118
+/svn/svnrepos/!svn/ver/180925/server5/deploy/trunk/TTEngine/templates/customer/customer_all_deploy_unchecked_list.html
+END
+customer_deploy_record.html
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/svn/svnrepos/!svn/ver/180759/server5/deploy/trunk/TTEngine/templates/customer/customer_deploy_record.html
+END

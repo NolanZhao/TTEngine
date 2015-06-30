@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svn/svnrepos/!svn/ver/168438/server5/deploy/trunk/TTEngine/templates/delete
+END
+customer_package_update.html
+K 25
+svn:wc:ra_dav:version-url
+V 105
+/svn/svnrepos/!svn/ver/168438/server5/deploy/trunk/TTEngine/templates/delete/customer_package_update.html
+END
+customer_package_add.html
+K 25
+svn:wc:ra_dav:version-url
+V 102
+/svn/svnrepos/!svn/ver/168438/server5/deploy/trunk/TTEngine/templates/delete/customer_package_add.html
+END
+customer_package_view.html
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/svn/svnrepos/!svn/ver/168438/server5/deploy/trunk/TTEngine/templates/delete/customer_package_view.html
+END

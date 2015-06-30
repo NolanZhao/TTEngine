@@ -1,0 +1,458 @@
+{% extends "root.html" %}
+{% load rzrk_tags %}
+
+{% block title %}{% settings_value "MAIN_PROJECT_NAME" %}-欢迎{% endblock %}
+{% block rootJsAndCss %}
+    <!-- jquery -->
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.11.2/themes/smoothness/jquery-ui.css">
+    <script src="//code.jquery.com/jquery-1.10.2.js"></script>
+    <script src="//code.jquery.com/ui/1.11.2/jquery-ui.js"></script>
+    <link rel="stylesheet" href="/resources/demos/style.css">
+
+    <style>
+         .cus_name_item {
+            color: blue;
+            text-decoration: underline;
+        }
+
+        .cus_name_item:hover {
+            background-color: #D5DDF6;
+            cursor: pointer;
+        }
+
+        .ui-autocomplete {
+            max-height: 250px;
+            overflow-y: auto;
+            overflow-x: hidden;
+            z-index:10 !important;
+            font-size:12px;
+        }
+    </style>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            //portal升级脚本查看
+            $("body").on("click", ".btn[type=portal_upgrade_sql]", function () {
+                var $this = $(this);
+                var sql = $this.attr('value');
+
+                var dialog_title = $('span[type=dialog_title]');
+
+                dialog_title.text('升级脚本');
+
+                var dialog_table = $('#dialog_table .easyDialog_text');
+                dialog_table.empty();
+                dialog_table.append(sql);
+                easyDialog.open({
+                    container: 'dialog_table',
+                    overlay: false
+                });
+            });
+            //文件列表
+            $(".inner").on("click", ".btn[cmd=file_list]", function () {
+                var $this = $(this);
+                var package_id = $this.parent().find('input[name=package_id]').val();
+
+                var url = '/customer/package_file/';
+
+                $.get(url, {packageId: package_id}, function (resp) {
+                    if (resp.success) {
+                        var data = resp.data;
+                        var dialog_title = $('span[type=dialog_title]');
+                        dialog_title.text('文件列表');
+                        var dialog_table = $('div[class=easyDialog_text]');
+                        dialog_table.empty();
+                        //初始化table
+                        var html = '';
+                        html += '<table class="bordered table_small" type="dialog_table">';
+                        html += '<tr>';
+                        html += '<th>序号</th>';
+                        html += '<th>路径</th>';
+                        html += '<th>大小</th>';
+                        html += '<th>sha1</th>';
+                        html += '<th>权限</th>';
+                        html += '<th>操作</th>';
+                        html += '</tr>';
+
+                        for (var index in data) {
+                            var data_item = data[index];
+                            html += '<tr>';
+                            html += '<td>' + (parseInt(index) + 1) + '</td>';
+                            html += '<td>' + data_item.path + '</td>';
+                            html += '<td>' + Math.round((parseInt(data_item.size) / 1024) * 100) / 100 + ' KB</td>';
+                            html += '<td>' + data_item.sha1 + '</td>';
+                            html += '<td>' + data_item.mod + '</td>';
+                            html += '<td>';
+                            html += '<span class="btn" cmd="file_download" value="' + data_item.id + '" style="line-height: 21px;">下载</span>';
+                            html += '</td>';
+                            html += '</tr>';
+                        }
+                        html += '</table>';
+
+                        dialog_table.append(html);
+                        easyDialog.open({
+                            container: 'dialog_table',
+                            overlay: false
+                        });
+                    } else {
+                        alert(resp.error);
+                    }
+                });
+            });
+
+            //文件下载
+            $("body").on("click", ".btn[cmd=file_download]", function () {
+                var $this = $(this);
+                var file_id = $this.attr('value');
+                var url = '/customer/package_file/download/?id=' + file_id;
+                window.open(url);
+            });
+
+            //分支信息
+            $(".inner").on("click", ".btn[cmd=package_branch]", function () {
+                var $this = $(this);
+                var package_id = $this.parent().find('input[name=package_id]').val();
+
+                var url = '/customer/package_branch/';
+
+                $.get(url, {packageId: package_id}, function (resp) {
+                    if (resp.success) {
+                        var data = resp.data;
+                        var dialog_title = $('span[type=dialog_title]');
+                        dialog_title.text('分支信息');
+                        var dialog_table = $('div[class=easyDialog_text]');
+                        dialog_table.empty();
+                        //初始化table
+                        var html = '';
+                        html += '<table class="bordered table_small" type="dialog_table">';
+                        html += '<tr>';
+                        html += '<th>序号</th>';
+                        html += '<th>分支</th>';
+                        html += '<th>版本号</th>';
+                        html += '</tr>';
+
+                        for (var index in data.branches) {
+                            var data_item = data.branches[index];
+                            html += '<tr>';
+                            html += '<td>' + (parseInt(index) + 1) + '</td>';
+                            html += '<td>' + data_item[0] + '</td>';
+                            html += '<td>' + data_item[1] + '</td>';
+                            html += '</tr>';
+                        }
+                        html += '</table>';
+
+                        dialog_table.append(html);
+                        easyDialog.open({
+                            container: 'dialog_table',
+                            overlay: false
+                        });
+                    } else {
+                        alert(resp.error);
+                    }
+                });
+            });
+
+
+            //删除
+            $('.inner').on('click', '.btn[cmd=delete_record]', function () {
+                var $this = $(this);
+                var id = $this.attr('value');
+
+                if (!id) {
+                    alert('升级记录ID为空!');
+                    return;
+                }
+
+                if (!confirm('确认删除该升级记录?')) {
+                    return;
+                }
+
+                var url = '/customer/deploy/record/del/';
+
+                $.post(url, {id: id}, function (resp) {
+                    if (resp.success) {
+                        $this.parent().parent().parent().remove();
+                        alert(resp.error);
+                    } else {
+                        alert(resp.error);
+                    }
+                }, 'json');
+            });
+
+            $('.inner').on('click', '.btn[cmd=delete_cus_record]', function () {
+                var $this = $(this);
+                var id = $this.attr('value');
+
+                if (!id) {
+                    alert('升级记录ID为空!');
+                    return;
+                }
+
+                if (!confirm('确认删除该升级记录?')) {
+                    return;
+                }
+
+                var url = '/customer/deploy/cus_record/del/';
+
+                $.post(url, {id: id}, function (resp) {
+                    if (resp.success) {
+                        dialog_success('', resp.error, function () {
+                            window.location.reload();
+                        });
+                    } else {
+                        dialog_error('', resp.error);
+                    }
+                }, 'json');
+            });
+
+            //修改升级记录
+            $('.inner').on('click', '.btn[cmd=edit_cus_record]', function() {
+                  var $this = $(this);
+                  var id = $this.attr('value');
+                  var flag = $this.attr('name');
+                  var type = $this.attr('label');
+                  var url = '/customer/deploy/record/list/edit/?id=' + id + '&flag='+ flag + '&type=' + type;
+                  window.open(url, '_self');
+            });
+
+            //发送邮件
+            $('.inner').on('click', '.btn[cmd=send_email]', function() {
+                 var $this = $(this);
+                 var id = $this.attr('value')
+                $.post('/customer/deploy/record/list/email/', {id:id}, function(resp) {
+                    if(resp.success){
+                          dialog_success('', resp.error);
+                    }else{
+                        dialog_error('', resp.error);
+                    }
+                })
+            });
+
+             //升级检查记录
+            $('.inner').on('click', '.btn[cmd=check_update]', function (){
+                var $this = $(this);
+                var id = $this.attr('value');
+                var url = '/customer/deploy/record/check/?id='+ id;
+                window.location.href = url;
+            });
+
+            //enter键查询
+            $("#record_se").bind('keypress', function(event) {
+                if(event.keyCode == 13){
+                    do_search();
+                }
+            });
+
+        });
+
+        function do_search(){
+            var text = $("#record_se").val().trim();
+            url = '/customer/all/deploy/record/list/search/?search='+ text;
+            window.location.href = url;
+        }
+
+        $(function() {
+               var  availableTags = [
+                     "银河期货实盘",
+                       "安信基金实盘",
+                       "长安基金实盘",
+                       "长安基金模拟",
+                       "东方汇智模拟",
+                       "东方汇至基金实盘",
+                       "东证期货模拟",
+                       "富安达模拟",
+                       "冠通期货实盘",
+                       "国金道富模拟",
+                       "国联安基金实盘",
+                       "国联安基金模拟",
+                       "华宝证券实盘",
+                       "华宝证券模拟",
+                       "华润元大模拟",
+                       "嘉合基金模拟",
+                       "金瑞期货模拟",
+                       "九泰基金模拟",
+                       "君德时代模拟",
+                       "君德时代实盘",
+                       "廊坊测试系统",
+                       "鲁证期货实盘",
+                       "鲁证期货模拟",
+                       "南华期货模拟",
+                       "纽银西部模拟盘_PC机",
+                       "鹏华基金实盘",
+                       "鹏华基金模拟",
+                       "平安大华实盘",
+                       "瑞达期货模拟",
+                       "中信证券实盘",
+                       "盈融达43",
+                       "国金道富实盘",
+                       "申万期货实盘",
+                       "申万期货实盘最新",
+                       "申万期货模拟",
+                       "申万菱信实盘",
+                       "首善投资实盘",
+                       "首善投资模拟",
+                       "国泰君安模拟",
+                       "国金千石资本模拟",
+                       "华西期货模拟",
+                       "纽银西部基金模拟_服务器",
+                       "易方达基金模拟",
+                       "银建期货模拟",
+                       "中海模拟盘",
+                       "中粮期货模拟",
+                       "申万菱信模拟",
+                       "三智资本模拟",
+                       "万家基金模拟",
+                       "冠通期货模拟",
+                       "系数投资实盘",
+                       "系数投资模拟",
+                       "一德期货模拟",
+                       "英大基金实盘",
+                       "英大基金模拟",
+                       "盈融达44",
+                       "盈融达45",
+                       "银河资本实盘",
+                       "银河资本模拟",
+                       "银河期货模拟",
+                       "银华基金模拟",
+                       "招商基金实盘",
+                       "招商期货模拟",
+                       "招商基金模拟",
+                       "中欧基金实盘",
+                       "中欧基金模拟",
+                       "中投天琪期货",
+                       "中信建投期货实盘",
+                       "招商期货实盘",
+                       "是",
+                       "否",
+                       "zhoaxu",
+                       "limanli",
+                       "liuchao",
+                       "duanliangixn",
+                       "dingyiran",
+                       "changjingde",
+                       "duanxingxing",
+                       "赵旭",
+                       "李曼丽",
+                       "刘超",
+                       "段良鑫",
+                       "丁翼然",
+                       "常敬德",
+                       "段星星"
+               ];
+               $("#record_se").autocomplete({
+                   source:availableTags
+               });
+            });
+    </script>
+{% endblock %}
+{% block rootBody %}
+    <div class="title_1">
+        <span>客户升级列表</span>
+        <span style="margin-left: 1200px">查询:</span>
+        <input id="record_se" class="b_searchbox" value="{% if text %}{{ text}} {% else %}{% endif %}" style="margin-left: 0px;width: 200px">
+    </div>
+    <div class="inner">
+        <div class="btn_line"></div>
+        <table class="bordered table">
+            <tr>
+                <th>序号</th>
+                <th>客户名称</th>
+                <th>版本号</th>
+                <th>机器</th>
+                <th>Portal</th>
+                <th>开始时间</th>
+                <th>结束时间</th>
+                <th>实施人员</th>
+                <th>升级备注</th>
+                <th>是否升级检查</th>
+                <th>升级检查人员</th>
+                <th>录入时间</th>
+                <th>录入人员</th>
+                <th width="155px" colspan="2">操作</th>
+            </tr>
+             {% if cus_records %}
+                {% for record in cus_records %}
+                    {% for server_package in record.cus_package.machine_packages %}
+                        {% if forloop.first %}
+                        <tr>
+                            <td rowspan="{{ record.cus_package.machine_packages|length }}">{{ forloop.parentloop.counter }}</td>
+                            <td>
+                                <a  href="/customer/view/?cus_id={{ server_package.customer.id  }}" title="点击查看详情" cmd="viewCustomer" title="查看"  cus_name="{{ server_package.customer.name  }}" class="cus_name_item" >{{ server_package.customer.name  }}</a>
+                            </td>
+                            <td>{{ server_package.version }}</td>
+                            <td>{{ server_package.machine.name }}</td>
+                            <td rowspan="{{ record.cus_package.machine_packages|length }}">
+                                <a title="点击查看详情[{{ record.cus_package.portal_package.svn_url }}]" href="/portal/package/view/?id={{ record.cus_package.portal_package.id }}">{{ record.cus_package.portal_package.svn_version }}</a>
+                            </td>
+                            <td rowspan="{{ record.cus_package.machine_packages|length }}">{{ record.start_time|date:'Y-m-d H:i:s' }}</td>
+                            <td rowspan="{{ record.cus_package.machine_packages|length }}">{{ record.end_time|date:'Y-m-d H:i:s' }}</td>
+                            <td rowspan="{{ record.cus_package.machine_packages|length }}">{{ record.deploy_user }}</td>
+                            <td rowspan="{{ record.cus_package.machine_packages|length }}">{{ record.remark }}</td>
+                            <td rowspan="{{ record.cus_package.machine_packages|length }}">{{ record.is_checked }}</td>
+                            <td rowspan="{{ record.cus_package.machine_packages|length }}">{{ record.check_user }}</td>
+                            <td rowspan="{{ record.cus_package.machine_packages|length }}">{{ record.create_time|date:'Y-m-d H:i:s' }}</td>
+                            <td rowspan="{{ record.cus_package.machine_packages|length }}">{{ record.create_user }}</td>
+                            <td>
+                                <input type="hidden" name="package_id" value="{{ server_package.id }}">
+                                <span class="btn" cmd="file_list" title="文件列表">文件列表</span>
+                                <span class="btn" cmd="package_branch" title="分支信息">分支信息</span>
+                                <span class="btn" cmd="download_server" title="下载Server包" onclick="javascript:window.open('/customer/download_install_package/?packageId={{ server_package.id }}','_self')">下载</span>
+                                <span class="btn" cmd="check_update" title="升级检查记录" value="{{ record.customer.id }}">升级检查记录</span>
+                            </td>
+                            <td rowspan="{{ record.cus_package.machine_packages|length }}">
+                                <span class="btn" cmd="edit_cus_record" title="编辑" name = "all_record_list" value="{{ record.id }}" label="edit">修改</span>
+                                <span class="btn" cmd="delete_cus_record" title="删除" value="{{ record.id }}">删除</span>
+                                <span class="btn" type="portal_upgrade_sql" value="{{ record.portal_upgrade_sql }}">升级脚本</span>
+                                <span class="btn" cmd="send_email" title="发送邮件" value="{{ record.id }}">发送邮件</span>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td>{{ server_package.customer.name }}</td>
+                            <td>{{ server_package.version }}</td>
+                            <td>{{ server_package.machine.name }}</td>
+                            <td>
+                                <input type="hidden" name="package_id" value="{{ server_package.id }}">
+                                <span class="btn" cmd="file_list" title="文件列表">文件列表</span>
+                                <span class="btn" cmd="package_branch" title="分支信息">分支信息</span>
+                                <span class="btn" cmd="download_server" title="下载Server包" onclick="javascript:window.open('/customer/download_install_package/?packageId={{ server_package.id }}','_self')">下载</span>
+                            </td>
+                        </tr>
+                         {% endif %}
+                    {% endfor %}
+                {% endfor %}
+            {% else %}
+                <tr type="record" key="{{ machine_id }}">
+                    <td colspan="11">暂无升级记录</td>
+                </tr>
+            {% endif %}
+        </table>
+    </div>
+    <div class="long-pages">
+            {% if cus_records.has_previous %}
+                <a href="/customer/all/deploy/record/list?page={{ cus_records.previous_page_number }}" class="prev">上一页</a>
+            {% endif %}
+            <span>
+                  {% for p in page_range %}
+                      {% ifequal p cus_records.number %}
+                          <span class="current">{{ p }}</span>
+                      {% else %}
+                          <a href="/customer/all/deploy/record/list?page={{ p }}" title="第{{ p }}页">{{ p }}</a>
+                      {% endifequal %}
+                  {% endfor %}
+            </span>
+            {% if cus_records.has_next %}
+                <a href="/customer/all/deploy/record/list?page={{ cus_records.next_page_number }}">下一页</a>
+            {% endif %}
+            <a>[第{{ cus_records.number }}/{{ cus_records.paginator.num_pages }}页]</a>
+    </div>
+    <div id="dialog_table" class="easyDialog_wrapper" style="display: none; margin: 0px; min-width: 1045px; width: auto; min-height: 300px; max-height: 500px;">
+        <div class="easyDialog_content">
+            <h4 class="easyDialog_title" id="easyDialogTitle" style="cursor: move;">
+                <a href="javascript:void(0)" title="关闭窗口" class="close_btn closeBtn_rzrk">×</a>
+                <span type="dialog_title"></span>
+            </h4>
+            <div class="easyDialog_text" style="min-height: 300px; max-height: 415px; overflow: auto;">
+            </div>
+        </div>
+    </div>
+{% endblock %}

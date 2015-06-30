@@ -1,0 +1,182 @@
+{% extends "root.html" %}
+{% load rzrk_tags %}
+
+{% block title %}{% settings_value "MAIN_PROJECT_NAME" %}-欢迎{% endblock %}
+{% block rootJsAndCss %}
+    <style>
+        .like_table {
+            width: 500px;
+            border: 1px solid steelblue;
+            background-color: #97B0F8;
+            text-align: center;
+            font-size: 15px;
+            height: 20px;
+            line-height: 20px;
+            cursor: pointer;
+        }
+
+        .like_table span {
+            width: 150px;
+            color: #ffffff;
+            font-weight: bolder
+        }
+
+
+    </style>
+    <script type="text/javascript">
+        var update_obj = {{ update_obj|safe }};
+        $(document).ready(function () {
+            //绑定切换事件
+            $('.inner').on("change", "#update_machines", function () {
+                var $this = $(this);
+                var packages = update_obj[$this.val()].packages;
+                if (packages.length == 0) {
+                    var html = '';
+                    html += '<span class="like_table" type="none">暂无</span>';
+                    $("#version_package").children().remove();
+                    $("#version_package").append(html);
+                } else {
+                    $("#version_package").children().remove();
+                    for (var i = 1; i <= packages.length; i++) {
+                        var item = packages[i - 1];
+                        var html = '';
+                        html += '<span class="like_table" type="enable_package" style="background-color: #FA9915" value="' + item._id.$oid + '">';
+                        html += '<span style="color: #aec0f8;width: 40px;background-color: #FFFFAB">' + i + '</span>';
+                        html += '<span>' + item.version + '</span>';
+                        html += '<span>' + item.package_full_name + '</span>';
+                        html += '</span>';
+                        $("#version_package").append(html);
+                    }
+                }
+            });
+            //绑定点击事件
+            $('.inner').on("click", ".like_table[type=enable_package]", function () {
+                var $this = $(this);
+                //判断是否已在机器区
+                if ($this.parent().attr("id") == 'machine_package') {
+                    $("#machine_package .like_table[type=none]").show();
+                    $("#version_package").append($this);
+                    return;
+                }
+
+
+                //判断是否已有待添加版本
+                if ($("#machine_package .like_table[type=enable_package]").length > 0) {
+                    alert('已有待部署版本!')
+                    return false;
+                }
+
+                //移动
+                $("#machine_package").prepend($this);
+                $("#machine_package .like_table[type=none]").hide();
+            });
+            //保存方法
+            $("#saveBtn").bind('click', function () {
+                //机器区的可用版本
+                var target_package = $("#machine_package .like_table[type=enable_package]");
+                var package_id = target_package.attr('value');
+                if (package_id == null || package_id == '') {
+                    alert("请选择要添加的版本!");
+                    return false;
+                }
+                var remark = $('#remark').val();
+                var id = $('#update_machines').val();
+                $.post(
+                        '/customer/package/update/',
+                        {
+                            package_id: package_id,
+                            machine_id: '{{machine.id}}',
+                            cus_id: '{{ customer.id }}',
+                            update_from: id,
+                            param_json: '',
+                            remark: remark
+                        },
+                        function (resp) {
+                            if (resp.success) {
+                                alert(resp.error)
+                                window.location.reload();
+                            } else {
+                                alert(resp.error)
+                            }
+                        },
+                        'json'
+                );
+            });
+            //初始化机器
+            $("#update_machines").trigger('change');
+        });
+    </script>
+{% endblock %}
+{% block rootBody %}
+    <div class="title_1">
+        <span>机器版本升级</span>
+    </div>
+    <div class="inner">
+        <div class="btn_line">
+            <div class="btn" id="page_back">返回</div>
+        </div>
+        <table class="bordered table">
+            <tr>
+                <td>客户名称:</td>
+                <td>{{ customer.name }}</td>
+            </tr>
+            <tr>
+                <td>客户类型:</td>
+                <td>{% if customer.is_sys %}<span style="color: red">系统客户</span>{% else %}普通客户{% endif %}</td>
+            </tr>
+            <tr>
+                <td>机器名称:</td>
+                <td>{{ machine.name }}</td>
+            </tr>
+            <tr>
+                <td>机器类型:</td>
+                <td>{{ machine.type|parse_machine_type }}</td>
+            </tr>
+            {% if update_from == 1 %}
+                <tr>
+                    <td>原始路径</td>
+                    <td>原始路径</td>
+                </tr>
+            {% endif %}
+            <tr>
+                <td>升级原因:</td>
+                <td><input type="text" id="remark" style="width: 500px;"></td>
+            </tr>
+            <tr>
+                <th>现有版本</th>
+                <th>
+                    可用版本库
+                    <select id="update_machines" name="update_machines" style="width: 200px;">
+                        {% if update_machines %}
+                            {% for update_machine in update_machines %}
+                                <option value="{{ update_machine.id }}">{{ update_machine.name }}</option>
+                            {% endfor %}
+                        {% else %}
+                            <option>暂无可升级版本</option>
+                        {% endif %}
+                    </select>
+                </th>
+            </tr>
+            <tr>
+                <td id="machine_package">
+                    {% if not machine_packages %}
+                        <span class="like_table" type="none">暂无</span>
+                    {% endif %}
+                    {% for m_package in machine_packages %}
+                        <span class="like_table" type="machine_package" value="{{ m_package.package.id }}">
+                            <span style="color: #aec0f8;width: 40px;background-color: #FFFFAB">{{ forloop.counter }}</span>
+                            <span>{{ m_package.package.version }}</span>
+                            <span>{{ m_package.package.package_full_name }}</span>
+                            <span>{{ m_package.package.upload_user.username }}</span>
+                        </span>
+                    {% endfor %}
+                </td>
+                <td id="version_package">
+                </td>
+            </tr>
+        </table>
+        <div class="btn_line">
+            <div class="btn" id="saveBtn">保存</div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,22 @@
+{% extends "root.html" %}
+{% load rzrk_tags %}
+
+{% block title %}{% settings_value "MAIN_PROJECT_NAME" %}-欢迎{% endblock %}
+{% block rootJsAndCss %}
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#return").bind("click", function () {
+                window.history.back();
+            });
+        });
+    </script>
+{% endblock %}
+{% block rootBody %}
+    <div class="title_1"><span>错误信息</span></div>
+    <div class="inner">
+        <div class="btn_line">
+            <div class="btn" id="return">返回</div>
+        </div>
+        <span class="like_table">{{ error }}</span>
+    </div>
+{% endblock %}

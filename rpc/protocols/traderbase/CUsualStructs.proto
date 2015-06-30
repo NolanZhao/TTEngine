@@ -1,0 +1,344 @@
+option optimize_for = SPEED;
+
+message CAccountInfo_PB{
+    required int32 m_nBrokerType = 1;
+    required int32 m_nPlatformID = 2;
+    optional string m_strApiType = 3;
+    required string m_strBrokerID = 4;
+    optional string m_strBrokerName = 5;
+    required int32 m_nAccountType = 6;
+    required string m_strAccountID = 7;
+    optional string m_strPassword = 8;
+    optional string m_strAccountName = 9;
+    required string m_strSubAccount = 10;
+    optional string m_strBankNo = 11;
+    optional string m_strSHAccount = 12;
+    optional string m_strSZAccount = 13;
+    repeated string m_addresses = 14;
+    optional int32 m_iStatus = 15;
+};
+    
+
+message COrderTag_PB{
+    optional int32 frontId = 1;
+    optional int32 sessionId = 2;
+    optional string orderRef = 3;
+    optional int32 requestId = 4;
+    optional string orderSysId = 5;
+};
+    
+
+message CXtOrderTag_PB{
+    optional string m_strUser = 1;
+    optional int32 m_eXtHedgeType = 2;
+    optional int32 m_nFundProductID = 3;
+    optional string m_strFundProductName = 4;
+    optional int32 m_nCommandID = 5;
+    optional int32 m_nGroupID = 6;
+    optional int32 m_eTraderType = 7;
+    optional string m_strDate = 8;
+    optional string m_strInterfaceId = 9;
+    optional string m_strSource = 10;
+    required string m_strSessionTag = 11;
+    required int32 m_nRequestId = 12;
+    optional int32 m_nProperty = 13;
+    optional int32 m_eOrderType = 14;
+};
+    
+
+message COrderInfo_PB{
+    optional CAccountInfo_PB m_accountInfo = 1;
+    optional COrderTag_PB m_tag = 2;
+    optional string m_strExchangeId = 3;
+    optional string m_strProductId = 4;
+    optional string m_strInstrumentId = 5;
+    optional int32 m_eOperationType = 6;
+    optional int32 m_eBrokerPriceType = 7;
+    optional double m_dPrice = 8;
+    optional int32 m_nDirection = 9;
+    optional int32 m_nOffsetFlag = 10;
+    optional int32 m_nHedgeFlag = 11;
+    optional int32 m_nBusinessNum = 12;
+    optional int32 m_nOrderNum = 13;
+    optional double m_dCancelInterval = 14;
+    optional double m_dOrderTime = 15;
+    optional double m_dCancelTime = 16;
+    optional double m_dCompleteTime = 17;
+    optional int32 m_nCancelTimes = 18;
+    required CXtOrderTag_PB m_xtTag = 19;
+    optional string m_strErrorMsg = 20;
+    optional double m_dDealMoney = 21;
+    optional int32 m_nDealStaticsVolume = 22;
+    optional int32 m_nErrorId = 23;
+    optional bool m_bIsComplement = 24;
+    optional int32 m_eEntrustType = 25;
+    optional string m_strCompactId = 26;
+    optional int32 m_ePayType = 27;
+    optional double m_dOccurBalance = 28;
+};
+    
+
+message COrderDetail_PB{
+    required CAccountInfo_PB m_accountInfo = 1;
+    optional string m_strExchangeID = 2;
+    optional string m_strExchangeName = 3;
+    optional string m_strProductID = 4;
+    optional string m_strProductName = 5;
+    optional string m_strInstrumentID = 6;
+    optional string m_strInstrumentName = 7;
+    required int32 m_nSessionID = 8;
+    required int32 m_nFrontID = 9;
+    required string m_strOrderRef = 10;
+    optional int32 m_nOrderPriceType = 11;
+    optional int32 m_nDirection = 12;
+    optional int32 m_nOffsetFlag = 13;
+    optional int32 m_nHedgeFlag = 14;
+    optional double m_dLimitPrice = 15;
+    optional int32 m_nVolumeTotalOriginal = 16;
+    optional int32 m_nOrderSubmitStatus = 17;
+    optional string m_strOrderSysID = 18;
+    optional int32 m_nOrderStatus = 19;
+    optional int32 m_nVolumeTraded = 20;
+    optional int32 m_nVolumeTotal = 21;
+    optional int32 m_nErrorID = 22;
+    optional string m_strErrorMsg = 23;
+    optional int32 m_nTaskId = 24;
+    optional double m_dFrozenMargin = 25;
+    optional double m_dFrozenCommission = 26;
+    optional string m_strInsertDate = 27;
+    optional string m_strInsertTime = 28;
+    optional CXtOrderTag_PB m_xtTag = 29;
+    optional double m_dTradedPrice = 30;
+    optional double m_dCancelAmount = 31;
+    optional string m_strOptName = 32;
+    optional double m_dTradeAmount = 33;
+    optional int32 m_eEntrustType = 34;
+};
+    
+
+message CDealDetail_PB{
+    required CAccountInfo_PB m_accountInfo = 1;
+    required string m_strExchangeID = 2;
+    optional string m_strExchangeName = 3;
+    optional string m_strProductID = 4;
+    optional string m_strProductName = 5;
+    required string m_strInstrumentID = 6;
+    optional string m_strInstrumentName = 7;
+    required string m_strTradeID = 8;
+    required string m_strOrderRef = 9;
+    required string m_strOrderSysID = 10;
+    required int32 m_nDirection = 11;
+    optional int32 m_nOffsetFlag = 12;
+    optional int32 m_nHedgeFlag = 13;
+    optional double m_dPrice = 14;
+    optional int32 m_nVolume = 15;
+    optional string m_strTradeDate = 16;
+    optional string m_strTradeTime = 17;
+    optional double m_dComssion = 18;
+    optional double m_dTradeAmount = 19;
+    optional int32 m_nTaskId = 20;
+    optional CXtOrderTag_PB m_xtTag = 21;
+    optional int32 m_nOrderPriceType = 22;
+    optional string m_strOptName = 23;
+    optional int32 m_eEntrustType = 24;
+};
+    
+
+message CPositionDetail_PB{
+    required CAccountInfo_PB m_accountInfo = 1;
+    required string m_strExchangeID = 2;
+    optional string m_strExchangeName = 3;
+    optional string m_strProductID = 4;
+    optional string m_strProductName = 5;
+    required string m_strInstrumentID = 6;
+    optional string m_strInstrumentName = 7;
+    required int32 m_nHedgeFlag = 8;
+    required int32 m_nDirection = 9;
+    required string m_strOpenDate = 10;
+    required string m_strTradeID = 11;
+    optional int32 m_nVolume = 12;
+    optional double m_dOpenPrice = 13;
+    optional string m_strTradingDay = 14;
+    optional double m_dMargin = 15;
+    optional double m_dOpenCost = 16;
+    optional double m_dSettlementPrice = 17;
+    optional int32 m_nCloseVolume = 18;
+    optional double m_dCloseAmount = 19;
+    optional double m_dFloatProfit = 20;
+    optional double m_dCloseProfit = 21;
+    optional double m_dMarketValue = 22;
+    optional double m_dPositionCost = 23;
+    optional double m_dPositionProfit = 24;
+    optional double m_dLastSettlementPrice = 25;
+    optional double m_dInstrumentValue = 26;
+    optional bool m_bIsToday = 27;
+    optional CXtOrderTag_PB m_xtTag = 28;
+    optional string m_strStockHolder = 29;
+    optional int32 m_nFrozenVolume = 30;
+    optional int32 m_nCanUseVolume = 31;
+    optional int32 m_nOnRoadVolume = 32;
+    optional int32 m_nYesterdayVolume = 33;
+    optional double m_dLastPrice = 34;
+    optional double m_dProfitRate = 35;
+};
+    
+
+message CPositionStatics_PB{
+    required CAccountInfo_PB m_accountInfo = 1;
+    required string m_strExchangeID = 2;
+    optional string m_strExchangeName = 3;
+    optional string m_strProductID = 4;
+    required string m_strInstrumentID = 5;
+    optional string m_strInstrumentName = 6;
+    required int32 m_nDirection = 7;
+    required int32 m_nHedgeFlag = 8;
+    required bool m_bIsToday = 9;
+    optional int32 m_nPosition = 10;
+    optional double m_dOpenCost = 11;
+    optional double m_dPositionCost = 12;
+    optional double m_dAvgPrice = 13;
+    optional double m_dPositionProfit = 14;
+    optional double m_dFloatProfit = 15;
+    optional double m_dOpenPrice = 16;
+    optional int32 m_nCanCloseVol = 17;
+    optional double m_dUsedMargin = 18;
+    optional double m_dUsedCommission = 19;
+    optional double m_dFrozenMargin = 20;
+    optional double m_dFrozenCommission = 21;
+    optional double m_dInstrumentValue = 22;
+    optional int32 m_nOpenTimes = 23;
+    optional int32 m_nOpenVolume = 24;
+    optional int32 m_nCancelTimes = 25;
+    optional int32 m_eXtHedgeType = 26;
+    optional string m_strStockHolder = 27;
+    optional int32 m_nFrozenVolume = 28;
+    optional int32 m_nCanUseVolume = 29;
+    optional int32 m_nOnRoadVolume = 30;
+    optional int32 m_nYesterdayVolume = 31;
+    optional double m_dSettlementPrice = 32;
+    optional double m_dProfitRate = 33;
+};
+    
+
+message CFtOrderDetail_PB{
+    optional int32 m_nTimeCondition = 1;
+    optional string m_strGTDDate = 2;
+    optional int32 m_nVolumeCondition = 3;
+    optional int32 m_nMinVolume = 4;
+    optional int32 m_nContingentCondition = 5;
+    optional double m_dStopPrice = 6;
+    optional int32 m_nForceCloseReason = 7;
+    optional int32 m_nIsAutoSuspend = 8;
+    optional string m_strBusinessUnit = 9;
+    optional int32 m_nRequestID = 10;
+    optional string m_strOrderLocalID = 11;
+    optional string m_strParticipantID = 12;
+    optional string m_strClientID = 13;
+    optional string m_strExchangeInstID = 14;
+    optional string m_strTraderID = 15;
+    optional int32 m_nInstallID = 16;
+    optional int32 m_nNotifySequence = 17;
+    optional string m_strTradingDay = 18;
+    optional int32 m_nSettlementID = 19;
+    optional int32 m_nOrderSource = 20;
+    optional int32 m_eOrderType = 21;
+    optional string m_strActiveTime = 22;
+    optional string m_strSuspendTime = 23;
+    optional string m_strUpdateTime = 24;
+    optional string m_strCancelTime = 25;
+    optional string m_strActiveTraderID = 26;
+    optional string m_strClearingPartID = 27;
+    optional int32 m_nSequenceNo = 28;
+    optional string m_strUserProductInfo = 29;
+    optional string m_strStatusMsg = 30;
+    optional int32 m_nUserForceClose = 31;
+    optional string m_strActiveUserID = 32;
+    optional int32 m_nBrokerOrderSeq = 33;
+    optional string m_strRelativeOrderSysID = 34;
+    required COrderDetail_PB m_baseType = 35;
+};
+    
+
+message CFtDealDetail_PB{
+    optional string m_strParticipantID = 1;
+    optional string m_strClientID = 2;
+    optional int32 m_nTradingRole = 3;
+    optional int32 m_nTradeType = 4;
+    optional int32 m_nPriceSource = 5;
+    optional string m_strTraderID = 6;
+    optional string m_strOrderLocalID = 7;
+    optional string m_strClearingPartID = 8;
+    optional string m_strBusinessUnit = 9;
+    optional int32 m_nSequenceNo = 10;
+    optional string m_strTradingDay = 11;
+    optional int32 m_nSettlementID = 12;
+    optional int32 m_nBrokerOrderSeq = 13;
+    optional int32 m_nTradeSource = 14;
+    optional double m_dCloseProfit = 15;
+    required CDealDetail_PB m_baseType = 16;
+};
+    
+
+message CFtPositionDetail_PB{
+    optional int32 m_nSettlementID = 1;
+    optional int32 m_nTradeType = 2;
+    optional string m_strCombInstrumentID = 3;
+    optional double m_dCloseProfitByDate = 4;
+    optional double m_dCloseProfitByTrade = 5;
+    optional double m_dPositionProfitByDate = 6;
+    optional double m_dPositionProfitByTrade = 7;
+    optional double m_dExchMargin = 8;
+    optional double m_dMarginRateByMoney = 9;
+    optional double m_dMarginRateByVolume = 10;
+    required CPositionDetail_PB m_baseType = 11;
+};
+    
+
+message CAccountDetail_PB{
+    required CAccountInfo_PB m_accountInfo = 1;
+    optional double m_dMaxMarginRate = 2;
+    optional double m_dFrozenMargin = 3;
+    optional double m_dFrozenCash = 4;
+    optional double m_dFrozenCommission = 5;
+    optional double m_dRisk = 6;
+    optional double m_dNav = 7;
+    optional double m_dPreBalance = 8;
+    optional double m_dBalance = 9;
+    optional double m_dAvailable = 10;
+    optional double m_dCommission = 11;
+    optional double m_dPositionProfit = 12;
+    optional double m_dCloseProfit = 13;
+    optional double m_dCashIn = 14;
+    optional double m_dCurrMargin = 15;
+    optional double m_dInitBalance = 16;
+    optional string m_strStatus = 17;
+    optional double m_dInitCloseMoney = 18;
+    optional double m_dInstrumentValue = 19;
+    optional double m_dDeposit = 20;
+    optional double m_dWithdraw = 21;
+    optional double m_dPreCredit = 22;
+    optional double m_dPreMortgage = 23;
+    optional double m_dMortgage = 24;
+    optional double m_dCredit = 25;
+    optional double m_dAssetBalance = 26;
+    optional string m_strOpenDate = 27;
+    optional double m_dFetchBalance = 28;
+    optional string m_strTradingDate = 29;
+};
+    
+
+message CFtAccountDetail_PB{
+    optional double m_dPreDeposit = 1;
+    optional double m_dPreMargin = 2;
+    optional double m_dInterestBase = 3;
+    optional double m_dInterest = 4;
+    optional double m_dWithdrawQuota = 5;
+    optional double m_dReserve = 6;
+    optional string m_strTradingDay = 7;
+    optional int32 m_nSettlementID = 8;
+    optional double m_dExchangeMargin = 9;
+    optional double m_dDeliveryMargin = 10;
+    optional double m_dExchangeDeliveryMargin = 11;
+    required CAccountDetail_PB m_baseType = 12;
+};
+    

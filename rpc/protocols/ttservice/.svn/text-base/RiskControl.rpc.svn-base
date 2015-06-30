@@ -1,0 +1,83 @@
+﻿Namespace = ttservice
+ServiceName = RiskControl
+Includes = (
+    bson/src/bson.h,
+    Protocol/rpc_Enums.h,
+    Protocol/rpc_Structs_Def.h,
+    Protocol/rpc_ClientTraderCommon_Def.h,
+    utils/TTError.h
+)
+
+CppIncludes = (
+    Protocol/rpc_Structs.h,
+    Protocol/rpc_ClientTraderCommon.h,
+    net/RPCEngine.h
+)
+
+# 登录
+login(userName:#s, password:#s, id:EAmpModule) => (error: #utils::TTError)
+
+# 任务检查
+checkTask(req:CCreateTaskReqPtr) => (error: #utils::TTError, resp:CCreateTaskReqPtr)
+
+# 指令检查
+checkCmd(req:COrderCommandPtr) =>(error: #utils::TTError, resp:COrderCommandPtr)
+
+# 委托检查
+checkOrder(orderInfo:COrderInfoPtr) => (error: #utils::TTError, resp:COrderInfoPtr)
+
+# 推送风控报警信息
+=> pushRCMsg(account:CAccountInfoPtr, msg:#s)
+
+#推送止损指令
+=>pushRCCommand(req : [CClosePositionRequestPtr], timeout : #i)
+
+#推送产品风控
+=>pushProductRCMsg(productId:#i, msg:#s)
+
+# 推送产品信息
+=> pushProductNetValue(strTradeDate:#s, productId:#i, productInfo:CProductNetValuePtr)
+
+# 请求更新指定日期的产品信息
+=> pushProductPreNetValueRequest(strTradeDate:#s)
+
+# 更新指定日期的产品信息
+updateProductNetValuePre(value:bson::bo) => (error:#utils::TTError)
+
+#更新风控配置
+updateAccountsRC(accounts:[CAccountInfoPtr], configs:[bson::bo]) => (error:#utils::TTError)
+updateProductsRC(products:[CProductPtr], configs:[bson::bo]) => (error:#utils::TTError)
+updateGlobalRC( config : bson::bo) => (error:#utils::TTError)
+
+updateFundsAssets(products:[CFundAssetsInfoPtr]) => (error:#utils::TTError)
+
+#更新指令信息
+updateCommands(cmds:[COrderCommandPtr]) => (error :#utils::TTError)
+
+#更新数据
+updateAccountDatas(account:CAccountInfoPtr, datas:[IDataPtr]) => (error :#utils::TTError)
+updateAccountData(account:CAccountInfoPtr, data:IDataPtr) => (error :#utils::TTError)
+setAccountInitialized(account:CAccountInfoPtr, inited:#b) => (error :#utils::TTError)
+updateLoginStatus(account:CAccountInfoPtr, status:#i) => (error :#utils::TTError)
+
+#查询9种持仓组合
+queryAccountComPositionValue(account:CAccountInfoPtr) => (error :#utils::TTError, data:CComPositionValuePtr)
+queryProductComPositionValue(productId:#i) => (error :#utils::TTError, data:CComPositionValuePtr)
+
+# 后台刷新股票列表
+refreshStockList() => (error: #utils::TTError)
+
+#更新用户股票池变化
+updateUserStockPool(pool:CUserStockPool, bDelete:#b) => (error :#utils::TTError)
+
+# 更新o32
+updateO32TradingData(content:[CO32TradingData]) => (success:#b)
+
+# xtservice通知riskcontrol配置已经全部上传
+notifyRcConfigDone() => (error: #utils::TTError)
+
+# 更新历史数据
+updateAccountPrevData(accKey:#s, datas:{#i:{#s:IDataPtr} }) => (error: #utils::TTError)
+removeAccountPrevData(accKey:#s) => (error: #utils::TTError)
+
+updateO32OrderData(orders : [CO32OrderData]) => (error : #utils::TTError)

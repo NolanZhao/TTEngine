@@ -1,0 +1,18 @@
+body{color: #666;}
+.north{position: relative;height: 60px;}
+.center{padding: 5px;}
+
+.north img{position: absolute;top: 8px;left: 15px;}
+.center .panel{margin: 100px auto 0;}
+
+.icon-login{background: transparent url("/media/theme/images/icons/user.png") 0 0 no-repeat;}
+.header-login{background-color: #f9f9f9;}
+.header-login,.header-login .panel-title{height: 30px;line-height: 30px;}
+
+form div{margin-top: 10px;}
+form label{display: block;}
+form input{width: 96.8%;height: 30px;line-height: 30px;margin-top: 10px;padding:0 5px;border: 1px solid #ccc;}
+.easyui-linkbutton, form input{-webkit-border-radius: 5px;-moz-border-radius: 5px;border-radius: 5px;}
+.easyui-linkbutton, .easyui-linkbutton .l-btn-text{height: 30px;line-height: 30px;}
+.easyui-linkbutton{width: 80px;float: right;margin-top:10px;}
+.error{color: red;}

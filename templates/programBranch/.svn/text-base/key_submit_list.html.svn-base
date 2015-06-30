@@ -1,0 +1,84 @@
+{% extends "root.html" %}
+{% load rzrk_tags %}
+
+{% block title %}{% settings_value "MAIN_PROJECT_NAME" %}-关键提交列表{% endblock %}
+{% block rootJsAndCss %}
+    <style type="text/css">
+    </style>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            //删除功能
+            $('.inner').on('click', '.btn[cmd=del]', function () {
+                var $this = $(this);
+                var id = $this.attr('key');
+                var url = '/programBranch/key/del/';
+                easyDialog.open({
+                    container: {
+                        header: '确认',
+                        content: '确认删除关键提交?',
+                        yesFn: function () {
+                            $.post(url, {id: id}, function (resp) {
+                                if (resp.success) {
+                                    dialog_error('', resp.error);
+                                    $this.parent().parent().remove();
+                                } else {
+                                    dialog_error('', resp.error);
+                                }
+                            }, 'json');
+                        },
+                        noFn: true
+                    },
+                    overlay: false
+                });
+
+            });
+        });
+    </script>
+{% endblock %}
+{% block rootBody %}
+    <div class="title_1">
+        <span>关键提交列表</span>
+    </div>
+    <div class="inner">
+        <div class="btn_line">
+            <div class="btn" id="page_back">返回</div>
+            <div class="btn" onclick="javascript:window.open('/programBranch/key/create/','_self')">添加</div>
+        </div>
+        <table class="bordered table" id="settings_table">
+            <tr>
+                <th style="width: 35px;">序号</th>
+                <th>分支</th>
+                <th style="width: 150px;">版本</th>
+                <th>创建人</th>
+                <th style="width: 190px;">创建时间</th>
+                <th>备注</th>
+                <th style="width: 65px;">操作</th>
+            </tr>
+            {% if submits %}
+                {% for submit in submits %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ submit.branch.programName }}/{{ submit.branch.branchTag }}</td>
+                        <td>
+                            {% if submit.revision_start == submit.revision_end %}
+                                {{ submit.revision_start }}
+                            {% else %}
+                                [{{ submit.revision_start }},{{ submit.revision_end }}]
+                            {% endif %}
+                        </td>
+                        <td>{{ submit.create_user.username }}</td>
+                        <td>{{ submit.create_time|date:'Y-m-d H:i:s' }}</td>
+                        <td>{{ submit.remark }}</td>
+                        <td>
+                            <span cmd="del" key="{{ submit.id }}" class="btn">删除</span>
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="7">暂无关键更新</td>
+                </tr>
+            {% endif %}
+        </table>
+    </div>
+{% endblock %}

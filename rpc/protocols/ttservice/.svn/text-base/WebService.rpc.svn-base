@@ -1,0 +1,117 @@
+﻿Namespace = ttservice
+ServiceName = WebService
+Includes = (
+    bson/src/bson.h,
+	Protocol/rpc_FtCommon_Def.h,
+    Protocol/rpc_TTServiceCommon_Def.h,
+    Protocol/rpc_ClientTrader.h,
+    Protocol/rpc_Structs_Def.h,
+    Protocol/rpc_ClientTraderCommon.h
+)
+
+CppIncludes = (
+	Protocol/rpc_FtCommon.h,
+    Protocol/rpc_TTServiceCommon.h,
+    Protocol/rpc_Structs.h,
+    net/RPCEngine.h
+)
+
+# 取持仓
+getAccountPositions(account : CAccountInfoPtr) => (parent:[#ParentStatics], sub:[CPositionStaticsPtr])
+
+updatePosition(account:CAccountInfoPtr, params:[PositionAdjustItem]) => (success:#b)
+
+# 修改成本价
+updateOpenPrice(account:CAccountInfoPtr, params:[COpenPriceAdjustItem]) => (success:#b)
+
+# 交易日改变(for test)
+#changeDate(account:CAccountInfo) => (success:#b)
+
+# 重载
+reload(account : CAccountInfo) => (success:#b)
+# 查询数据
+queryData(account : CAccountInfoPtr, typeId :#i) => (content:[IDataPtr])
+
+# 改密码
+changePassword(pwd : #S, account:CAccountInfoPtr) => (error: #utils::TTError, resp:IDataPtr)
+
+
+# 批量取账号状态
+#getAccountDetails(accounts : [CAccountInfo]) => (content:[CFtAccountDetail])
+
+# 修改持仓(用于测试持仓不一致的情况)
+#modifyPositionForTest(account : CAccountInfo) => (success :#b)
+
+# 取正在运行中的状态
+getRunningLicenseConfig() => (userNum:#i, futureNum:#i, brokerNum:#i, accountNum:#i, projectNum:#i)
+
+# 更新密码
+#updateTTUserPassword(user:#s, oldPass:#s, newPass:#s) => (success:#b)
+
+# 更新合规止损设置
+#updateStopLossSetting(setting:CStopLossSetting) => (success:#b)
+
+
+# 风控相关
+
+# 登录
+login(userName:#s, password:#s) => (success:#b) 
+# 取账号风控
+queryAccountRC() => (accounts:[#s], configs:[bson::bo])
+# 取产品风控
+queryProductRC() => (products:[#s], configs:[bson::bo])
+# 取产品信息
+queryProducts() => (products:[CProductPtr])
+# 取账号信息
+queryAccounts() => (accounts:[CAccountInfoPtr])
+
+# 风控变化
+=>pushAccountRC(account:CAccountInfoPtr, config:bson::bo)
+=>pushProductRC(product:CProductPtr, config:bson::bo)
+
+# 查询该帐号是否结算
+queryBDelivered(account: CAccountInfoPtr) => (error: #utils::TTError, isDelivered:#b)
+
+# 返回距离该日期最近的交易日
+queryRecentTradingDay(account:CAccountInfoPtr, date:#s) => (error: #utils::TTError, strTradingDay:#s, isToday:#b)
+#获得当前交易日
+getCurTradingDay(brokerType:#i) => (curTradingDay:#s)
+
+# 通知serviceCenter股票折算率改变，service重读数据
+updateStkCvionRateSignal(date:#s, strKey:#s) => (error: #utils::TTError, success:#b)
+
+#更新融资融券标信息
+updateStkMargin(account:CAccountInfoPtr) => (success:#b)
+
+getlicenseconfig() => (MaxOrderServerNum:#i, MaxUserNum:#i, MaxBrokerNum:#i, MaxAccountNum:#i, MaxSubAccountPerAccount:#i, MaxProjectNum:#i)
+getstocklist(m_nBrokerType:#i) => (stocklist:[CInstrumentDetailPtr])
+updatebyweb()=>(success:#b)
+updateproduct(productId:#i) =>(success:#b)
+updateaccount(account_db_id:#i, subaccount_db_id:#i, account:CAccountInfoPtr) => (success:#b)
+updateuser(user_db_id:#i, user_name:#s) =>(success:#b)
+updateobserver(user_db_id:#i, user_name:#s) =>(success:#b)
+updatebroker(platform_id:#i, brokerId:#s) =>(success:#b)
+removebroker(platform_id:#i, brokerId:#s) =>(success:#b)
+updatetradingmonitor() =>(success:#b)
+updatesmtp() =>(success:#b)
+updateQuoter(platformId:#i) =>(success:#b)
+updateGlobalRC() =>(success:#b)
+getAccountDetails(accounts:[CAccountInfo]) => (content:[CAccountDetailPtr])
+getOnlineUsers() =>(users:[#s])
+queryCommands(nProduct:#i) => (cmds:[IDataPtr])
+logintest(req:CCreatClientReqPtr) => (error: #utils::TTError, response:IDataPtr)
+
+# 证券分类发生改变
+reloadCategory(id:#i) => (success:#b)
+
+# 更新o32
+updateO32TradingData() => (success:#b)
+
+# 强制帐号重新登录
+accountReLogin(account: CAccountInfoPtr) => (success:#b)
+
+# 更改帐号可用资金
+updateAvailable(account: CAccountInfoPtr, dAvailable:#d) => (success:#b)
+
+# 获取帐号当前可用资金和可调上限
+getAccountAvailableInfo(account: CAccountInfoPtr) => (curAvailable:#d, limitAvailable:#d, success:b)

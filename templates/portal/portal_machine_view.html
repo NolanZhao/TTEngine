@@ -1,0 +1,249 @@
+{% extends "root.html" %}
+{% load rzrk_tags %}
+
+{% block title %}{% settings_value "MAIN_PROJECT_NAME" %}-Portal部署机管理{% endblock %}
+{% block rootJsAndCss %}
+    <style>
+        td input {
+            width: 100%;
+            font-family: "courier new";
+        }
+
+        #dock_wrap > #add {
+            position: fixed;
+            top: 10%;
+        }
+
+        #dock_wrap {
+            position: relative;
+            z-index: 20;
+        }
+
+    </style>
+    {% if not is_view %}
+        <script type="text/javascript">
+            $(document).ready(function () {
+                //edit
+                $(".inner").on("click", "span[cmd=edit]", function () {
+                    var $this = $(this).parent().parent();
+                    $this.find('input[type=text]').removeAttr('disabled');
+                    $(this).attr('cmd', 'update');
+                    $(this).text('更新');
+                });
+                //更新按钮
+                $(".inner").on("click", "span[cmd=update]", function () {
+                    var $this = $(this).parent().parent();
+
+                    var pm_id = $this.find('input[name=pm_id]').val().trim();
+                    var name = $this.find('input[name=name]').val().trim();
+                    var host = $this.find('input[name=host]').val().trim();
+                    var port = $this.find('input[name=port]').val().trim();
+                    var username = $this.find('input[name=username]').val().trim();
+                    var password = $this.find('input[name=password]').val().trim();
+                    var path = $this.find('input[name=path]').val().trim();
+
+                    if (!pm_id || !name || !host || !port || !username || !password || !path) {
+                        dialog_error('', '必要参数为空!');
+                        return false;
+                    }
+
+                    var params = {
+                        "cmd": "update",
+                        "pm_id": pm_id,
+                        "name": name,
+                        "host": host,
+                        "port": parseInt(port),
+                        "username": username,
+                        "password": password,
+                        "path": path
+                    };
+
+                    $.post('/portal/machine/operate/', params, function (resp) {
+                        if (resp.success) {
+                            //禁用控件
+                            $this.find('input[type=text]').attr('disabled', 'disabled');
+                            //编辑按钮
+                            $this.find('span[cmd=update]').text('编辑');
+                            $this.find('span[cmd=update]').attr('cmd', 'edit');
+                        } else {
+                            dialog_error('', resp.error)
+                        }
+                    }, 'json')
+                });
+                //删除按钮
+                $(".inner").on("click", "span[cmd=delete]", function () {
+                    var $this = $(this).parent().parent();
+                    //尝试获取ID
+                    var pm_id = $this.find('input[name=pm_id]').val().trim();
+                    //未获取ID即为删除未保存的参数,直接移除控件
+                    if (!pm_id) {
+                        $this.remove();
+                        return;
+                    }
+
+                    var params = {
+                        "cmd": "delete",
+                        "pm_id": pm_id
+                    };
+
+                    easyDialog.open({
+                        container: {
+                            header: '确认',
+                            content: '确定删除此部属机?',
+                            yesFn: function () {
+                                $.post('/portal/machine/operate/', params, function (resp) {
+                                    if (resp.success) {
+                                        $this.remove();
+                                        dialog_success('', resp.error)
+                                    } else {
+                                        dialog_error('', resp.error)
+                                    }
+                                }, 'json');
+                            },
+                            noFn: true
+                        },
+                        overlay: false
+                    });
+                });
+                //添加
+                $(".inner").on("click", "#add", function () {
+                    //清空提示行
+                    var obj = $("#pm_table");
+                    if (obj.find('input').length == 0) {
+                        $(obj.find('tr')[1]).remove();
+                    }
+                    var html = '';
+                    html += '<tr>';
+                    html += '<td>';
+                    html += '<span class="like_table">';
+                    html += '<span>别名</span>';
+                    html += '<input type="text" name="name" value="">';
+                    html += '</span>';
+                    html += '<span class="like_table">';
+                    html += '<span>HOST</span>';
+                    html += '<input type="text" name="host" value="192.168.1.">';
+                    html += '</span>';
+                    html += '<span class="like_table">';
+                    html += '<span>端口</span>';
+                    html += '<input type="text" name="port" value="22">';
+                    html += '</span>';
+                    html += '<span class="like_table">';
+                    html += '<span>用户名</span>';
+                    html += '<input type="text" name="username" value="root">';
+                    html += '</span>';
+                    html += '<span class="like_table">';
+                    html += '<span>密码</span>';
+                    html += '<input type="text" name="password" value="">';
+                    html += '</span>';
+                    html += '<span class="like_table">';
+                    html += '<span>目录</span>';
+                    html += '<input type="text" name="path" value="/home/rzrk/webserver/webserver">';
+                    html += '</span>';
+                    html += '</td>';
+                    html += '<td>';
+                    html += '<input type="hidden" name="pm_id" value="">';
+                    html += '<span class="btn" cmd="save">保存</span>';
+                    html += '<span class="btn" cmd="delete">删除</span>';
+                    html += '</td>';
+                    html += '</tr>';
+                    $("#pm_table").append(html)
+                });
+                //保存
+                $(".inner").on("click", "span[cmd=save]", function () {
+                    var $this = $(this).parent().parent();
+
+                    var name = $this.find('input[name=name]').val().trim();
+                    var host = $this.find('input[name=host]').val().trim();
+                    var port = $this.find('input[name=port]').val().trim();
+                    var username = $this.find('input[name=username]').val().trim();
+                    var password = $this.find('input[name=password]').val().trim();
+                    var path = $this.find('input[name=path]').val().trim();
+
+                    if (!name || !host || !port || !username || !password || !path) {
+                        dialog_error('', '必要参数为空!');
+                        return false;
+                    }
+
+                    var params = {
+                        "cmd": "save",
+                        "name": name,
+                        "host": host,
+                        "port": parseInt(port),
+                        "username": username,
+                        "password": password,
+                        "path": path
+                    };
+
+                    $.post('/portal/machine/operate/', params, function (resp) {
+                        if (resp.success) {
+                            //禁用控件
+                            $this.find('input[name=pm_id]').val(resp.id);
+                            $this.find('input[type=text]').attr('disabled', 'disabled');
+                            //编辑按钮
+                            $this.find('span[cmd=save]').attr('cmd', 'edit');
+                            $this.find('span[cmd=save]').text('编辑');
+                            dialog_success('', resp.error)
+                        } else {
+                            dialog_error('', resp.error)
+                        }
+                    }, 'json')
+                });
+            });
+        </script>
+    {% endif %}
+{% endblock %}
+{% block rootBody %}
+    <div class="title_1"><span>部属机管理</span></div>
+    <div class="inner">
+        <div class="btn_line" id='dock_wrap'>
+            <div class="btn" id="add">添加机器</div>
+        </div>
+        <table class="bordered table" id="pm_table" style="margin-top: 40px;">
+            <tr>
+                <th>部属机</th>
+                <th style="width: 300px;">操作</th>
+            </tr>
+            {% if pms|length > 0 %}
+                {% for pm in pms %}
+                    <tr>
+                        <td>
+                            <span class="like_table">
+                                <span>别名</span>
+                                <input type="text" name="name" value="{{ pm.name }}" disabled="disabled">
+                            </span>
+                            <span class="like_table">
+                                <span>HOST</span>
+                                <input type="text" name="host" value="{{ pm.host }}" disabled="disabled">
+                            </span>
+                            <span class="like_table">
+                                <span>端口</span>
+                                <input type="text" name="port" value="{{ pm.port }}" disabled="disabled">
+                            </span>
+                            <span class="like_table">
+                                <span>用户名</span>
+                                <input type="text" name="username" value="{{ pm.username }}" disabled="disabled">
+                            </span>
+                            <span class="like_table">
+                                <span>密码</span>
+                                <input type="text" name="password" value="{{ pm.password }}" disabled="disabled">
+                            </span>
+                            <span class="like_table">
+                                <span>目录</span>
+                                <input type="text" name="path" value="{{ pm.path }}" disabled="disabled">
+                            </span>
+                        </td>
+                        <td>
+                            <input type="hidden" name="pm_id" value="{{ pm.id }}">
+                            <span class="btn" cmd="edit">编辑</span>
+                            <span class="btn" cmd="delete">删除</span>
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td type="setting" colspan="2">暂无部属机</td>
+                </tr>
+            {% endif %}
+        </table>
+    </div>
+{% endblock %}

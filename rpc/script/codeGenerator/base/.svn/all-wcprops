@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/svn/svnrepos/!svn/ver/167575/server5/deploy/trunk/TTEngine/rpc/script/codeGenerator/base
+END
+RPCStruct.py
+K 25
+svn:wc:ra_dav:version-url
+V 102
+/svn/svnrepos/!svn/ver/167575/server5/deploy/trunk/TTEngine/rpc/script/codeGenerator/base/RPCStruct.py
+END
+__init__.py
+K 25
+svn:wc:ra_dav:version-url
+V 101
+/svn/svnrepos/!svn/ver/167575/server5/deploy/trunk/TTEngine/rpc/script/codeGenerator/base/__init__.py
+END
+RPCParser.py
+K 25
+svn:wc:ra_dav:version-url
+V 102
+/svn/svnrepos/!svn/ver/167575/server5/deploy/trunk/TTEngine/rpc/script/codeGenerator/base/RPCParser.py
+END

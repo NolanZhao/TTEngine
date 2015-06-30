@@ -1,0 +1,201 @@
+{% extends "server_monitor_common.html" %}
+{% load rzrk_tags %}
+
+{% block title %}{% settings_value "MAIN_PROJECT_NAME" %}-欢迎{% endblock %}
+{% block rootJsAndCss %}
+    <style>
+        textarea {
+            width: 100%;
+            height: 200px;
+        }
+
+        .loading {
+            width: 700px;
+            height: 20px;
+            text-align: center;
+            border: 2px solid #BEBEBE;
+            margin-left: 215px;
+            margin-top: -26px;
+        }
+
+        .loading div {
+            background-color: #C1FFE4;
+            margin-top: -20px;
+            width: 700px;
+            height: 20px;
+            z-index: 2;
+        }
+
+        .loading span {
+            position: relative;
+            z-index: 3;
+        }
+
+    </style>
+
+    <script src="/media/js/jq/jquery-2.1.0.min.js"></script>
+    <script src="/media/js/ajaxfileupload/ajaxfileupload.js"></script>
+
+    <script type="text/javascript">
+    $(document).ready(function () {
+
+        //保存按钮
+        $('.btn[id=saveBtn]').bind("click", function () {
+            var cus_name = $("select[name=customer_name]").val();
+            var log_type = $("select[name=log_type]").val();
+            var monitor_type = $("select[name=monitor_type]").val();
+            var module_type = $("select[name=module_type]").val();
+            var detail = $("#log_detail").val();
+            var url = $("#attachmenturl").val();
+
+            var result = {
+                "cus_name": cus_name,
+                "log_type": log_type,
+                "monitor_type": monitor_type,
+                "module_type": module_type,
+                "detail": detail,
+                "url":url
+            };
+
+            var json = JSON.stringify(result);
+            var url = "/serverMonitor/logPost/";
+            //执行save操作
+            $.post(url, result, function (resp) {
+                if (resp.success) {
+                    alert("提交成功！")
+                    window.location.href = window.location.href;
+                } else {
+                    alert(resp.error);
+                }
+            }, 'json');
+
+        });
+
+        //绑定上传方法
+
+        $("#fileuploadbutton").click(function () {
+            var $this = $("#uploadPackageFile");
+            var path = $this.val();
+            if (!path) {
+                alert("上传文件不能为空！");
+                return;
+            }
+            ajaxFileUpload();
+        })
+
+        function ajaxFileUpload() {
+            $.ajaxFileUpload
+            (
+                {
+                    url: '/serverMonitor/uploadFile/', //用于文件上传的服务器端请求地址
+                    secureuri: false, //是否需要安全协议，一般设置为false
+                    fileElementId: 'uploadPackageFile', //文件上传域的ID
+                    dataType: 'json', //返回值类型 一般设置为json
+                    success: function (data, status)  //服务器成功响应处理函数
+                    {
+                        $("#attachmenturl").val(data.fileurl);
+                        if (typeof (data.error) != 'undefined') {
+                            if (data.error.trim.length == 0) {
+                                alert("上传成功！")
+                            } else {
+                                alert(data.error);
+                            }
+                        }
+                    }
+                }
+            )
+            return false;
+        }
+
+    });
+
+    </script>
+{% endblock %}
+    {% block title_1 %}
+        <span style="float:left;">{% if is_view or is_edit %}<span class="cus_name" value="{{ customer.id }}">{{ customer.name }}</span> - {% else %}监控日志 - {% endif %}{% if is_edit %}编辑{% elif is_view %}查看{% else %}录入{% endif %}</span>
+    {% endblock %}
+    {% block extratitle_1 %}
+        {% if not is_view %}
+            <div class="btn" id="saveBtn">提交</div>
+        {% endif %}
+        {% if is_view %}
+
+        {% endif %}
+    {% endblock %}
+    {% block content %}
+        <tr>
+            <th style="width: 120px;">客户:</th>
+            <td>
+                <span class="like_table">
+                    <select id="select" name="customer_name" >
+                        {% for customer in customer %}
+                            <option value="{{ customer.id }}">{{ customer.name }}</option>
+                        {% endfor %}
+                    </select>
+                </span>
+            </td>
+        </tr>
+        <tr>
+            <th>模块类型:</th>
+            <td>
+                <span class="like_table">
+                    <select id="select" name="module_type" >
+                        {% for moduleType in serverMonitorModule %}
+                            <option value="{{ moduleType.module }}">{{ moduleType.module }}</option>
+                        {% endfor %}
+                    </select>
+                </span>
+            </td>
+        </tr>
+        <tr>
+            <th>日志类型:</th>
+            <td>
+                <span class="like_table">
+                    <select id="select" name="log_type" >
+                        {% for logType in serverMonitorLogType %}
+                            <option value="{{ logType.id }}">{{ logType.log_type }}</option>
+                        {% endfor %}
+                    </select>
+                </span>
+            </td>
+        </tr>
+        <tr>
+            <th>监控类别:</th>
+            <td>
+                <span class="like_table">
+                    <select id="select" name="monitor_type" >
+                         <option value="0">错误</option>
+                         <option value="1">正常</option>
+                         <option value="2">客户反馈</option>
+                    </select>
+                </span>
+            </td>
+        </tr>
+        <tr>
+            <th>详情:</th>
+            <td>
+                <textarea id="log_detail"></textarea>
+            </td>
+        </tr>
+        <tr>
+            <th>附件:</th>
+            <td>
+                <input type="button" id="fileuploadbutton" value="上传" />
+                <input id="uploadPackageFile" type="file" name="uploadFile" method="ajaxSubmit" class="uploadFile tips">
+                <input type="hidden" name="attachmenturl" id="attachmenturl" />
+            </td>
+        </tr>
+
+
+    <div id="dialog_table" class="easyDialog_wrapper" style="display: none; margin: 0px; min-width: 1045px; width: auto; min-height: 300px; max-height: 500px;">
+        <div class="easyDialog_content">
+            <h4 class="easyDialog_title" id="easyDialogTitle" style="cursor: move;">
+                <a href="javascript:void(0)" title="关闭窗口" class="close_btn closeBtn_rzrk">×</a>
+                <span type="dialog_title"></span>
+            </h4>
+
+            <div class="easyDialog_text" style="min-height: 300px; max-height: 415px; overflow: auto;">
+            </div>
+        </div>
+    </div>
+{% endblock %}

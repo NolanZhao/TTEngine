@@ -1,0 +1,124 @@
+{% extends "root.html" %}
+{% load rzrk_tags %}
+
+{% block title %}{% settings_value "MAIN_PROJECT_NAME" %}-欢迎{% endblock %}
+{% block rootJsAndCss %}
+    <style>
+        .like_table {
+            width: 600px;
+            border: 1px solid steelblue;
+            background-color: #97B0F8;
+            text-align: center;
+            font-size: 15px;
+            height: 20px;
+            line-height: 20px;
+            cursor: pointer;
+        }
+
+        .like_table span {
+            width: auto;
+            color: #ffffff;
+            font-weight: bolder
+        }
+
+    </style>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            //绑定点击事件
+            $('.inner').on("click", ".like_table[type=enable_package]", function () {
+                var $this = $(this);
+                //判断是否已在机器区
+                if ($this.parent().attr("id") == 'machine_package') {
+                    $("#machine_package .like_table[type=none]").show();
+                    $("#version_package").append($this);
+                    return;
+                }
+                //判断是否已有待添加版本
+                if ($("#machine_package .like_table[type=enable_package]").length > 0) {
+                    alert('已有待下载版本!')
+                    return false;
+                }
+                //移动
+                $("#machine_package").prepend($this);
+                $("#machine_package .like_table[type=none]").hide();
+            });
+            //保存方法
+            $("#saveBtn").bind('click', function () {
+                //机器区的可用版本
+                var target_package = $("#machine_package .like_table[type=enable_package]");
+                var package_id = target_package.attr('value');
+                if (package_id == null || package_id == '') {
+                    alert("请选择要添加的版本!");
+                    return false;
+                }
+                var params = {
+                    package_id: package_id,
+                    machine_id: '{{machine.id}}',
+                    cus_id: '{{ customer.id }}'
+                }
+                //window.open('/customer/package/dodownload/?package_id=' + package_id + "&machine_id={{ machine.id }}&cus_id={{ customer.id }}");
+                window.open('/customer/package/dodownload/?package_id=' + package_id + ";machine_id={{ machine.id }};cus_id={{ customer.id }}");
+            });
+        });
+    </script>
+{% endblock %}
+{% block rootBody %}
+    <div class="title_1">
+        <span>下载安装包</span>
+    </div>
+    <div class="inner">
+        <div class="btn_line">
+            <div class="btn" id="page_back">返回</div>
+        </div>
+        <table class="bordered table">
+            <tr>
+                <td style="width: 50%;">客户名称:</td>
+                <td style="width: 50%;">{{ customer.name }}</td>
+            </tr>
+            <tr>
+                <td>客户类型:</td>
+                <td>{% if customer.is_sys %}<span style="color: red">系统客户</span>{% else %}普通客户{% endif %}</td>
+            </tr>
+            <tr>
+                <td>机器名称:</td>
+                <td>{{ machine.name }}</td>
+            </tr>
+            <tr>
+                <td>机器类型:</td>
+                <td>{{ machine.type|parse_machine_type }}</td>
+            </tr>
+            <tr>
+                <th>现有版本</th>
+                <th>可用版本库</th>
+            </tr>
+            <tr>
+                <td id="machine_package">
+                    {% if not machine.active_version %}
+                        <span class="like_table" type="none">暂无</span>
+                    {% else %}
+                        <span class="like_table" type="machine_package" value="{{ machine.active_version.id }}">
+                            <span style="color: #aec0f8;width: 40px;background-color: #FFFFAB">1</span>
+                            <span>{{ machine.active_version.version }}</span>
+                            <span>{{ machine.active_version.create_time|date:'Y-m-d H:i:s' }}</span>
+                        </span>
+                    {% endif %}
+                </td>
+                <td id="version_package">
+                    {% if not packages %}
+                        <span class="like_table" type="none">暂无</span>
+                    {% endif %}
+                    {% for package in packages %}
+                        <span class="like_table" type="enable_package" style="background-color: #FA9915" value="{{ package.id }}">
+                            <span style="color: #aec0f8;width: 40px;background-color: #FFFFAB;height: 20px">{{ forloop.counter }}</span>
+                            <span style="width: 350px;height: 20px">{{ package.version }}</span>
+                            <span style="width: 180px;height: 20px">{{ package.create_time|date:'Y-m-d H:i:s' }}</span>
+                        </span>
+                    {% endfor %}
+                </td>
+            </tr>
+        </table>
+        <div class="btn_line">
+            <div class="btn" id="saveBtn">确认下载</div>
+        </div>
+    </div>
+{% endblock %}

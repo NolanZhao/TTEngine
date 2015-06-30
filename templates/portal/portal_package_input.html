@@ -1,0 +1,104 @@
+{% extends "root.html" %}
+{% load rzrk_tags %}
+
+{% block title %}{% settings_value "MAIN_PROJECT_NAME" %}-欢迎{% endblock %}
+{% block rootJsAndCss %}
+    <style type="text/css">
+        textarea {
+            width: 1000px;
+            height: 200px;
+        }
+    </style>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#saveBtn").bind('click', function () {
+                var $this = $(this);
+                var id = $this.attr('pk');
+                var is_enabled = $("#is_enabled").val();
+                is_enabled = (is_enabled == 'true') ? true : false;
+                var remark = $("#remark").val();
+                //开始执行请求
+                $.post('/portal/package/edit/', {id: id, is_enabled: is_enabled, remark: remark}, function (resp) {
+                    if (resp.success) {
+                        dialog_success('', resp.error, function () {
+                            window.location.href = '/portal/package/view/?id={{ pp.id }}';
+                        });
+                    } else {
+                        dialog_error('', resp.error);
+                    }
+                });
+            });
+        });
+    </script>
+{% endblock %}
+{% block rootBody %}
+    <div class="title_1">
+        <span>Portal版本{% if is_view %}查看{% else %}编辑{% endif %}</span>
+    </div>
+    <div class="inner">
+        <div class="btn_line">
+            <span class="btn" id="page_back">返回</span>
+            <span class="btn" onclick="javascript:window.location.href = '/portal/package/list/'">列表</span>
+        </div>
+        <table class="bordered table" id="settings_table">
+            <tr>
+                <td>SVN 版本</td>
+                <td>{{ pp.svn_version }}</td>
+            </tr>
+            <tr>
+                <td>SVN 链接</td>
+                <td>{{ pp.svn_url }}</td>
+            </tr>
+            <tr>
+                <td>是否启用</td>
+                <td>
+                    <select style="width: 500px;" id="is_enabled" {% if is_view %}disabled="disabled"{% endif %}>
+                        <option value="true" {% if pp.is_enabled %}selected="selected"{% endif %}>启用</option>
+                        <option value="false" {% if not pp.is_enabled %}selected="selected"{% endif %}>禁用</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>Portal包</td>
+                <td><a title="{{ pp.package_size }}字节" href="/portal/package/download_package/?id={{ pp.id }}">{% widthratio pp.package_size 1048576 1 %}MB</a></td>
+            </tr>
+            <tr>
+                <td>建库脚本</td>
+                <td><a title="{{ pp.sql_size }}字节" href="/portal/package/download_sql/?id={{ pp.id }}">{% widthratio pp.sql_size 1024 1 %}KB</a></td>
+            </tr>
+            <tr>
+                <td>源主机</td>
+                <td>
+                    {{ pp.portal_machine.host }}
+                </td>
+            </tr>
+            <tr>
+                <td>创建人</td>
+                <td>{{ pp.create_user.username }}</td>
+            </tr>
+            <tr>
+                <td>创建时间</td>
+                <td>{{ pp.create_time|date:'Y-m-d H:i:s' }}</td>
+            </tr>
+            <tr>
+                <td>更新人</td>
+                <td>{{ pp.update_user.username }}</td>
+            </tr>
+            <tr>
+                <td>更新时间</td>
+                <td>{{ pp.update_time|date:'Y-m-d H:i:s' }}</td>
+            </tr>
+            <tr>
+                <td>备注</td>
+                <td>
+                    <textarea id="remark" {% if is_view %}disabled="disabled"{% endif %}>{{ pp.remark }}</textarea>
+                </td>
+            </tr>
+        </table>
+        {% if is_edit %}
+            <div class="btn_line">
+                <div class="btn" id="saveBtn" pk="{{ pp.id }}">保存版本</div>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

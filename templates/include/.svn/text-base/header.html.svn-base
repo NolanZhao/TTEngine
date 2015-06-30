@@ -1,0 +1,14 @@
+{% load rzrk_tags %}
+<div id="headerDiv">
+    <span><span onclick="javascript:window.location.href = '/'" id="main_project_name">{% settings_value "MAIN_PROJECT_NAME" %}</span></span>
+    <span>[
+        {% if request.user.is_authenticated %}
+            您好!{{ request.user.username }}!
+        {% else %}
+            未登录
+        {% endif %}]
+    </span>
+    <span class="logout">退出</span>
+</div>
+<br/>
+<hr>

@@ -1,0 +1,28 @@
+Namespace = ttservice
+ServiceName = XtTask
+packType = 2
+isNewError = True
+Includes = (
+	Protocol/rpc_Structs_Def.h,
+	Protocol/rpc_ClientTraderCommon_Def.h,
+    utils/TTError.h
+)
+
+CppIncludes = (
+	Protocol/rpc_Structs.h,
+	Protocol/rpc_ClientTraderCommon.h,
+    net/RPCEngine.h
+)
+
+# generated file relies on TTServiceCommon.rpc
+# generated file relies on StockCommon.rpc   
+
+reloadAccounts(accounts:[CAccountInfoPtr]) =>(success:#b)
+createTask(req:CCreateTaskReqPtr, strUserName:#s) =>(id:[#i])
+operateTask(groupId:#i, taskId:#i, op:CTaskOpRecordPtr) =>(success:#b)
+queryTasks() => (tasks:[CTaskDetailPtr])
+queryAccounts() => (accounts:[CAccountInfoPtr])
+runTasks() => (success:#b)
+=> pushTaskStatus(tasks:CTaskDetailPtr)
+=> pushTaskStatuses(tasks:[CTaskDetailPtr])
+

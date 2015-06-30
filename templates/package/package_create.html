@@ -1,0 +1,317 @@
+{% extends "root.html" %}
+{% load rzrk_tags %}
+
+{% block title %}{% settings_value "MAIN_PROJECT_NAME" %}-欢迎{% endblock %}
+{% block rootJsAndCss %}
+    <!-- jsoneditor -->
+    {#    <link rel="stylesheet" type="text/css" href="/media/js/json_editor/jsoneditor.css">#}
+    {#    <script src="/media/js/json_editor/jsoneditor.js"></script>#}
+    <!-- ace code editor -->
+    {#    <script type="text/javascript" src="/media/js/json_editor/lib/ace/ace.js"></script>#}
+    {#    <script type="text/javascript" src="/media/js/json_editor/lib/ace/mode-json.js"></script>#}
+    {#    <script type="text/javascript" src="/media/js/json_editor/lib/ace/theme-textmate.js"></script>#}
+    {#    <script type="text/javascript" src="/media/js/json_editor/lib/ace/theme-jsoneditor.js"></script>#}
+    <!-- json lint -->
+    {#    <script type="text/javascript" src="/media/js/json_editor/lib/jsonlint/jsonlint.js"></script>#}
+    <style type="text/css">
+        code {
+            background-color: #f5f5f5;
+        }
+
+        {#        #jsoneditor {#}
+        {#            width: 1000px;#}
+        {#            height: 400px;#}
+        {#            margin-left: 10px;#}
+        {#            margin-bottom: 10px;#}
+        {#        }#}
+
+        {#        #jsoneditor td {#}
+        {#            border: none;#}
+        {#        }#}
+
+        #remark {
+            width: 994px;
+            height: 200px;;
+        }
+
+        .uploadFile {
+            -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=1)";
+            filter: alpha(opacity=1);
+            opacity: 0;
+            margin-left: -66px;
+            margin-top: 5px;
+            width: 66px !important;
+            height: 22px !important;
+            cursor: pointer;
+            position: absolute;
+        }
+
+        .loading {
+            position: relative;
+            float: left;
+            width: 500px;
+            height: 20px;
+            margin-left: 10px;
+            margin-top: 4px;
+            text-align: center;
+            border: 2px solid #BEBEBE;
+        }
+
+        .loading div {
+            position: relative;
+            background-color: orangered;
+            margin-top: -18px;
+            width: 0px;
+            height: 20px;
+            z-index: 2;
+        }
+
+        .loading span {
+            position: relative;
+            z-index: 3;
+        }
+
+        #file_value {
+            position: relative;
+            float: left;
+            width: auto;
+            border: 1px dashed gray;
+            height: 20px;
+            margin-top: 5px;
+            margin-left: 10px;
+            min-width: 350px;
+            line-height: 20px;
+            font-family: "courier new";
+        }
+    </style>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            //显示上传的文件
+            $("input[type=file]").change(function () {
+                $("#file_value").text($(this).val())
+            });
+            //创建按钮
+            $("#saveBtn").click(function () {
+                var $this = $("#uploadFile");
+                var path = $this.val();
+                if (!path) {
+                    alert("上传文件不能为空！");
+                    return;
+                }
+                var ext = /\.[^\.]+$/.exec(path);
+
+                if (ext == null) {
+                    alert("不能上传无后缀文件!");
+                    return;
+                }
+
+                var enableArr = new Array(".gz", ".zip");
+                var flag = false;
+                for (var temp in enableArr) {
+                    if (enableArr[temp] == ext[0]) {
+                        flag = true;
+                        break;
+                    }
+                }
+                if (!flag) {
+                    alert("不支持的格式!");
+                    return;
+                }
+                //进度条
+                var loading = $this.parent().find('.loading');
+                //进度数字
+                var progress = loading.find("span");
+                //进度背景
+                var bar = loading.find("div");
+                //var json_info = JSON.stringify(editor.get());
+                var remark = $("#remark").val();
+                var version = $("#package_version").val();
+                //if (json_info == '' || version == '') {
+                //    alert('请输入必要参数!');
+                //    return false;
+                //}
+                var url = '/package/create/?remark=' + remark + '&package_version=' + version;
+                $this.wrap("<form id='version_upload_form' action='" + url + "' method='post' enctype='multipart/form-data' style='display:none'></form>");
+                //$this.parent().append("<input type='text' name='json' value='" + json_info + "'>");
+
+                $("#version_upload_form").ajaxSubmit({
+                    url: url,
+                    type: 'post',
+                    dataType: 'json',
+                    // 安装包上传时间限制30分钟
+                    timeout: 30 * 60 * 1000,
+                    beforeSend: function () {
+                        progress.text("0%");
+                        bar.css("width", "0px");
+                    },
+                    uploadProgress: function (event, position, total, percentComplete) {
+                        progress.text(percentComplete + '%');
+                        bar.css("width", percentComplete * 5 + 'px');
+                    },
+                    success: function (resp) {
+                        if (resp["success"]) {
+                            alert(resp['error']);
+                            window.location.href = '/package/view/?id=' + resp['id'];
+                        } else {
+                            alert(resp["error"]);
+                        }
+                        //$this.parent().find("input[name=json]").remove();
+                        $this.unwrap();
+                    },
+                    error: function (xhr) {
+                        $this.unwrap();
+                        progress.text("0%");
+                        bar.css("width", "0px");
+                        alert("上传异常!");
+                    }
+                });
+            });
+            //编辑保存按钮
+            $("#saveEditBtn").click(function () {
+                var is_enabled = $("#is_enabled").val();
+                if (is_enabled == 'true') {
+                    is_enabled = true;
+                } else if (is_enabled == 'false') {
+                    is_enabled = false;
+                } else {
+                    alert('启用状态异常!');
+                    return false;
+                }
+                //var json_info = JSON.stringify(editor.get());
+                var remark = $("#remark").val();
+                $.post('/package/edit/', {id: '{{package.id}}', is_enabled: is_enabled, remark: remark}, function (resp) {
+                    if (resp["success"]) {
+                        alert(resp['error']);
+                        window.location.href = '/package/view/?id={{package.id}}';
+                    } else {
+                        alert(resp["error"]);
+                    }
+                }, 'json');
+            });
+        });
+    </script>
+{% endblock %}
+{% block rootBody %}
+    <div class="title_1">
+        <span>版本{% if is_view %}查看{% elif is_edit %}编辑{% else %}录入{% endif %}</span>
+    </div>
+    <div class="inner">
+        {% if  is_view %}
+            <div class="btn_line">
+                <div class="btn" id="edit" onclick="javascript:window.location.href='/package/edit/?id={{ package.id }}'">编辑</div>
+            </div>
+        {% endif %}
+        <table class="bordered table" id="settings_table">
+            {% if is_view or is_edit %}
+                <tr>
+                    <td>版本</td>
+                    <td>{{ package.version }}</td>
+                </tr>
+                <tr>
+                    <td>文件名</td>
+                    <td>{{ package.package_full_name }}</td>
+                </tr>
+                <tr>
+                    <td>文件大小</td>
+                    <td><span title="{{ package.package_size }}字节">{% widthratio package.package_size 1048576 1 %} MB</span></td>
+                </tr>
+                <tr>
+                    <td>启用状态</td>
+                    <td>
+                        {% if is_view %}
+                            {% if package.is_enabled %}可用{% else %}<span style="color: red;font-weight: bolder">禁用</span>{% endif %}
+                        {% elif is_edit %}
+                            <select id="is_enabled">
+                                <option value="true" {% if package.is_enabled %}selected="selected"{% endif %}>启用</option>
+                                <option value="false" {% if not package.is_enabled %}selected="selected"{% endif %}>禁用</option>
+                            </select>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                <tr>
+                    <td>包状态</td>
+                    <td>{% if package.package %}正常{% else %}<span style="color: red;font-weight: bolder">删除</span>{% endif %}</td>
+                </tr>
+                <tr>
+                    <td>创建者</td>
+                    <td>{{ package.upload_user.username }}</td>
+                </tr>
+                <tr>
+                    <td>创建时间</td>
+                    <td>{{ package.create_time|date:'Y-m-d H:i:s' }}</td>
+                </tr>
+                <tr>
+                    <td>更新者</td>
+                    <td>{% if package.update_user %}{{ package.update_user.username }}{% else %}-{% endif %}</td>
+                </tr>
+                <tr>
+                    <td>更新时间</td>
+                    <td>{% if package.update_time %}{{ package.update_time|date:'Y-m-d H:i:s' }}{% else %}-{% endif %}</td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td><span style="font-weight: bolder;">版本号</span></td>
+                    <td>
+                        <input type="text" style="width: 500px;margin-left: 10px" id="package_version">
+                        &nbsp;
+                        <span style="color: red;font-weight: bolder">版本号是区分升级包的唯一标识!!!</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>上传文件</td>
+                    <td>
+                        <span id="addCodeBlack" class="btn">上传文件</span>
+                        <input type="file" id="uploadFile" class="uploadFile" name="uploadFile">
+
+                        <div id="file_value">点击左侧按钮上传文件</div>
+                        <div class="loading" style="">
+                            <span>0%</span>
+
+                            <div></div>
+                        </div>
+                    </td>
+                </tr>
+            {% endif %}
+            <!--
+            <tr>
+                <td>JSON数据</td>
+                <td>
+                    <div id="jsoneditor"></div>
+                </td>
+            </tr>
+            -->
+            <tr>
+                <td>备注</td>
+                <td>
+                    <textarea id="remark" {% if is_view %}disabled="disabled"{% endif %} style="margin-left: 10px">{{ package.remark }}</textarea>
+                </td>
+            </tr>
+        </table>
+        {% if not is_view %}
+            <div class="btn_line">
+                <div class="btn" id="{% if is_edit %}saveEditBtn{% else %}saveBtn{% endif %}">{% if is_edit %}保存版本{% else %}创建版本{% endif %}</div>
+            </div>
+        {% endif %}
+    </div>
+    <!--
+    <script type="text/javascript">
+        var container = document.getElementById('jsoneditor');
+
+        var options = {
+            name: 'jsonEditor',
+            mode: 'code',
+            modes: ['code', 'view', 'tree'],
+            error: function (err) {
+                alert(err.toString());
+            }
+        };
+        {% if is_view or is_edit %}
+            var json ={{ package.json_info|safe }};
+        {% else %}
+            var json = {"array": [1, 2, 3], "boolean": true, "null": null, "number": 123, "object": {"a": "b", "c": "d", "e": "f"}, "string": "Hello World"};
+        {% endif %}
+        var editor = new jsoneditor.JSONEditor(container, options, json);
+    </script>
+    -->
+{% endblock %}

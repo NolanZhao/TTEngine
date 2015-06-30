@@ -1,0 +1,118 @@
+{% extends "root.html" %}
+{% load rzrk_tags %}
+
+{% block title %}{% settings_value "MAIN_PROJECT_NAME" %}-欢迎{% endblock %}
+{% block rootJsAndCss %}
+    <style type="text/css">
+    </style>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('.inner').on('click', '.btn[cmd=enable],.btn[cmd=disable]', function () {
+                var $this = $(this);
+
+                var package_version = $this.parent().find('input[name=package_version]').val();
+                var package_id = $this.parent().find('input[name=package_id]').val();
+
+                var cmd = $this.attr('cmd');
+                var cmd_name = null;
+                if (cmd == 'enable') {
+                    cmd_name = '确认"启用"版本[' + package_version + ']?';
+                } else if (cmd == 'disable') {
+                    cmd_name = '确认"禁用"版本[' + package_version + ']?'
+                }
+                var url = '/package/' + cmd + '/';
+                if (!confirm(cmd_name)) {
+                    return false;
+                }
+                $.post(url, {id: package_id}, function (resp) {
+                    alert(resp.error);
+                    if (resp.success) {
+                        window.location.reload();
+                    }
+                }, 'json');
+            });
+            $('.inner').on('click', '.btn[cmd=delete_package]', function () {
+                var $this = $(this);
+
+                var package_version = $this.parent().find('input[name=package_version]').val();
+                var package_id = $this.parent().find('input[name=package_id]').val();
+
+                var cmd = $this.attr('cmd');
+                var cmd_name = '确认"删除"版本[' + package_version + ']?';
+                var url = '/package/' + cmd + '/';
+                if (!confirm(cmd_name)) {
+                    return false;
+                }
+                $.post(url, {id: package_id}, function (resp) {
+                    alert(resp.error);
+                    if (resp.success) {
+                        window.location.reload();
+                    }
+                }, 'json');
+            });
+            //添加按钮
+            $(".inner").on("click", "#addCustomer", function () {
+                window.open("/package/create/", "_self");
+            });
+        });
+    </script>
+{% endblock %}
+{% block rootBody %}
+    <div class="title_1">
+        <span>版本列表</span>
+    </div>
+    <div class="inner">
+        <div class="btn_line">
+            <div class="btn" id="addCustomer">添加</div>
+        </div>
+        <table class="bordered table" id="settings_table">
+            <tr>
+                <th>序号</th>
+                <th>文件名</th>
+                <th>版本</th>
+                <th>是否启用</th>
+                <th>包状态</th>
+                <th>大小</th>
+                <th>创建人</th>
+                <th>创建时间</th>
+                <th>更新人</th>
+                <th>更新时间</th>
+                <th>操作</th>
+            </tr>
+            {% if not packages %}
+                <tr>
+                    <td colspan="4">暂无版本</td>
+                </tr>
+            {% endif %}
+            {% for package in packages %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>
+                        {{ package.package_full_name }}
+                    </td>
+                    <td>{{ package.version }}</td>
+                    <td>{% if package.is_enabled %}可用{% else %}<span style="color: red;font-weight: bolder">禁用</span>{% endif %}</td>
+                    <td>{% if package.package %}正常{% else %}<span style="color: red;font-weight: bolder">删除</span>{% endif %}</td>
+                    <td><span title="{{ package.package_size }}字节">{% widthratio package.package_size 1048576 1 %}MB</span></td>
+                    <td>{{ package.upload_user.username }}</td>
+                    <td>{{ package.create_time|date:'Y-m-d H:i:s' }}</td>
+                    <td>{% if package.update_user %}{{ package.update_user.username }}{% else %}-{% endif %}</td>
+                    <td>{% if package.update_time %}{{ package.update_time|date:'Y-m-d H:i:s' }}{% else %}-{% endif %}</td>
+                    <td>
+                        <input type="hidden" name="package_id" value="{{ package.id }}">
+                        <input type="hidden" name="package_version" value="{{ package.version }}">
+                        <span class="btn" onclick="javascript:window.open('/package/view/?id={{ package.id }}','_self')">查看</span>
+                        <span class="btn" onclick="javascript:window.open('/package/edit/?id={{ package.id }}','_self')">编辑</span>
+                        {% if package.is_enabled %}
+                            <span class="btn" cmd="disable">禁用</span>
+                        {% else %}
+                            <span class="btn" cmd="enable" style="color: blue">启用</span>
+                        {% endif %}
+                        <span class="btn" cmd="delete_package">删除</span>
+                        <span class="btn" onclick="javascript:window.open('/package/download_package/?id={{ package.id }}')">下载</span>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+{% endblock %}

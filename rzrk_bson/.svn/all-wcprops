@@ -1,0 +1,83 @@
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svn/svnrepos/!svn/ver/170376/server5/deploy/trunk/TTEngine/rzrk_bson
+END
+code.py
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svn/svnrepos/!svn/ver/167800/server5/deploy/trunk/TTEngine/rzrk_bson/code.py
+END
+tz_util.py
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svn/svnrepos/!svn/ver/167800/server5/deploy/trunk/TTEngine/rzrk_bson/tz_util.py
+END
+min_key.py
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svn/svnrepos/!svn/ver/167800/server5/deploy/trunk/TTEngine/rzrk_bson/min_key.py
+END
+errors.py
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svn/svnrepos/!svn/ver/167800/server5/deploy/trunk/TTEngine/rzrk_bson/errors.py
+END
+max_key.py
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svn/svnrepos/!svn/ver/167800/server5/deploy/trunk/TTEngine/rzrk_bson/max_key.py
+END
+__init__.py
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svn/svnrepos/!svn/ver/170376/server5/deploy/trunk/TTEngine/rzrk_bson/__init__.py
+END
+py3compat.py
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svn/svnrepos/!svn/ver/167800/server5/deploy/trunk/TTEngine/rzrk_bson/py3compat.py
+END
+son.py
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svn/svnrepos/!svn/ver/167800/server5/deploy/trunk/TTEngine/rzrk_bson/son.py
+END
+dbref.py
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svn/svnrepos/!svn/ver/167800/server5/deploy/trunk/TTEngine/rzrk_bson/dbref.py
+END
+objectid.py
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svn/svnrepos/!svn/ver/167800/server5/deploy/trunk/TTEngine/rzrk_bson/objectid.py
+END
+timestamp.py
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svn/svnrepos/!svn/ver/167800/server5/deploy/trunk/TTEngine/rzrk_bson/timestamp.py
+END
+binary.py
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svn/svnrepos/!svn/ver/167800/server5/deploy/trunk/TTEngine/rzrk_bson/binary.py
+END
+json_util.py
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svn/svnrepos/!svn/ver/167800/server5/deploy/trunk/TTEngine/rzrk_bson/json_util.py
+END

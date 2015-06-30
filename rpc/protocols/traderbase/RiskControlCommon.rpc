@@ -1,0 +1,44 @@
+﻿
+Namespace = ttservice
+ServiceName = RiskControlCommon
+Includes = (
+    idata/IData.h,
+    idata/IDataBson.h,
+    Protocol/rpc_Enums.h,
+    Protocol/rpc_ClientTraderCommon_Def.h,
+)
+
+CppIncludes = (
+    Protocol/rpc_ClientTraderCommon.h,    idata/IDataCreator.h,
+    boost/assign/list_of.hpp,
+)
+
+CStkBasicRate : (
+    warn_value : #s;
+    stop_value : #s;
+    key : #s;
+    desc : #s;
+)
+
+# 基础账号风控
+CStkBasicRC : (
+    rate : [CStkBasicRate];
+)
+
+# 黑白名单
+CStkRestrictList : (
+    white : [#s];
+    black : [#s];    
+)
+
+# 黑白分类
+CStkRestrictCategory : (
+    white : [#i];
+    black : [#i];
+)
+
+CStkConfigAccount : (
+    m_default : CStkBasicRC;
+    stocks : CStkRestrictList;
+    category: CStkRestrictCategory;
+)

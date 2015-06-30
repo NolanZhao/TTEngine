@@ -1,0 +1,529 @@
+{% extends "customer_common_button.html" %}
+{% load rzrk_tags %}
+
+{% block title %}{% settings_value "MAIN_PROJECT_NAME" %}-欢迎{% endblock %}
+{% block rootJsAndCss %}
+     <link rel="stylesheet" href="//code.jquery.com/ui/1.11.2/themes/smoothness/jquery-ui.css">
+     <script src="//code.jquery.com/jquery-1.10.2.js"></script>
+     <script src="//code.jquery.com/ui/1.11.2/jquery-ui.js"></script>
+     <link rel="stylesheet" href="/resources/demos/style.css">
+     <style type="text/css">
+
+        .progress-label {
+                float: left;
+                margin-left: 33%;
+                margin-top: 5px;
+                font-weight: bold;
+                text-shadow: 1px 1px 0 #fff;
+        }
+
+
+
+        .like_table span {
+            width: 180px;
+        }
+
+        .like_table input {
+            margin-left: 10px;
+        }
+
+        .like_table label {
+            width: 33px;
+            float: left;
+        }
+
+        .status {
+            margin-top: -5px;
+            margin-left: 0px !important;
+            min-width: 10px !important;
+            width: 34px !important;
+            cursor: pointer;
+        }
+
+        .status:hover {
+            background-color: #C2DFFF;
+        }
+
+        .green {
+
+        }
+    </style>
+     <script type="text/javascript">
+
+        var index_timer = 0;
+
+        var status_dict = {
+            1: ['成功', '✔', 'green'],
+            0: ['失败', '✖', 'blue'],
+            '-1': ['运行中', '☂', 'red'],
+            null: ['未知', '▬', 'gray']
+        };
+
+        $(document).ready(function () {
+            //一键更新
+
+            $('.inner').on("click", '.btn[cmd=onekey_update]',onekey_update)
+
+            //开始编译按钮
+            $('.inner').on('click', '.btn[cmd=start_compiling]',start_compiling)
+
+            //检验更新数据库
+            $(".inner").on("click", ".btn[cmd=check_sql]", check_sql);
+
+            var selects = $('select:visible');
+            var size = selects.size() - 1;
+            $('select:visible').bind('change', function () {
+                var $this = $(this);
+                var program_name = this.id;
+                if (program_name.length != 14){
+                init_one_program_status($this);}
+            });
+            $('select:visible').each(function (index, domEle) {
+
+                if (index != 0){
+                init_one_program_status($(domEle));}
+            });
+
+            {% for program in  program_names %}
+                 $(".inner").on("change", "select[name={{ program }}]", function () {
+                    var $this = $(this);
+                    var branchTag = $this.val();
+                    var programName = $this.attr('name');
+                    $.get('/customer/package_default/', {programName: programName, branchTag: branchTag, customerID: "{{customer.id}}"}, function (resp) {
+                        }, 'json');
+                });
+            {% endfor %}
+			
+			
+	    $(".inner").on("change", "#portal_package", function () {
+                var portal_package_id = $('#portal_package').val();
+                $.get('/customer/portal_default/', { portal_package_id: portal_package_id, customerID: "{{customer.id}}"}, function (resp) {
+                    }, 'json');
+            });
+
+
+{#            setInterval(function() {#}
+{#                $.get('/customer/deploy_process_info/', function (resp) {#}
+{#                    if(resp.success)#}
+{#                    {#}
+{#                        $("#progressbar").progressbar("value", resp.deployPercent);#}
+{#                        $("#ProgressInfo").text(resp.deployINFO);#}
+{#                        $("#progressPercent").text(resp.deployPercent);#}
+{#                        $(".progress-label").text("Deploying..."+"    "+resp.deployPercent+"%");#}
+{#                    }#}
+{#                }, 'json');#}
+{#            }, 1000);#}
+
+            $( "#progressbar" ).progressbar({
+                value: 0
+            });
+
+{#            setInterval(function() {#}
+{#                $.get('/customer/compile_process_info/', function (resp) {#}
+{#                    if(resp.success)#}
+{#                    {#}
+{#                        $("#CompileInfo").text(resp.compileINFO);#}
+{#                    }#}
+{#                }, 'json');#}
+{#            }, 1000);#}
+
+
+
+        });
+
+
+
+            function start_compiling(){
+            var $btn = $(this);
+            var btn_text = $btn.text();
+            //解除绑定按钮
+            $(this).unbind();
+            //开始执行timer
+            var timer = setInterval(function () {
+                index_timer = index_timer == 0 ? 3 : --index_timer;
+                $btn.text(btn_text + get_repeat('.', index_timer));
+            }, 1000);
+
+            //获取参数
+            var machine_id = $("#machine_id").val();
+            var updates = {};
+            var compiles = {};
+            var cleans = {};
+            var params = $(".branch_params");
+            for (var index = 0; index < params.length; index++) {
+                var $this = $(params[index]);
+                var name = $this.attr('name');
+                var isUpdate = $("#" + name + "_isUpdate")[0].checked;
+                var value = $this.val();
+                if (isUpdate) {
+                    updates[name] = value;
+                }
+                var isCompile = $("#" + name + "_isCompile")[0].checked;
+                if (isCompile) {
+                    compiles[name] = value;
+                }
+                var isClean = $("#" + name + "_isClean")[0].checked;
+                if (isClean) {
+                    cleans[name] = value;
+                }
+            }
+            var result = {
+                'cus_id': '{{ customer.id }}',
+                'machine_id': machine_id,
+                'cleans': cleans,
+                'updates': updates,
+                'compiles': compiles
+
+            };
+
+            var json = JSON.stringify(result);
+            $.post('/customer/compiling/', {json: json}, function (resp) {
+                //重新绑定点击方法
+                $btn.bind('click', start_compiling);
+                $btn.text(btn_text);
+                //关闭timer
+                if (timer) {
+                    clearInterval(timer);
+                    timer = 0;
+                }
+
+                if (resp.success) {
+                    dialog_success('', resp.error);
+                } else {
+                    var log_str = resp.error;
+                    log_str += '</br>';
+                    log_str += '</br>';
+                    var log_arr = resp.log;
+
+                    for (var index in log_arr) {
+                        var log_item = log_arr[index];
+                        log_str += log_item;
+                        log_str += '</br>';
+                    }
+                    dialog_error('', log_str);
+                }
+                $('select:visible').each(function (index, domEle) {
+				if (index != 0){
+                init_one_program_status($(domEle));}
+                });
+            }, 'json');
+        }
+
+
+
+            function check_sql() {
+                var $this = $(this);
+                $('.btn[cmd = check_sql]').unbind('click');
+                $this.text('检验中...');
+                var url = '/customer/check_sql/';
+                $.post(url, function (resp) {
+                    try {
+                        if (resp.success) {
+                            alert(resp.error);
+                        } else {
+                            alert(resp.error);
+                        }
+                    } catch (err) {
+                        dialog_error(err.name, err.message);
+                    }
+                    finally {
+                        $this.text('检验数据库');
+                        $('.btn[cmd=check_sql]').bind('click', check_sql);
+                    }
+                });
+            }
+
+            function onekey_update() {
+                $("#progressbar").show();
+                var $this = $(this);
+                $('.btn[cmd = onekey_update]').unbind('click');
+                $this.text('更新中...');
+                var cus_id = $this.attr('id');
+                var cus_name = $this.attr('cus_name');
+                var portal_package = $('#portal_package').val();
+                var machine_id = $("#machine_id").val();
+                var updates = {};
+                var compiles = {};
+                var cleans = {};
+                var params = $(".branch_params");
+                for (var index = 0; index < params.length; index++) {
+                    var param = $(params[index]);
+                    var name = param.attr('name');
+                    var isUpdate = $("#" + name + "_isUpdate")[0].checked;
+                    var value = param.val();
+                    if (isUpdate) {
+                        updates[name] = value;
+                    }
+                    var isCompile = $("#" + name + "_isCompile")[0].checked;
+                    if (isCompile) {
+                        compiles[name] = value;
+                    }
+                    var isClean = $("#" + name + "_isClean")[0].checked;
+                    if (isClean) {
+                        cleans[name] = value;
+                    }
+                }
+                var param_dict = {};
+                var params = $(".branch_params");
+                for (var index = 0; index < params.length; index++) {
+                    var param = $(params[index]);
+                    var name = param.attr('name');
+                    var value = param.val();
+                    param_dict[name] = value;
+                }
+                var pro = {
+                    'cus_id': cus_id,
+                    'params': param_dict,
+                    'portal_package': portal_package,
+                    'machine_id':machine_id,
+                    'cleans': cleans,
+                    'updates': updates,
+                    'compiles': compiles
+                };
+                var json = JSON.stringify(pro);
+
+                $.post('/customer/onekey_update/', {json:json}, function (resp) {
+                    try {
+                        if (resp.success) {
+		        } else {
+                            alert(resp.error);
+                        }
+                    } catch (err) {
+                        dialog_error(err.name, err.message);
+                    }
+                    finally {
+                        $this.text('一键更新');
+                        $('.btn[cmd=onekey_update]').bind('click', onekey_update);
+                    }
+                });
+
+            }
+
+
+    function init_one_program_status(select_obj) {
+            var program_name = select_obj.attr('name');
+            var branch_tag = select_obj.val();
+
+            var update_status_obj = select_obj.parent().find('span[type=update]');
+            var clean_status_obj = select_obj.parent().find('span[type=clean]');
+            var compile_status_obj = select_obj.parent().find('span[type=compile]');
+
+            var url = '/customer/compiling/status/';
+            var params = {'program_name': program_name, 'branch_tag': branch_tag};
+
+            $.get(url, params, function (resp) {
+                if (resp.success) {
+                    var data = resp.data;
+                    var update_data = data.update;
+                    var clean_data = data.clean;
+                    var compile_data = data.compile;
+
+                    //update
+                    update_status_obj.empty();
+                    update_status_obj.attr('class', 'status ' + status_dict[update_data.status][2]);
+                    update_status_obj.html('[' + status_dict[update_data.status][1] + ']');
+
+                    var update_status_html = '';
+                    update_status_html += '当前版本: ';
+                    update_status_html += '<br/>';
+                    update_status_html +=  + update_data.local_revision;
+                    update_status_html += '<br/>';
+                    update_status_html +='外链: '+update_data.externals_local_revision;
+                    update_status_html += '<br/>';
+                    update_status_html += '最新版本: ';
+                    update_status_html += '<br/>';
+                    update_status_html +=  +update_data.current_revision;
+                    update_status_html += '<br/>';
+                    update_status_html += '外链: ' + update_data.externals_current_revision;
+                    update_status_html += '<br/>';
+                    update_status_html += '执行结果: ' ;
+                    update_status_html += '<br/>';
+                    update_status_html += status_dict[update_data.status][0];
+
+                    update_status_obj.attr('title', update_status_html);
+                    update_status_obj.show();
+                    update_status_obj.qtip();
+
+                    //clean
+                    clean_status_obj.empty();
+                    clean_status_obj.attr('class', 'status ' + status_dict[clean_data.status][2]);
+                    clean_status_obj.html('[' + status_dict[clean_data.status][1] + ']');
+
+                    var clean_status_html = '';
+                    clean_status_html += '当前版本: ' ;
+                    clean_status_html += '<br/>';
+                    clean_status_html += clean_data.local_revision ;
+                    clean_status_html += '<br/>';
+                    clean_status_html +='外链: '+ clean_data.externals_local_revision ;
+                    clean_status_html += '<br/>';
+                    clean_status_html += '最新版本: ' ;
+                    clean_status_html += '<br/>';
+                    clean_status_html +=  clean_data.current_revision;
+                    clean_status_html += '<br/>';
+                    clean_status_html += '外链: ' + clean_data.externals_current_revision;
+                    clean_status_html += '<br/>';
+                    clean_status_html += '上次版本: ' ;
+                    clean_status_html += '<br/>';
+                    clean_status_html +=   clean_data.last_execute_revision;
+                    clean_status_html += '<br/>';
+                    clean_status_html += '上次开始: ' ;
+                    clean_status_html += '<br/>';
+                    clean_status_html +=  clean_data.last_execute_start_time;
+                    clean_status_html += '<br/>';
+                    clean_status_html += '上次结束: ' ;
+                    clean_status_html += '<br/>';
+                    clean_status_html +=  clean_data.last_execute_end_time;
+                    clean_status_html += '<br/>';
+                    clean_status_html += '执行结果: ' ;
+                    clean_status_html +=  status_dict[clean_data.status][0];
+                    clean_status_html += '<br/>';
+
+                    clean_status_obj.attr('title', clean_status_html);
+                    clean_status_obj.show();
+                    clean_status_obj.qtip();
+
+
+                    //compile
+                    compile_status_obj.empty();
+                    compile_status_obj.attr('class', 'status ' + status_dict[compile_data.status][2]);
+                    compile_status_obj.html('[' + status_dict[compile_data.status][1] + ']');
+
+                    var compile_status_html = '';
+                    compile_status_html += '当前版本: ' ;
+                    compile_status_html += '<br/>';
+                    compile_status_html +=  compile_data.local_revision;
+                    compile_status_html += '<br/>';
+                    compile_status_html += '外链: '+ compile_data.externals_local_revision;
+                    compile_status_html += '<br/>';
+                    compile_status_html += '最新版本: ';
+                    compile_status_html += '<br/>';
+                    compile_status_html +=   compile_data.current_revision;
+                    compile_status_html += '<br/>';
+                    compile_status_html += '外链: '+ compile_data.externals_current_revision;
+                    compile_status_html += '<br/>';
+                    compile_status_html += '上次版本: ' ;
+                    compile_status_html += '<br/>';
+                    compile_status_html += compile_data.last_execute_revision;
+                    compile_status_html += '<br/>';
+                    compile_status_html += '上次开始: ' ;
+                    compile_status_html += '<br/>';
+                    compile_status_html += compile_data.last_execute_start_time;
+                    compile_status_html += '<br/>';
+                    compile_status_html += '上次结束: ' ;
+                    compile_status_html += '<br/>';
+                    compile_status_html +=  compile_data.last_execute_end_time;
+                    compile_status_html += '<br/>';
+                    compile_status_html += '执行结果: ' ;
+                    compile_status_html += '<br/>';
+                    compile_status_html +=  status_dict[compile_data.status][0];
+
+                    compile_status_obj.attr('title', compile_status_html);
+                    compile_status_obj.show();
+                    compile_status_obj.qtip();
+                } else {
+                    dialog_error('', resp.error)
+                }
+            }, 'json');
+        }
+
+    </script>
+
+{% endblock %}
+
+{% block title_1 %}
+    <span style="float: left"><span class="cus_name" value="{{ customer.id }}">{{ customer.name }}</span> - 一键更新</span>
+{% endblock %}
+{% block content %}
+    <tr>
+        <th style="width: 150px;">客户名称:</th>
+        <td>{{ customer.name }}</td>
+    </tr>
+    <tr>
+        <th>Portal包:</th>
+        <td>
+            {% if is_edit %}
+                {{ customer_package.portal_package.svn_url }}:{{ customer_package.portal_package.svn_version }}
+            {% else %}
+                <select id="portal_package" style="width: 500px;">
+                    {% for package in portal_packages %}
+                         <option value="{{ package.id }}"{% for defaultpack in packages %}{% if package.svn_version == defaultpack.svn_version and package.get_branch_tag == defaultpack.branchtag %} selected="selected" {% endif %}{% endfor %}> {{ package.svn_version }} : [{{ package.get_branch_tag }}]</option>
+                    {% endfor %}
+                </select>
+            {% endif %}
+        </td>
+    </tr>
+    <tr>
+        <th>编译机:</th>
+        <td>
+            {% for machine in  machines %}
+                <span>{{ machine.name }} - {{ machine.os|parse_os_type }}</span>
+            {% endfor %}
+            <select style="width: 400px;display: none" id="machine_id">
+                {% for machine in  machines %}
+                    <option value="{{ machine.id }}">{{ machine.name }} - {{ machine.os|parse_os_type }}</option>
+                {% endfor %}
+            </select>
+        </td>
+    </tr>
+    <tr>
+        <th>请填写编译参数:</th>
+        <td>
+            {% for program in  program_names %}
+                <span class="like_table">
+                    <span>{{ program }}:</span>
+                    <select id="{{ program }}" name="{{ program }}" class="branch_params">
+                        {% for data in  branchInfos %}
+                            {% if data.programName == program %}
+                                {% if data.customerTag == customer.tag or data.customerTag == "" %}
+                                    <option value="{{ data.branchTag }}"{% for defaultData in defaultInfo %}{% if data.branchTag == defaultData.branchTag and data.programName == defaultData.programName %}selected="selected"{% endif %}{% endfor %}> {{ data.branchTag }}</option>
+                                {% endif %}
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+
+                    <input type=checkbox id="{{ program }}_isUpdate" name="{{ program }}">
+                    <label for="{{ program }}_isUpdate" >更新</label>
+                    <span type="update" class="status" title=""></span>
+
+                    <input type=checkbox id="{{ program }}_isClean" name="{{ program }}"  style="margin-left: 50px;">
+                    <label for="{{ program }}_isClean" >清空</label>
+                    <span type="clean" class="status"></span>
+
+                    <input type=checkbox id="{{ program }}_isCompile" name="{{ program }}" style="margin-left: 50px;">
+                    <label for="{{ program }}_isCompile" >编译</label>
+                    <span type="compile" class="status"></span>
+                </span>
+            {% endfor %}
+        </td>
+    </tr>
+    <tr>
+        <span class="btn" cmd="check_sql" title="检验数据库" id="{{ customer.id }}" cus_name="{{ customer.name }}">检验数据库</span>
+    </tr>
+{% endblock %}
+{% block floorcontent %}
+    <div class="btn_line">
+    <tr>
+        <div class="btn" id="{{ customer.id }}" cmd="onekey_update">一键更新</div>
+    </tr>
+    <tr>
+        <span class="btn" cmd="start_compiling" title="开始编译" id="{{ customer.id }}" cus_name="{{ customer.name }}">开始编译</span>
+    </tr>
+    </div>
+
+    <tr>
+        <div id="progressbar" style="display:none">
+	    <div class="progress-label">Deploying ...</div >
+        </div>
+    </tr>
+    <tr>
+        <td>
+            <br>
+            <br>
+            <div id="ProgressInfo" style="text-align:left; font-size: 26px; font-weight: bold; margin-left: 33%;"></div>
+            <div id="CompileInfo" style="text-align:left; font-size: 26px; font-weight: bold; margin-left: 33%; background-color:lightblue;"></div>
+	    </td>
+    </tr>
+
+{% endblock %}
+
+

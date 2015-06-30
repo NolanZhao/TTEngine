@@ -1,0 +1,65 @@
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svn/svnrepos/!svn/ver/184917/server5/deploy/trunk/TTEngine/customer
+END
+deployCustomerPackage.py
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/svn/svnrepos/!svn/ver/172744/server5/deploy/trunk/TTEngine/customer/deployCustomerPackage.py
+END
+MysqlConfig.py
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svn/svnrepos/!svn/ver/171572/server5/deploy/trunk/TTEngine/customer/MysqlConfig.py
+END
+views.py
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svn/svnrepos/!svn/ver/184917/server5/deploy/trunk/TTEngine/customer/views.py
+END
+KeepalivedConfig.py
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/svn/svnrepos/!svn/ver/171810/server5/deploy/trunk/TTEngine/customer/KeepalivedConfig.py
+END
+__init__.py
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svn/svnrepos/!svn/ver/166034/server5/deploy/trunk/TTEngine/customer/__init__.py
+END
+CustomerUpdator.py
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svn/svnrepos/!svn/ver/170684/server5/deploy/trunk/TTEngine/customer/CustomerUpdator.py
+END
+LicenseDataGenerator.py
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/svn/svnrepos/!svn/ver/168527/server5/deploy/trunk/TTEngine/customer/LicenseDataGenerator.py
+END
+models.py
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svn/svnrepos/!svn/ver/184582/server5/deploy/trunk/TTEngine/customer/models.py
+END
+onetimestatus.py
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svn/svnrepos/!svn/ver/181918/server5/deploy/trunk/TTEngine/customer/onetimestatus.py
+END
+urls.py
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svn/svnrepos/!svn/ver/184564/server5/deploy/trunk/TTEngine/customer/urls.py
+END

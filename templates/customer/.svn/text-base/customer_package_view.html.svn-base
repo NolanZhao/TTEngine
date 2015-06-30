@@ -1,0 +1,245 @@
+{% extends "customer_common_button.html" %}
+{% load rzrk_tags %}
+
+{% block title %}{% settings_value "MAIN_PROJECT_NAME" %}-欢迎{% endblock %}
+{% block rootJsAndCss %}
+    <style type="text/css">
+    </style>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('.inner').on('click', '.btn[cmd=enable],.btn[cmd=disable]', function () {
+                window.open("/customer/package_file/?packageId={{ package.id }}")
+            });
+
+            // 删除 安装包
+            $('.inner').on('click', '.btn[cmd=delete_package]', function () {
+                var $this = $(this);
+
+                var package_version = $this.parent().find('input[name=package_version]').val();
+                var package_id = $this.parent().find('input[name=package_id]').val();
+
+                var cmd = $this.attr('cmd');
+                var cmd_name = '确认"删除"版本[' + package_version + ']?';
+                var url = '/customer/package_del/';
+                if (!confirm(cmd_name)) {
+                    return false;
+                }
+                $.post(url, {id: package_id}, function (resp) {
+                    if (resp.success) {
+                        window.location.reload();
+                    } else {
+                        dialog_error('', resp.error);
+                    }
+                }, 'json');
+            });
+            //添加按钮
+            $(".inner").on("click", "#createPackage", function () {
+                window.open("/customer/package_create/?customerId={{ customer.id }}", "_self");
+            });
+
+            //文件列表
+            $(".inner").on("click", ".btn[cmd=file_list]", function () {
+                var $this = $(this);
+                var package_id = $this.parent().find('input[name=package_id]').val();
+
+                var url = '/customer/package_file/';
+
+                $.get(url, {packageId: package_id}, function (resp) {
+                    if (resp.success) {
+                        var data = resp.data;
+                        var dialog_title = $('span[type=dialog_title]');
+                        dialog_title.text('文件列表');
+                        var dialog_table = $('table[type=dialog_table]');
+                        dialog_table.empty();
+                        //初始化table
+                        var html = '';
+                        html += '<tr>';
+                        html += '<th>序号</th>';
+                        html += '<th>路径</th>';
+                        html += '<th>大小</th>';
+                        html += '<th>sha1</th>';
+                        html += '<th>权限</th>';
+                        html += '<th>操作</th>';
+                        html += '</tr>';
+
+                        for (var index in data) {
+                            var data_item = data[index];
+                            html += '<tr>';
+                            html += '<td>' + (parseInt(index) + 1) + '</td>';
+                            html += '<td>' + data_item.path + '</td>';
+                            html += '<td>' + Math.round((parseInt(data_item.size) / 1024) * 100) / 100 + ' KB</td>';
+                            html += '<td>' + data_item.sha1 + '</td>';
+                            html += '<td>' + data_item.mod + '</td>';
+                            html += '<td>'
+                            html += '<span class="btn" cmd="file_download" value="' + data_item.id + '" style="line-height: 21px;">下载</span>';
+                            //html += '<span class="btn" cmd="file_read" value="' + data_item.id + '" style="line-height: 21px;" >查看</span>';
+                            html += '<span class="btn" onclick="javascript:window.open(\'/customer/package_file/read/?id=' + data_item.id + '\',\'_blank\')" style="line-height: 21px;" >查看</span>';
+
+
+                            html += '</td>';
+                            html += '</tr>';
+                        }
+
+                        dialog_table.append(html);
+                        easyDialog.open({
+                            container: 'dialog_table',
+                            overlay: false
+                        });
+                    } else {
+                        alert(resp.error);
+                    }
+                });
+            });
+
+            //文件下载
+            $("body").on("click", ".btn[cmd=file_download]", function () {
+                var $this = $(this);
+                var file_id = $this.attr('value');
+                var url = '/customer/package_file/download/?id=' + file_id;
+                window.open(url);
+            });
+
+            // 查看 文件内容
+            $("body").on("click", ".btn[cmd=file_read]", function () {
+                var $this = $(this);
+                var file_id = $this.attr('value');
+                var url = '/customer/package_file/read/';
+                $.get(url, {id: file_id}, function (resp) {
+                    if (resp["success"]) {
+                        var data = resp.error;
+                        var dialog_title = $('span[type=dialog_title]');
+                        dialog_title.text('代码分支');
+                        var dialog_table = $('textarea[type=dialog_table]');
+                        dialog_table.empty();
+                        //初始化table
+                        var html = '';
+                        html += '<tr>';
+                        html += '<th>文件内容</th>';
+                        html += '</tr>';
+
+                        html += '<tr>';
+                        html += '<td><xmp>' + data + '</xmp></td>';
+                        html += '</tr>';
+
+                        alert(html);
+                    } else {
+                        dialog_error('', resp.error);
+                    }
+                });
+            });
+
+            //代码分支
+            $(".inner").on("click", ".btn[cmd=package_branch]", function () {
+                var $this = $(this);
+                var package_id = $this.parent().find('input[name=package_id]').val();
+
+                var url = '/customer/package_branch/';
+
+                $.get(url, {packageId: package_id}, function (resp) {
+                    if (resp.success) {
+                        var data = resp.data;
+                        var dialog_title = $('span[type=dialog_title]');
+                        dialog_title.text('代码分支');
+                        var dialog_table = $('table[type=dialog_table]');
+                        dialog_table.empty();
+                        //初始化table
+                        var html = '';
+                        html += '<tr>';
+                        html += '<th>序号</th>';
+                        html += '<th>分支</th>';
+                        html += '<th>版本号</th>';
+                        html += '</tr>';
+
+                        for (var index in data.branches) {
+                            var data_item = data.branches[index];
+                            html += '<tr>';
+                            html += '<td>' + (parseInt(index) + 1) + '</td>';
+                            html += '<td>' + data_item[0] + '</td>';
+                            html += '<td>' + data_item[1] + '</td>';
+                            html += '</tr>';
+                        }
+
+                        dialog_table.append(html);
+                        easyDialog.open({
+                            container: 'dialog_table',
+                            overlay: false
+                        });
+                    } else {
+                        alert(resp.error);
+                    }
+                });
+            });
+        });
+    </script>
+{% endblock %}
+{% block title_1 %}
+        <span style="float: left"><span class="cus_name" value="{{ customer.id }}">{{ customer.name }}</span> - 机器安装包</span>
+{% endblock %}
+    {% block content %}
+            <tr>
+                <th style="width: 100px;">客户名称:</th>
+                <td>
+                    {{ package.customer.name }}
+                </td>
+            </tr>
+            <tr>
+                <th>机器名称:</th>
+                <td>
+                    {{ package.machine.name }}
+                </td>
+            </tr>
+            <tr>
+                <th>版本号:</th>
+                <td>
+                    {{ package.version }}
+                </td>
+            </tr>
+            <tr>
+                <th>创建人:</th>
+                <td>
+                    {{ package.create_user.username }}
+                </td>
+            </tr>
+            <tr>
+                <th>创建时间:</th>
+                <td>
+                    {{ package.create_time|date:'Y-m-d H:i:s' }}
+                </td>
+            </tr>
+            <tr>
+                <th>备注:</th>
+                <td>
+                    {{ package.remark }}
+                </td>
+            </tr>
+            <tr>
+                <th>操作:</th>
+                <td>
+                    <input type="hidden" name="package_id" value="{{ package.id }}">
+                    <input type="hidden" name="package_version" value="{{ package.version }}">
+                    <span class="btn" cmd="file_list">文件列表</span>
+                    <span class="btn" cmd="package_branch">代码分支</span>
+                    <span class="btn" onclick="javascript:window.open('/customer/download_install_package/?packageId={{ package.id }}','_self')">下载安装包</span>
+                    <span class="btn" onclick="javascript:window.open('/customer/download_update_package/?packageId={{ package.id }}','_self')">下载升级包</span>
+                    <!--
+                    暂时去掉删除功能
+                    <span class="btn" cmd="delete_package">删除</span>
+                    -->
+                </td>
+            </tr>
+{% endblock %}
+{% block floorcontent %}
+    <div id="dialog_table" class="easyDialog_wrapper" style="display: none; margin: 0px; min-width: 1080px; width: auto; min-height: 300px; max-height: 500px;">
+        <div class="easyDialog_content">
+            <h4 class="easyDialog_title" id="easyDialogTitle" style="cursor: move;">
+                <a href="javascript:void(0)" title="关闭窗口" class="close_btn closeBtn_rzrk">×</a>
+                <span type="dialog_title"></span>
+            </h4>
+
+            <div class="easyDialog_text" style="min-height: 300px; max-height: 415px; overflow: auto;">
+                <table class="bordered table_small" type="dialog_table">
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}

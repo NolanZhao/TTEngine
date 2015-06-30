@@ -1,0 +1,375 @@
+body {
+    font-family: "courier new";
+}
+
+#headerDiv {
+    position: relative;
+    float: left;
+    width: 100%;
+    height: auto;
+
+}
+
+.logout {
+    float: right;
+}
+
+#main_project_name, .logout {
+    background-color: #7db500;
+    border: 1px solid #7db500;
+    color: #ffffff;
+    font-weight: bold;
+}
+
+#main_project_name:hover, .logout:hover {
+    background-color: #F5530D;
+    border: 1px solid #F5530D;
+    cursor: pointer;
+}
+
+#bodyDiv {
+    position: relative;
+    width: 100%;
+    min-height: 800px;
+    height: auto;
+    float: left;
+}
+
+.footer {
+    position: relative;
+    float: left;
+    text-align: center;
+    margin-top: 15px;
+    font-size: 13px;
+    width: 100%;
+    height: 50px;
+    color: gray;
+}
+
+/* 搜索框*/
+.b_searchbox {
+    width: 200px;
+    margin: 2px 0px 3px 12px;
+    border-width: 0px 1px 0px 0px;
+    border-style: none solid none none;
+    -moz-border-top-colors: none;
+    -moz-border-right-colors: none;
+    -moz-border-bottom-colors: none;
+    -moz-border-left-colors: none;
+    border-image: none;
+    padding: 0px 10px 0px 0px;
+    max-height: 30px;
+    outline: medium none;
+    border-color: #CCC;
+    box-sizing: content-box;
+    position: relative;
+    height: 20px;
+}
+
+/*标题栏1*/
+.title_1 {
+    position: relative;
+    float: left;
+    width: 100%;
+    height: 30px;
+    background-color: #C2DFFF;
+    line-height: 30px;
+    font-weight: bold;
+    font-size: 13px;
+}
+
+.title_1 span {
+    margin-left: 10px;
+}
+
+.inner {
+    position: relative;
+    margin-top: 10px;
+    float: left;
+    width: 100%;
+    min-height: 700px;
+    height: auto;
+    border: 1px solid gray;
+}
+
+.s_btn {
+    position: relative;
+    float: left;
+    border: 1px solid orange;
+    margin-left: 5px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    width: 20px;
+    height: 20px;
+    font-weight: bolder;
+    line-height: 25px;
+    font-size: 15px;
+    background-color: orange;
+    color: white;
+    text-align: center;
+}
+
+.s_btn:hover {
+    background-color: orangered;
+    cursor: pointer;
+}
+
+.btn {
+    position: relative;
+    float: left;
+    border: 1px solid #7db500;
+    margin-left: 10px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    min-width: 50px;
+    width: auto;
+    height: 20px;
+    font-weight: bolder;
+    line-height: 25px;
+    font-size: 15px;
+    background-color: #7db500;
+    color: white;
+    text-align: center;
+}
+
+.btn:hover {
+    background-color: #F5530D;
+    border: 1px solid #F5530D;
+    cursor: pointer;
+}
+
+.btn_line {
+    width: 100%;
+    height: auto;
+    position: relative;
+    float: left;
+}
+
+/*                                     表格                                     */
+.table {
+    *border-collapse: collapse; /* IE7 and lower */
+    border-spacing: 0;
+    width: 98%;
+    margin: 10px 10px 10px 10px;
+    min-width: 1410px;
+}
+
+.table_small {
+    *border-collapse: collapse; /* IE7 and lower */
+    border-spacing: 0;
+    width: auto;
+    margin: -10px 5px 5px 5px;
+    min-width: 1000px;
+}
+
+.bordered {
+    border: solid #ccc 1px;
+    -moz-border-radius: 6px;
+    -webkit-border-radius: 6px;
+    border-radius: 6px;
+    -webkit-box-shadow: 0 1px 1px #ccc;
+    -moz-box-shadow: 0 1px 1px #ccc;
+    box-shadow: 0 1px 1px #ccc;
+}
+
+.bordered tr:hover {
+    background: #fbf8e9;
+    -o-transition: all 0.1s ease-in-out;
+    -webkit-transition: all 0.1s ease-in-out;
+    -moz-transition: all 0.1s ease-in-out;
+    -ms-transition: all 0.1s ease-in-out;
+    transition: all 0.1s ease-in-out;
+}
+
+.bordered td, .bordered th {
+    border-left: 1px solid #ccc;
+    border-top: 1px solid #ccc;
+    padding: 10px;
+    text-align: left;
+}
+
+.bordered th {
+    background-color: #dce9f9;
+    background-image: -webkit-gradient(linear, left top, left bottom, from(#ebf3fc), to(#dce9f9));
+    background-image: -webkit-linear-gradient(top, #ebf3fc, #dce9f9);
+    background-image: -moz-linear-gradient(top, #ebf3fc, #dce9f9);
+    background-image: -ms-linear-gradient(top, #ebf3fc, #dce9f9);
+    background-image: -o-linear-gradient(top, #ebf3fc, #dce9f9);
+    background-image: linear-gradient(top, #ebf3fc, #dce9f9);
+    -webkit-box-shadow: 0 1px 0 rgba(255, 255, 255, .8) inset;
+    -moz-box-shadow: 0 1px 0 rgba(255, 255, 255, .8) inset;
+    box-shadow: 0 1px 0 rgba(255, 255, 255, .8) inset;
+    border-top: none;
+    text-shadow: 0 1px 0 rgba(255, 255, 255, .5);
+}
+
+.bordered td:first-child, .bordered th:first-child {
+    border-left: none;
+}
+
+.bordered th:first-child {
+    -moz-border-radius: 6px 0 0 0;
+    -webkit-border-radius: 6px 0 0 0;
+    border-radius: 6px 0 0 0;
+}
+
+.bordered th:last-child {
+    -moz-border-radius: 0 6px 0 0;
+    -webkit-border-radius: 0 6px 0 0;
+    border-radius: 0 6px 0 0;
+}
+
+.bordered th:only-child {
+    -moz-border-radius: 6px 6px 0 0;
+    -webkit-border-radius: 6px 6px 0 0;
+    border-radius: 6px 6px 0 0;
+}
+
+.bordered tr:last-child td:first-child {
+    -moz-border-radius: 0 0 0 6px;
+    -webkit-border-radius: 0 0 0 6px;
+    border-radius: 0 0 0 6px;
+}
+
+.bordered tr:last-child td:last-child {
+    -moz-border-radius: 0 0 6px 0;
+    -webkit-border-radius: 0 0 6px 0;
+    border-radius: 0 0 6px 0;
+}
+
+/*                                     表格结束                                     */
+
+/*                                     又一个表格                                     */
+.zebra td, .zebra th {
+    padding: 10px;
+    border-bottom: 1px solid #f2f2f2;
+}
+
+.zebra tbody tr:nth-child(even) {
+    background: #f5f5f5;
+    -webkit-box-shadow: 0 1px 0 rgba(255, 255, 255, .8) inset;
+    -moz-box-shadow: 0 1px 0 rgba(255, 255, 255, .8) inset;
+    box-shadow: 0 1px 0 rgba(255, 255, 255, .8) inset;
+}
+
+.zebra th {
+    text-align: left;
+    text-shadow: 0 1px 0 rgba(255, 255, 255, .5);
+    border-bottom: 1px solid #ccc;
+    background-color: #eee;
+    background-image: -webkit-gradient(linear, left top, left bottom, from(#f5f5f5), to(#eee));
+    background-image: -webkit-linear-gradient(top, #f5f5f5, #eee);
+    background-image: -moz-linear-gradient(top, #f5f5f5, #eee);
+    background-image: -ms-linear-gradient(top, #f5f5f5, #eee);
+    background-image: -o-linear-gradient(top, #f5f5f5, #eee);
+    background-image: linear-gradient(top, #f5f5f5, #eee);
+}
+
+.zebra th:first-child {
+    -moz-border-radius: 6px 0 0 0;
+    -webkit-border-radius: 6px 0 0 0;
+    border-radius: 6px 0 0 0;
+}
+
+.zebra th:last-child {
+    -moz-border-radius: 0 6px 0 0;
+    -webkit-border-radius: 0 6px 0 0;
+    border-radius: 0 6px 0 0;
+}
+
+.zebra th:only-child {
+    -moz-border-radius: 6px 6px 0 0;
+    -webkit-border-radius: 6px 6px 0 0;
+    border-radius: 6px 6px 0 0;
+}
+
+.zebra tfoot td {
+    border-bottom: 0;
+    border-top: 1px solid #fff;
+    background-color: #f1f1f1;
+}
+
+.zebra tfoot td:first-child {
+    -moz-border-radius: 0 0 0 6px;
+    -webkit-border-radius: 0 0 0 6px;
+    border-radius: 0 0 0 6px;
+}
+
+.zebra tfoot td:last-child {
+    -moz-border-radius: 0 0 6px 0;
+    -webkit-border-radius: 0 0 6px 0;
+    border-radius: 0 0 6px 0;
+}
+
+.zebra tfoot td:only-child {
+    -moz-border-radius: 0 0 6px 6px;
+    -webkit-border-radius: 0 0 6px 6px border-radius : 0 0 6 px 6 px
+}
+
+/*                                     表格结束                                     */
+
+.like_table {
+    position: relative;
+    display: block;
+    width: 100%;
+    float: left;
+    margin-left: 5px;
+    margin-top: 2px;
+    margin-bottom: 2px;
+}
+
+.like_table span {
+    position: relative;
+    display: block;
+    min-width: 100px;
+    width: auto;
+    float: left;
+    line-height: 26px;
+    margin-left: 5px;
+}
+
+.like_table input[type~=text] {
+    position: relative;
+    display: block;
+    float: left;
+    margin-left: 5px;
+    width: 400px;
+}
+
+.like_table input[type~=checkbox] {
+    position: relative;
+    display: block;
+    float: left;
+    margin-left: 5px;
+}
+
+.like_table select {
+    position: relative;
+    margin-left: 5px;
+    display: block;
+    float: left;
+    width: 400px;
+}
+
+.like_table .btn {
+    margin-top: 0px;
+}
+
+.cus_name {
+    margin-left: 0px !important;
+    color: green !important;
+}
+
+.cus_name:hover {
+    background-color: azure !important;;
+    cursor: pointer !important;;
+}
+
+.svn_tips {
+    color: red;
+    cursor: pointer
+}
+
+.svn_tips:hover {
+    background-color: #97B0F8;
+}

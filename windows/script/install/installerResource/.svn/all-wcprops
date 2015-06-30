@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/svn/svnrepos/!svn/ver/171151/server5/deploy/trunk/TTEngine/windows/script/install/installerResource
+END
+license.txt
+K 25
+svn:wc:ra_dav:version-url
+V 112
+/svn/svnrepos/!svn/ver/171151/server5/deploy/trunk/TTEngine/windows/script/install/installerResource/license.txt
+END
+welcome.bmp
+K 25
+svn:wc:ra_dav:version-url
+V 112
+/svn/svnrepos/!svn/ver/171151/server5/deploy/trunk/TTEngine/windows/script/install/installerResource/welcome.bmp
+END
+setup.ico
+K 25
+svn:wc:ra_dav:version-url
+V 110
+/svn/svnrepos/!svn/ver/171151/server5/deploy/trunk/TTEngine/windows/script/install/installerResource/setup.ico
+END
+uninst.ico
+K 25
+svn:wc:ra_dav:version-url
+V 111
+/svn/svnrepos/!svn/ver/171151/server5/deploy/trunk/TTEngine/windows/script/install/installerResource/uninst.ico
+END

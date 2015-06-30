@@ -1,0 +1,97 @@
+﻿[Product]
+client_version = 0
+product_name_cn = 迅投资产管理平台交易终端 睿智融科版
+product_name_en = XtAmpTradeClient
+output_file_tag = rzrk_232
+config_subdir = XXX
+region = XtAmpTradeClient.rzrk
+update_temp_file = XtAmpTradeClient_rzrk_setup.exe
+xt_exe_name = XtAmpTradeClient.exe
+
+[Version]
+id = 1
+name = 迅投资管
+build = 1
+
+[MySQL]
+host = 127.0.0.1
+port = 3306
+user = packer
+pass = rzrk
+db = version_db
+
+[Path]
+output_download_url = http://192.168.1.202/package.dev/XtAmpTradeClient/2.0/
+publish_download_url = http://192.168.1.202/package/XtAmpTradeClient/2.0/
+output_dir = F:\package.dev\XtAmpTradeClient\2.0
+publish_dir = F:\package\XtAmpTradeClient\2.0
+pdb_dir = F:\pdb\XtAmpTradeClient
+server_lib_dir = E:\work\libs
+
+[NSIS]
+scriptname = xtInstaller.nsi
+
+[Mail]
+success_dst_addr = kernel@thinktrader.net,zhangyi@thinktrader.net,panchunfeng@thinktrader.net
+fail_dst_addr = zhangyi@thinktrader.net
+publish_dst_addr = zhangyi@thinktrader.net
+
+[Modules]
+modules_num = 4
+
+[Module0]
+name = XtDaemon
+path = E:\server5\daemon\trunk
+rc_files = daemon.rc
+projects = daemon
+solution = daemon.sln
+last_revision = libs\base:169328 | .:168333
+bin_files = _runtime\Win32.Deploy_Release:XtDaemon.exe
+conf_files = _runtime\config:xtdaemon.log4cxx*xtdaemonconf.deploy.xml>xtdaemonconf.xml
+update_svn = 0
+clean = 0
+build = 0
+configuration = Deploy_Release
+
+[Module1]
+name = XtQuoter
+path = E:\server5\quoter\trunk
+rc_files = src\datasource\datasource.rc | src\clientquoter\XtQuoter.rc
+projects = XtQuoter
+solution = quoter.sln
+last_revision = src\traderbase:169260 | .:169345 | src\protocol\rpc_SeStruct_Def.h:165339 | src\protocol\rpc_SeStruct.cpp:167450 | src\base:169328 | src\protocol\rpc_SeStruct.h:167450
+bin_files = _runtime\Win32.Deploy_Release:XtQuoter.exe*datasource.dll | src\mdquoter\v8tfuvss\运行需要的dll:cpack.dll*KSMarketDataAPI.dll*ksPortalAPI.dll*KSTradeAPI.dll*lkcdll.dll*SSPXEncode.dll*KSInterB2C.lkc
+conf_files = _runtime\config:xtquoter.log4cxx
+update_svn = 0
+clean = 0
+build = 0
+configuration = Deploy_Release
+
+[Module2]
+name = XtUpdater
+path = E:\updater\trunk
+rc_files = include\tlupdater.rc
+projects = tlupdater
+solution = Updater.sln
+last_revision = .:150335
+bin_files = bin\Release:XtUpdate.exe
+conf_files = 
+update_svn = 0
+clean = 0
+build = 0
+configuration = Release
+
+[Module3]
+name = XtAmpTradeClient
+path = E:\XtTradeClient\trunk
+rc_files = src\XtTradeClient\Resources\XtTradeClient.rc
+projects = XtTradeClient
+solution = XtTradeClient.full.sln
+last_revision = _runtime\luaScripts\task:168410 | _runtime\config\xtquoter.lua:169305 | _runtime\config\env.lua:169305 | _runtime\config\table2json.lua:168113 | .:169341 | _traderBase:169260 | _xtPlatform\_server5base:169328 | _runtime\config\configHelper.lua:169305 | _xtPlatform:169289 | _runtime\config\sfitMdquoter.lua:168461 | _runtime\config\platform.lua:169284 | _runtime\config\config.lua:169305
+bin_files = _runtime\Win32.Deploy_Release:XtAmpTradeClient.exe | _xtPlatform\_runtime\Win32.Release:crash.dll*crashui.exe | _runtime\Win32.Release:net.dll | _xtPlatform\_server5base\_runtime\Win32.Release:persist.dll
+conf_files = _runtime\config:crash.ini*clientEnv.lua*configHelper.lua*env.lua*xtquoter.lua*sfitMdquoter.lua*table2json.lua*platform.lua*xtclient.lua*xtdaemon.lua*xtquoterconfig.deploy.xml>xtquoterconfig.xml*xtclient.log4cxx*config.lua*modules.sample.lua>modules.lua*xtuserconfig.xml
+update_svn = 0
+clean = 0
+build = 0
+configuration = Deploy_Release
+

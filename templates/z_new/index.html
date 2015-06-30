@@ -1,0 +1,50 @@
+{% load rzrk_tags %}
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+    <meta http-equiv="Cache-control" content="no-store">
+    <title>睿智融科部署管理系统</title>
+    <link rel="stylesheet" href="/media/js/libs/jquery-easyui-1.4.1/themes/icon.css" />
+    <link rel="stylesheet" href="/media/js/libs/jquery-easyui-1.4.1/themes/default/easyui.css" id="themes"/>
+    <link rel="stylesheet" href="/media/js/modules/z_new/css/index.css"/>
+    <script type="text/javascript" src="/media/js/libs/jquery-2.1.1.min.js"></script>
+    <script type="text/javascript" src="/media/js/libs/jquery-easyui-1.4.1/jquery.easyui.min.js"></script>
+    <script type="text/javascript" src="/media/js/libs/jquery-validation-1.13.1/jquery.validate.min.js"></script>
+    <script type="text/javascript" src="/media/js/libs/jquery.hotkeys-0.7.9.min.js"></script>
+    <script type="text/javascript" src="/media/js/modules/z_new/index.js"></script>
+</head>
+<body class="easyui-layout">
+    <div data-options="region:'north',split:false" class="north">
+        <div class="logo">睿智融科部署管理系统</div>
+        <div class="welcome">
+              <label class="middle-align" for="changeThemes">显示风格：</label>
+              <select class="easyui-combobox changeThemes" id="changeThemes" name="changeThemes" data-options="panelHeight:'auto'" style="width:100px;">
+                  <option value="default" selected="selected">Default</option>
+                  <option value="gray">Gray</option>
+                  <option value="metro">Metro</option>
+                  <option value="black">Black</option>
+                  <option value="bootstrap">Bootstrap</option>
+              </select>
+            <span class="middle-align">您好尊敬的：{{ request.user.username }}！</span>
+            <a href="/logout/" class="easyui-linkbutton logout" data-options="iconCls:'icon-logout'">登出</a>
+        </div>
+    </div>
+    <!--
+    <div data-options="region:'south',split:true" style="height:100px;">
+    </div>
+    <div data-options="region:'east',title:'east',split:true" style="width:100px;">
+    </div>
+    -->
+    <div data-options="region:'west',split:true,border:false,title:'<img src=\'/media/images/icons/menus.png\'/>'" class="west">
+        <div class="easyui-accordion menu" data-options="animate:true,selected:false,multiple:true,fit:true">
+            {{ request.user|generator_menu|safe }}
+        </div>
+    </div>
+    <div data-options="region:'center'" class="center">
+        <div class="easyui-tabs" data-options="fit:true,border:false">
+        </div>
+    </div>
+</body>
+</html>

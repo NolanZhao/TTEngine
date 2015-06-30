@@ -1,0 +1,95 @@
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/svn/svnrepos/!svn/ver/182223/server5/deploy/trunk/TTEngine/deploy
+END
+notify.sh
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svn/svnrepos/!svn/ver/170964/server5/deploy/trunk/TTEngine/deploy/notify.sh
+END
+MachineConfig.py
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svn/svnrepos/!svn/ver/170839/server5/deploy/trunk/TTEngine/deploy/MachineConfig.py
+END
+Deploy.py
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svn/svnrepos/!svn/ver/172957/server5/deploy/trunk/TTEngine/deploy/Deploy.py
+END
+MongoDbBackup.sh
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svn/svnrepos/!svn/ver/172224/server5/deploy/trunk/TTEngine/deploy/MongoDbBackup.sh
+END
+y.txt
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svn/svnrepos/!svn/ver/178164/server5/deploy/trunk/TTEngine/deploy/y.txt
+END
+__init__.py
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svn/svnrepos/!svn/ver/170839/server5/deploy/trunk/TTEngine/deploy/__init__.py
+END
+update.sh
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svn/svnrepos/!svn/ver/182223/server5/deploy/trunk/TTEngine/deploy/update.sh
+END
+old.txt
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svn/svnrepos/!svn/ver/178164/server5/deploy/trunk/TTEngine/deploy/old.txt
+END
+README
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svn/svnrepos/!svn/ver/170839/server5/deploy/trunk/TTEngine/deploy/README
+END
+win_Deploy.py
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svn/svnrepos/!svn/ver/177900/server5/deploy/trunk/TTEngine/deploy/win_Deploy.py
+END
+win_update.bat
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svn/svnrepos/!svn/ver/177900/server5/deploy/trunk/TTEngine/deploy/win_update.bat
+END
+CustomerDeploy.py
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svn/svnrepos/!svn/ver/170839/server5/deploy/trunk/TTEngine/deploy/CustomerDeploy.py
+END
+new.txt
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svn/svnrepos/!svn/ver/178164/server5/deploy/trunk/TTEngine/deploy/new.txt
+END
+MasterRun.py
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svn/svnrepos/!svn/ver/178164/server5/deploy/trunk/TTEngine/deploy/MasterRun.py
+END
+checkRedis.sh
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svn/svnrepos/!svn/ver/170964/server5/deploy/trunk/TTEngine/deploy/checkRedis.sh
+END

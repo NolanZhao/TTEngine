@@ -1,0 +1,90 @@
+{% extends "root.html" %}
+{% load rzrk_tags %}
+
+{% block title %}{% settings_value "MAIN_PROJECT_NAME" %}-客户备注列表{% endblock %}
+{% block rootJsAndCss %}
+    <style>
+        .tips_file {
+        }
+
+        .cus_name_item {
+            color: blue;
+            text-decoration: underline;
+        }
+
+        .cus_name_item:hover {
+            background-color: #D5DDF6;
+            cursor: pointer;
+        }
+    </style>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            //删除备注
+            $('.inner').on('click', '.btn[cmd=delRemark]', function () {
+                var $this = $(this);
+                var id = $this.attr('key');
+                var url = '/customer/tips/del/';
+
+                dialog_confirm('确认', '是否删除备注?', function () {
+                    $.post(url, {id: id}, function (resp) {
+                        if (resp.success) {
+                            dialog_success('', resp.error, null, 2000);
+                            $this.parent().parent().remove();
+                        } else {
+                            dialog_error('', resp.error);
+                        }
+                    }, 'json');
+                });
+            });
+        });
+    </script>
+{% endblock %}
+{% block rootBody %}
+    <div class="title_1">
+        <span>客户备注列表</span>
+    </div>
+    <div class="inner">
+        <div class="btn_line">
+        </div>
+        <table class="bordered table" style="margin-top: 35px;">
+            {% if remarks %}
+                <tr type="main">
+                    <th style="width: 40px;">序号</th>
+                    <th style="width: 150px;">客户名称</th>
+                    <th>备注内容</th>
+                    <th style="width: 100px;">创建人</th>
+                    <th style="width: 190px;">创建时间</th>
+                    <th style="width: 100px;">更新人</th>
+                    <th style="width: 190px;">更新时间</th>
+                    <th style="width: 190px;">操作</th>
+                </tr>
+                {% for remark in remarks %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>
+                            <span title="点击查看详情" onclick="javascript:window.location.href='/customer/view/?cus_id={{ remark.customer.id }}'" class="cus_name_item">{{ remark.customer.name }}</span>
+                        </td>
+                        <td>
+                            <xmp>{{ remark.content }}</xmp>
+                        </td>
+                        <td>{{ remark.create_user.username }}</td>
+                        <td>{{ remark.create_time|date:'Y-m-d H:i:s' }}</td>
+                        <td>{% if remark.update_user %}{{ remark.update_user.username }}{% else %}-{% endif %}</td>
+                        <td>{% if remark.update_time %}{{ remark.update_time|date:'Y-m-d H:i:s' }}{% else %}-{% endif %}</td>
+                        <td>
+                            {% if remark.file %}
+                                <span class="btn" title="{{ remark.file_name }}({% widthratio remark.file_size 1024 1 %} KB)" onclick="javascript:window.open('/customer/tips/download/?id={{ remark.id }}','_self')">下载</span>
+                            {% endif %}
+                            <span class="btn" cmd="delRemark" key="{{ remark.id }}" title="删除">删除</span>
+                            <span class="btn" onclick="javascript:window.location.href = '/customer/tips/edit/?id={{ remark.id }}'">修改</span>
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="8">暂无备注</td>
+                </tr>
+            {% endif %}
+        </table>
+    </div>
+{% endblock %}

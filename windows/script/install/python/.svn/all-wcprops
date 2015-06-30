@@ -1,0 +1,59 @@
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/svn/svnrepos/!svn/ver/173412/server5/deploy/trunk/TTEngine/windows/script/install/python
+END
+ClientVersioner.py
+K 25
+svn:wc:ra_dav:version-url
+V 108
+/svn/svnrepos/!svn/ver/171316/server5/deploy/trunk/TTEngine/windows/script/install/python/ClientVersioner.py
+END
+config.ini
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/svn/svnrepos/!svn/ver/173206/server5/deploy/trunk/TTEngine/windows/script/install/python/config.ini
+END
+config.ini.sample
+K 25
+svn:wc:ra_dav:version-url
+V 107
+/svn/svnrepos/!svn/ver/171316/server5/deploy/trunk/TTEngine/windows/script/install/python/config.ini.sample
+END
+Build.py
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/svn/svnrepos/!svn/ver/173412/server5/deploy/trunk/TTEngine/windows/script/install/python/Build.py
+END
+config_deploy_rzrk.ini
+K 25
+svn:wc:ra_dav:version-url
+V 112
+/svn/svnrepos/!svn/ver/173206/server5/deploy/trunk/TTEngine/windows/script/install/python/config_deploy_rzrk.ini
+END
+xtCommon.py
+K 25
+svn:wc:ra_dav:version-url
+V 101
+/svn/svnrepos/!svn/ver/171316/server5/deploy/trunk/TTEngine/windows/script/install/python/xtCommon.py
+END
+Config.py
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/svn/svnrepos/!svn/ver/173412/server5/deploy/trunk/TTEngine/windows/script/install/python/Config.py
+END
+Packer.py
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/svn/svnrepos/!svn/ver/173206/server5/deploy/trunk/TTEngine/windows/script/install/python/Packer.py
+END
+Publish.py
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/svn/svnrepos/!svn/ver/171316/server5/deploy/trunk/TTEngine/windows/script/install/python/Publish.py
+END

@@ -1,0 +1,62 @@
+{% extends "root.html" %}
+{% load rzrk_tags %}
+
+{% block title %}{% settings_value "MAIN_PROJECT_NAME" %}-欢迎{% endblock %}
+{% block rootJsAndCss %}
+    <style>
+    </style>
+    <script type="text/javascript">
+        $(document).ready(function () {
+        });
+    </script>
+{% endblock %}
+{% block rootBody %}
+    <div class="title_1">
+        <span>机器版本查看</span>
+    </div>
+    <div class="inner">
+        <div class="btn_line">
+            <div class="btn" id="page_back">返回</div>
+        </div>
+        <table class="bordered table">
+            <tr>
+                <td colspan="1">客户名称:</td>
+                <td colspan="4">{{ customer.name }}</td>
+            </tr>
+            <tr>
+                <td colspan="1">客户类型:</td>
+                <td colspan="4">{% if customer.is_sys %}<span style="color: red">系统客户</span>{% else %}普通客户{% endif %}</td>
+            </tr>
+            <tr>
+                <td colspan="1">机器名称:</td>
+                <td colspan="4">{{ machine.name }}</td>
+            </tr>
+            <tr>
+                <td colspan="1">机器类型:</td>
+                <td colspan="4">{{ machine.type|parse_machine_type }}</td>
+            </tr>
+            {% if not m_packages %}
+                <tr>
+                    <td colspan="5">暂无版本</td>
+                </tr>
+            {% else %}
+                <tr>
+                    <th>版本</th>
+                    <th>文件名</th>
+                    <th>添加人</th>
+                    <th>添加日期</th>
+                    <th>添加备注</th>
+                </tr>
+            {% endif %}
+            {% for m_package in m_packages %}
+                <tr>
+                    <td>{{ m_package.package.version }}</td>
+                    <td>{{ m_package.package.package_full_name }}</td>
+                    <td>{{ m_package.update_user.username }}</td>
+                    <td>{{ m_package.create_time|date:'Y-m-d H:i:s' }}</td>
+                    <td>{{ m_package.remark }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+{% endblock %}

@@ -1,0 +1,380 @@
+{% extends "root.html" %}
+{% load rzrk_tags %}
+
+{% block title %}{% settings_value "MAIN_PROJECT_NAME" %}-创建关键提交{% endblock %}
+{% block rootJsAndCss %}
+    <style type="text/css">
+        .svn_item {
+            border: 1px solid gainsboro;
+            background-color: gainsboro;
+        }
+
+        .svn_item:hover {
+            border: 1px solid #999999;
+            background-color: #999999;
+        }
+
+        .selected {
+            border: 1px solid gold;
+            background-color: gold;
+        }
+
+        .selected_item {
+            border: 1px solid #D3C99C;
+            background-color: #D3C99C;
+        }
+
+        .selected, .selected_item, .unlock:hover {
+            cursor: pointer;
+        }
+
+        .start, .end, .start-end {
+            border: 1px solid green;
+            background-color: green;
+        }
+
+        .lock:hover {
+            cursor: not-allowed;
+        }
+
+        .lock_item {
+            border: 1px solid #7fbf40;
+            background-color: #7fbf40;
+            cursor: not-allowed;
+        }
+    </style>
+    <script type="text/javascript">
+        var program_list_json = {{ program_list_json|safe }};
+        var tag_dict_json = {{ tag_dict_json|safe }};
+        var limit = 30;
+
+        $(document).ready(function () {
+
+            //选择框绑定
+            $("#program_list").bind('change', function () {
+                var $this = $(this);
+                var select_val = $this.val();
+                var tag_list = tag_dict_json[select_val];
+
+                var tag_list_obj = $('#tag_list');
+                tag_list_obj.html('');
+
+                var html = '';
+                for (var index in tag_list) {
+                    var tag_item = tag_list[index];
+                    html += '<option value="' + tag_item.id + '">' + tag_item.tag + '</option>';
+                }
+
+                tag_list_obj.append(html);
+            });
+
+            //添加SVN提交记录
+            $('#add_svn_log').bind('click', function () {
+                get_more_svn_log(false);
+            });
+
+            //绑定onchange事件
+            $('#program_list, #tag_list').bind('change', function () {
+                get_more_svn_log(true);
+            });
+
+            $('.inner').on('click', '.svn_item:not(.lock)', function () {
+                var $this = $(this);
+                //确认不能有两个以上的选择项
+                var length = $('.selected').length;
+
+                if ($this.hasClass('selected')) {
+                    $this.removeClass('selected');
+                    $this.removeAttr('type');
+                    ensure_svn_item();
+                } else {
+                    if (length == 0) {
+                        $this.addClass('selected');
+                        $this.attr('type', '1');
+                    } else if (length == 1) {
+                        //确保中间无lock
+                        var type_1_obj = $('.selected').first();
+                        var type_2_obj = $this;
+
+                        if (check_can_selected(type_1_obj, type_2_obj)) {
+                            $this.addClass('selected');
+                            $this.attr('type', '2');
+                        } else {
+                            dialog_error('', '已有标记为关键提交!');
+                        }
+                    } else if (length == 2) {
+                        var type_1_obj_old = $('.selected[type=1]');
+                        var type_1_obj_new = $('.selected[type=2]');
+
+                        var type_2_obj = $this;
+
+                        if (check_can_selected(type_1_obj_new, type_2_obj)) {
+                            type_1_obj_old.removeAttr('type');
+                            type_1_obj_old.removeClass('selected');
+
+                            type_1_obj_new.attr('type', '1');
+                            type_2_obj.attr('type', '2');
+                            type_2_obj.addClass('selected');
+                        } else {
+                            dialog_error('', '已有标记为关键提交!');
+                        }
+
+                    } else {
+                        dialog_error('', '悟空莫调皮!');
+                    }
+                    ensure_svn_item();
+                }
+            });
+
+            /* 提交保存 */
+            $('#saveBtn').bind('click', function () {
+                var id = $('#tag_list').val();
+                var selected = $('.selected');
+                var remark = $('#remark').val();
+
+                if (selected.length == 0 || selected.length > 2) {
+                    dialog_error('', '请正确选择提交记录!');
+                    return false;
+                }
+
+                if (!id) {
+                    dialog_error('', '请正确选择分支路径!');
+                    return false;
+                }
+
+                if (!remark) {
+                    dialog_error('', '请填写备注!');
+                    return false;
+                }
+
+                var url = '/programBranch/key/create/';
+                var params = {
+                    id: id,
+                    revision_1: parseInt($(selected[0]).find('span[type=revision]').text()),
+                    revision_2: selected.length == 1 ? null : parseInt($(selected[1]).find('span[type=revision]').text()),
+                    remark: remark
+                };
+                var json = JSON.stringify(params);
+
+                $.post(url, {json: json}, function (resp) {
+                    if (resp.success) {
+                        dialog_success('', resp.error);
+                        deploy_status();
+                    } else {
+                        dialog_error('', resp.error);
+                    }
+                });
+            });
+            //初始化tag列表
+            $('#program_list').trigger('change');
+        });
+
+        /*
+         * 检查是否可勾选
+         * */
+        function check_can_selected(obj1, obj2) {
+            var obj_1 = obj1;
+            var obj_2 = obj2;
+
+            if (obj1.attr('id') < obj2.attr('id')) {
+                obj_1 = obj2;
+                obj_2 = obj1;
+            }
+
+            var next_item = obj_1.next();
+            var id2 = obj_2.attr('id');
+            while (true) {
+                if (next_item.length == 0) {
+                    return true;
+                }
+                var id_next = next_item.attr('id');
+                if (id_next != id2) {
+                    if (next_item.hasClass('lock')) {
+                        return false;
+                    } else {
+                        next_item = next_item.next();
+                    }
+                } else {
+                    return true;
+                }
+            }
+        }
+
+         function deploy_status(){
+               var cus_id_arr = [];
+                 {% for item in customers %}
+                    cus_id_arr.push('{{ item.id }}');
+                    {% endfor %}
+                 var params = JSON.stringify(cus_id_arr);
+
+                var url ='/customer/compare/';
+                $.get(url,  {json: params},function(resp){
+                      if (resp.success) {
+                        dialog_success('', resp.error);
+                    } else {
+                        dialog_error('', resp.error);
+                    }
+                },'json');
+         }
+
+        /*
+         * 确保选择框
+         * */
+        function ensure_svn_item(obj) {
+            //清空颜色标记
+            $('.selected_item').each(function (index, domEle) {
+                $(domEle).removeClass('selected_item');
+            });
+
+            var selected_svn_items = $('.selected');
+
+            if (selected_svn_items.length != 2) {
+                return;
+            }
+
+            //将中间的控件也标记颜色
+            var to_add_class = [];
+            var first_item = $(selected_svn_items[0]);
+            var next_item = first_item.next();
+            while (true) {
+                if (next_item.hasClass('lock')) {
+                    dialog_error('', '包含已标记为关键提交!');
+                    return;
+                }
+                if (next_item.hasClass('selected')) {
+                    break;
+                }
+                to_add_class.push(next_item);
+                next_item = next_item.next();
+            }
+            for (var index in to_add_class) {
+                to_add_class[index].addClass('selected_item');
+            }
+        }
+
+        /*
+         * 获取更多的SVN提交记录
+         */
+        function get_more_svn_log(clean) {
+            //清空提交记录
+
+            var svn_revision_list = $('.svn_item');
+            var last = svn_revision_list.last();
+            var revision_start = last.length > 0 && !clean ? last.find('span[type=revision]').text() : null;
+            var index_start = last.length > 0 && !clean ? parseInt(last.find('span[type=index]').text()) : 0;
+
+            var id = $('#tag_list').val();
+            var url = '/programBranch/svn/list/';
+            var params = {
+                revision_start: revision_start,
+                id: id,
+                limit: limit
+            };
+            $.get(url, params, function (resp) {
+                if (clean) {
+                    $('#svn_item_td').html('');
+                }
+                if (resp.success) {
+                    if (resp.data.length == 0) {
+                        dialog_error('', '已展示全部!');
+                        return false;
+                    }
+
+                    var exist = resp.key_submit;
+                    var html = '';
+                    for (var index in resp.data) {
+                        var item = resp.data[index];
+                        var message = item.message.length > 100 ? (item.message.substr(0, 100) + '~') : item.message;
+
+                        var is_lock = item.revision in exist ? true : false;
+
+                        //make type as css
+                        var type = 'unlock';//start,end,start-end
+                        if (is_lock) {
+                            type = 'lock' + ' ' + exist[item.revision].type.join('-');
+                        }
+                        //create message
+                        var title = false;
+                        if (is_lock) {
+                            title = '[' + exist[item.revision].time + '] ' + exist[item.revision].create_user + ': ' + exist[item.revision].remark;
+                        }
+
+                        html += '<span id="' + item.revision + '" class="like_table svn_item ' + type + '" ' + (title ? 'title="' + title + '"' : '') + '>';
+                        html += '<span type="index">' + (++index_start) + '</span>';
+                        html += '<span type="revision">' + item.revision + '</span>';
+                        html += '<span type="date_time" style="width: 200px;">' + item.date_time + '</span>';
+                        html += '<span type="author" style="width: 140px;">' + item.author + '</span>';
+                        html += '<span type="message">' + message + '</span>';
+                        html += '</span>';
+                    }
+                    $('#svn_item_td').append(html);
+
+                    //标记lock
+                    //清空全部颜色
+                    $('.lock_item').each(function (index, domEle) {
+                        $(domEle).removeClass('lock_item');
+                    });
+                    var lock_flag = false;
+                    $('.svn_item').each(function (i, domEle) {
+                        var obj = $(domEle);
+                        if (lock_flag) {
+                            if (obj.hasClass('end')) {
+                                lock_flag = false;
+                            } else {
+                                obj.attr('class', 'like_table svn_item lock lock_item');
+                            }
+                        } else {
+                            if (obj.hasClass('start')) {
+                                lock_flag = true;
+                            }
+                        }
+                    });
+                } else {
+                    dialog_error('', resp.error);
+                }
+            });
+        }
+    </script>
+{% endblock %}
+{% block rootBody %}
+    <div class="title_1">
+        <span>创建 关键提交</span>
+    </div>
+    <div class="inner">
+        <div class="btn_line">
+            <span class="btn" id="page_back">返回</span>
+            <span class="btn" id="saveBtn">创建</span>
+            <span class="btn" id="add_svn_log" style="position: fixed;margin-left: 10px;z-index: 2;">更多...</span>
+        </div>
+        <table class="bordered table" id="settings_table">
+            <tr>
+                <th style="width: 100px">备注</th>
+                <td>
+                    <textarea id="remark" style="width: 100%;height: 60px;"></textarea>
+                </td>
+            </tr>
+            <tr>
+                <th style="width: 100px">分支路径</th>
+                <td>
+                    <span class="like_table">
+                        <select id="program_list" style="width: 150px;">
+                            {% for item in program_list %}
+                                <option value="{{ item }}">{{ item }}</option>
+                            {% endfor %}
+                        </select>
+                        <select id="tag_list" style="width: 300px;">
+                        </select>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <th>提交记录</th>
+                <td id="svn_item_td">
+                </td>
+            </tr>
+        </table>
+        <div class="btn_line">
+            <div class="btn" id="saveBtn">创建</div>
+        </div>
+    </div>
+{% endblock %}

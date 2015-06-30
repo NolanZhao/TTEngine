@@ -1,0 +1,25 @@
+body{color: #666;font-family: 微软雅黑;}
+.north{position: relative;height: 60px;}
+.west{width:150px;}
+
+.north a{text-decoration: none;color: #0099FF;}
+.north a:hover{text-decoration: underline;}
+.north img{position: absolute;top: 8px;left: 15px;}
+.north .logo{font-size: 24px;margin: 10px 0 0 10px;}
+.north .welcome{position: absolute;top: 16px;right: 30px;}
+.north .welcome .middle-align{vertical-align: middle;margin-left: 20px;}
+.north .welcome a{text-align: center;margin-left: 10px;width: 60px;}
+.north .welcome .icon-logout{background: transparent url("/media/images/icons/user.png") 0 0 no-repeat;}
+
+.west .menu{padding: 0;}
+.west .accordion{border-top: 0;}
+.west .main-menu{overflow:auto;}
+.west .sub-menu{display: block;text-decoration: none;height: 30px;line-height: 30px;color: #666;padding-left: 20px;cursor: pointer;}
+.west .sub-menu:hover{background-color: #0088cc;color: #fff;}
+.west .sub-menu img{vertical-align: sub;margin-right: 5px;}
+
+.accordion .panel-title{color: #666;}
+.accordion .accordion-header-selected{background-color: transparent;}
+.accordion .accordion-header-selected .panel-title{color: #666;}
+
+.window-proxy-mask, .window-mask{background: #eee;filter: alpha(opacity=1);opacity: 0.01;}

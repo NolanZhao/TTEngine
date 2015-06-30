@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/svn/svnrepos/!svn/ver/167575/server5/deploy/trunk/TTEngine/rpc/script/codeGenerator/tools
+END
+DjangoTranslator.py
+K 25
+svn:wc:ra_dav:version-url
+V 110
+/svn/svnrepos/!svn/ver/167575/server5/deploy/trunk/TTEngine/rpc/script/codeGenerator/tools/DjangoTranslator.py
+END
+__init__.py
+K 25
+svn:wc:ra_dav:version-url
+V 102
+/svn/svnrepos/!svn/ver/167575/server5/deploy/trunk/TTEngine/rpc/script/codeGenerator/tools/__init__.py
+END
+StringHelper.py
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/svn/svnrepos/!svn/ver/167575/server5/deploy/trunk/TTEngine/rpc/script/codeGenerator/tools/StringHelper.py
+END

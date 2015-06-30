@@ -1,0 +1,155 @@
+{% extends "root_empty.html" %}
+{% load rzrk_tags %}
+
+{% block title %}{% settings_value "MAIN_PROJECT_NAME" %}-登录{% endblock %}
+{% block rootJsAndCss %}
+    <script type="text/javascript">
+    function getCookie(c_name)
+        {
+            if (document.cookie.length>0)
+              {
+                  c_start=document.cookie.indexOf(c_name + "=");
+
+                  if (c_start!=-1)
+                    {
+                    c_start=c_start + c_name.length+1;
+                    c_end=document.cookie.indexOf(";",c_start);
+                    if (c_end==-1) c_end=document.cookie.length
+                    return unescape(document.cookie.substring(c_start,c_end));
+                }
+              }
+        return ""
+        }
+
+        function setCookie(c_name,value,c_password,value1,expiredays)
+        {
+            var exdate=new Date();
+            var exdate1 = new Date();
+            exdate.setDate(exdate.getDate()+expiredays);
+            exdate1.setDate(exdate1.getDate()+expiredays);
+            document.cookie=c_name+ "=" +escape(value)+
+            ((expiredays==null) ? "" : ";expires="+exdate.toGMTString());
+            document.cookie=c_password+ "=" +escape(value1)+
+            ((expiredays==null) ? "" : ";expires="+exdate1.toGMTString());
+
+
+        }
+
+        function checkCookie()
+        {
+            username=getCookie('username');
+            password=getCookie('password');
+            if (username!=null && username!=""&&password!=null && password!="")
+              {
+                  $("#username").val(username);
+                  $("#password").val(password);}
+            else
+              {
+              username=prompt('请输入用户名',"");
+              password=prompt('请输入密码',"");
+              if (username!=null && username!=""&&password!=null && password!="")
+                {
+                    var username = $.trim($("#username").val());
+                    var password = $.trim($("#password").val());
+                setCookie('username',username,'password',password,365);
+            }
+          }
+        }
+    $(document).ready(function(){
+            checkCookie();
+         $('#loginBtn').click(function (event) {
+                  doLogin();
+
+         });
+
+    });
+
+
+        function doLogin() {
+            var username = $.trim($("#username").val());
+            var password = $.trim($("#password").val());
+
+            if (username == "") {
+                alert("请输入用户名！");
+                return;
+            }
+            if (password == "") {
+                alert("请输入密码！");
+                return;
+            }
+
+            $.post("/login/", {username: username, password: password}, loginBack);
+
+        }
+        function loginBack(resp) {
+
+            if (resp.success == true) {
+                var username = $.trim($("#username").val());
+                var password = $.trim($("#password").val());
+                setCookie('username',username,'password',password,365);
+                var targetUrl = getQueryString("next");
+                window.location.href = targetUrl == '' ? "/home" : targetUrl;
+            }
+            else {
+                alert("登录失败，错误原因：" + resp.error);
+            }
+        }
+
+
+
+
+
+        function getQueryString(name) {
+            // 如果链接没有参数，或者链接中不存在我们要获取的参数，直接返回空
+            if (location.href.indexOf("?") == -1 || location.href.indexOf(name + '=') == -1) {
+                return '';
+            }
+
+            // 获取链接中参数部分
+            var queryString = location.href.substring(location.href.indexOf("?") + 1);
+
+            // 分离参数对 ?key=value&key2=value2
+            var parameters = queryString.split("&");
+
+            var pos, paraName, paraValue;
+            for (var i = 0; i < parameters.length; i++) {
+                // 获取等号位置
+                pos = parameters[i].indexOf('=');
+                if (pos == -1) {
+                    continue;
+                }
+
+                // 获取name 和 value
+                paraName = parameters[i].substring(0, pos);
+                paraValue = parameters[i].substring(pos + 1);
+
+                // 如果查询的name等于当前name，就返回当前值，同时，将链接中的+号还原成空格
+                if (paraName == name) {
+                    return unescape(paraValue.replace(/\+/g, " "));
+                }
+            }
+            return '';
+        }
+    </script>
+{% endblock %}
+
+{% block rootBody %}
+    <div class="body">
+        <p class="block-heading">请登录</p>
+
+        <div class="block-body">
+            <p>
+                <label id="errorTips"></label>
+                <label>用户名:</label>
+                <input type="text" name="username" id="username" value="">
+            </p>
+
+            <p>
+                <span style="display:none"></span>
+                <label>密&nbsp;&nbsp;码:</label>
+                <input type="password" name="password" id="password" value="">
+            </p>
+            <button type="button" id="loginBtn" >登录</button>
+        </div>
+    </div>
+{% endblock %}

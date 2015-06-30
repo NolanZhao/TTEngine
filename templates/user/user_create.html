@@ -1,0 +1,150 @@
+{% extends "root.html" %}
+{% load rzrk_tags %}
+
+{% block title %}{% settings_value "MAIN_PROJECT_NAME" %}-欢迎{% endblock %}
+{% block rootJsAndCss %}
+    <style>
+        textarea {
+            width: 100%;
+            height: 200px;
+        }
+    </style>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            //保存按钮
+            $('.btn[id=saveBtn]').bind("click", function () {
+                var username = $('#username').val().trim();
+                var password = $('#password').val().trim();
+                var group = $('#group').val().trim();
+                var telphone = $('#telphone').val().trim();
+                var email = $('#email').val().trim();
+                var is_staff = $('#is_staff').val() == '1' ? true : false;
+                var is_active = $('#is_active').val() == '1' ? true : false;
+                var user_id = $('#user_id').val().trim() == '' ? false : $('#user_id').val().trim();
+
+                if ((!username || username == '') || (!password || password == '')) {
+                    dialog_error('', '必要参数为空');
+                    return;
+                }
+
+                var params = {
+                    user_id: user_id,
+                    username: username,
+                    password: password,
+                    group: group,
+                    telphone: telphone,
+                    email: email,
+                    is_staff: is_staff,
+                    is_active: is_active
+                };
+
+                var url = user_id ? '/user/edit/' : '/user/create/';
+
+                $.post(url, {json: JSON.stringify(params)}, function (resp) {
+                    if (resp.success) {
+                        dialog_success('', resp.error, function () {
+                            window.location.href = '/user/list/';
+                        })
+                    } else {
+                        dialog_error('', resp.error);
+                    }
+                }, 'json');
+            });
+
+        });
+    </script>
+{% endblock %}
+{% block rootBody %}
+    <div class="title_1">
+        <span style="float:left;">{% if is_edit %}编辑{% else %}创建{% endif %}用户</span>
+    </div>
+    <div class="inner">
+        <div class="btn_line">
+            <div class="btn" id="page_back">返回</div>
+        </div>
+        <table class="bordered table">
+            <tr>
+                <th style="width: 120px;">用户名:</th>
+                <td>
+                    <span class="like_table">
+                        <input type="text" name="username" id="username" value="{{ user_obj.username }}" {% if is_edit %}disabled="disabled"{% endif %}>
+                        {% if is_edit %}<span style="color: red;font-size: 10px">[用户名不可修改!]</span>{% endif %}
+                        <input type="hidden" name="user_id" id="user_id" value="{{ user_obj.id }}">
+                    </span>
+                </td>
+            </tr>
+            {% if not is_edit %}
+                <tr>
+                    <th>密码:</th>
+                    <td>
+                        <span class="like_table">
+                            <input type="text" id="password" name="password">
+                        </span>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <th>新密码:</th>
+                    <td>
+                        <span class="like_table">
+                            <input type="text" id="password" name="password">
+                        </span>
+                    </td>
+                </tr>
+            {% endif %}
+            <tr>
+                <th>用户组:</th>
+                <td>
+                    <span class="like_table">
+                        <select id="group" name="group">
+                            {% for group in groups %}
+                                <option value="{{ group.key }}" {% if user_obj.group == group.key %}selected="selected"{% endif %}>{{ group.value }}</option>
+                            {% endfor %}
+                        </select>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <th>电话:</th>
+                <td>
+                    <span class="like_table">
+                        <input type="text" id="telphone" name="telphone" value="{% if user_obj.telphone%}{{ user_obj.telphone }}{% endif %}">
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <th>邮箱:</th>
+                <td>
+                    <span class="like_table">
+                        <input type="text" id="email" name="email" value="{% if user_obj.email %}{{ user_obj.email }}{% endif %}">
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <th>允许登陆:</th>
+                <td>
+                    <span class="like_table">
+                        <select id="is_staff" name="is_staff">
+                            <option value="1" {% if user_obj and user_obj.is_staff %}selected="selected"{% endif %}>是</option>
+                            <option value="0" {% if user_obj and not user_obj.is_staff %}selected="selected"{% endif %}>否</option>
+                        </select>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <th>是否可用:</th>
+                <td>
+                    <span class="like_table">
+                        <select id="is_active" name="is_active">
+                            <option value="1" {% if user_obj and user_obj.is_active %}selected="selected"{% endif %}>是</option>
+                            <option value="0" {% if user_obj and not user_obj.is_active %}selected="selected"{% endif %}>否</option>
+                        </select>
+                    </span>
+                </td>
+            </tr>
+        </table>
+        <div class="btn_line">
+            <div class="btn" id="saveBtn">保存</div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,41 @@
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svn/svnrepos/!svn/ver/176217/server5/deploy/trunk/TTEngine/test
+END
+RemoteDeploy.py
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svn/svnrepos/!svn/ver/172224/server5/deploy/trunk/TTEngine/test/RemoteDeploy.py
+END
+TestData.py
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svn/svnrepos/!svn/ver/170841/server5/deploy/trunk/TTEngine/test/TestData.py
+END
+test_update.ps1
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svn/svnrepos/!svn/ver/176216/server5/deploy/trunk/TTEngine/test/test_update.ps1
+END
+test1.py
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svn/svnrepos/!svn/ver/176217/server5/deploy/trunk/TTEngine/test/test1.py
+END
+ParamikoTest.py
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svn/svnrepos/!svn/ver/170839/server5/deploy/trunk/TTEngine/test/ParamikoTest.py
+END
+PlatformTest.py
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svn/svnrepos/!svn/ver/170839/server5/deploy/trunk/TTEngine/test/PlatformTest.py
+END

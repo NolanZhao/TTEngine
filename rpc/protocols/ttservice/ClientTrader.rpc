@@ -1,0 +1,109 @@
+﻿Namespace = ttservice
+ServiceName = ClientTrader
+packType = 2
+Includes = (
+	Protocol/rpc_Structs_Def.h,
+	Protocol/rpc_ClientTraderCommon_Def.h,
+	Protocol/rpc_FtCommon_Def.h,
+	Protocol/rpc_Enums.h,
+    utils/TTError.h
+)
+
+CppIncludes = (
+	Protocol/rpc_Structs.h,
+	Protocol/rpc_FtCommon.h,
+	Protocol/rpc_ClientTraderCommon.h,
+    net/RPCEngine.h
+)
+
+# generated file relies on TTServiceCommon.rpc
+# generated file relies on StockCommon.rpc   
+
+# account login
+
+login(req:CAccountInfoPtr) => (error: #utils::TTError, response:IDataPtr)
+logintest(req:CCreatClientReqPtr) => (error: #utils::TTError, response:IDataPtr)
+
+queryData(req : CQueryDataReqPtr) => (error: #utils::TTError, resp:[IDataPtr])
+queryRawData(req : CQueryDataReqPtr) => (error: #utils::TTError, resp:[IDataPtr])
+queryHistoryData(req : IDataPtr) => (error: #utils::TTError, resp:[IDataPtr])
+queryPrice(req:QueryPriceReqPtr) => (error: #utils::TTError, resp:IDataPtr)
+
+prepareInstrument(req:CPrepreInstrumentReqPtr) => (error: #utils::TTError, resp:IDataPtr)
+
+queryCommands() => (cmds : [IDataPtr])
+queryTasks() => (tasks : [IDataPtr])
+queryUnExcueteTasks(strMachineTag:#s) => (params:[CCreateTaskReqPtr])
+
+order(req : COrderInfoPtr) => (error: #utils::TTError, resp:IDataPtr)
+cancel(req : COrderInfoPtr) => (error: #utils::TTError, resp:IDataPtr)
+cancelAll(req : CAccountInfoPtr) => (error: #utils::TTError, resp:IDataPtr)
+queryOrderInfo(req : COrderInfoPtr) => (error: #utils::TTError, resp:IDataPtr)
+
+updateTradeConfig(req : UpdateTradeConfigReq) => (error: #utils::TTError, response:IDataPtr);
+getUserInfo() => (error: #utils::TTError, response:IDataPtr);
+
+updateUserPassword(req:UpdateUserPasswordReqPtr) =>(error: #utils::TTError, resp:IDataPtr)
+updateXtUserPassword(user:#s, oldPass:#s, newPass:#s) =>(error: #utils::TTError, resp:IDataPtr)
+updateTradingAccountPassword(req:UpdateTradingAccountPasswordReqPtr) =>(error: #utils::TTError, resp:IDataPtr)
+
+updateCommission(req:AccountCommissionInfoPtr) =>(error: #utils::TTError, resp:IDataPtr)
+
+createTask(req:CCreateTaskReqPtr) =>(error: #utils::TTError, resp:CCreateTaskReqPtr)
+
+operateTask(groupId:#i, taskId:#i, op:CTaskOpRecordPtr) =>(error: #utils::TTError)
+
+=> pushLoginStatus(accountInfo:CAccountInfoPtr, status:#i, errorMsg:#S)
+
+# 主推结算状态，服务器结算完成以后push该信息
+
+=> pushDeliveryStatus(account:CAccountInfoPtr, status:#b, msg:#s)
+
+=> pushData(accountInfo:CAccountInfoPtr, resp:IDataPtr, error:#utils::TTError)
+=> pushDatas(accountInfo:CAccountInfoPtr, resp:[IDataPtr])
+
+=> pushProduct(product:CProductPtr)
+
+# 推送风控报警信息
+
+=> pushRCMsg(account:CAccountInfoPtr, msg:#s)
+=> pushProductRCMsg(productId:#i, msg:#s)
+=> pushTraderMsg(account:CAccountInfoPtr, msg:#s)
+=> pushMsg(msg:#s)
+
+createStopLossCmd(req:CStopLossSettingPtr) => (error: #utils::TTError, resp:IDataPtr)
+
+querySettlementInfo(account : CAccountInfoPtr, strDateStart : #s, strDateEnd : #s) => (resp : [CAccountSettlementInfoPtr], error : utils::TTError)
+
+uploadData(datas:[IDataPtr])=>(error: #utils::TTError)
+
+#查询转账流水
+queryTransferSerial(req:CBankDataPtr) => (error: #utils::TTError, resp:[IDataPtr])
+
+#查询可从银行转出金额
+queryBankAmount(req:CBankDataPtr) => (error: #utils::TTError, resp:IDataPtr)
+
+#转账
+transfer(req:TransferReqPtr) => (error: #utils::TTError, resp:IDataPtr)
+
+# 后台刷新股票列表
+refreshStockList() => (error: #utils::TTError)
+
+# 推送结算信息
+
+=> pushSettlementInfo(account : CAccountInfoPtr, settlement:CAccountSettlementInfoPtr)
+
+# 校正
+correct(req:CAccountInfoPtr) => (success:#b)
+refreshAccount(req:CAccountInfoPtr) => (success:#b)
+
+createCommand(cmd: COrderCommandPtr) =>(error: #utils::TTError, id : #i)
+updateCommandStatus(id: #i, status: EOrderCommandStatus, user : #s) => (error: #utils::TTError)
+updateCommandProgress(id: #i, deltNum: #d, frozens: {#s:#d}, cmdFrozens: {#s:#d}, cmdFrees: {#s:#d}) => (error: #utils::TTError)
+
+# 请求原始的CTP数据
+queryRawCtp(account : CAccountInfoPtr, req:bson::bo) => (success:#b)
+=> pushRaw(account:CAccountInfoPtr, param:bson::bo)
+
+# 止盈止损
+closePosition(reqs : [CClosePositionRequestPtr], timeout : #i) => (error: #utils::TTError, results : [utils::TTError])

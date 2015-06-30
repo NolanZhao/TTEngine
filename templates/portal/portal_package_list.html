@@ -1,0 +1,338 @@
+{% extends "root.html" %}
+{% load rzrk_tags %}
+
+{% block title %}{% settings_value "MAIN_PROJECT_NAME" %}-Portal包列表{% endblock %}
+{% block rootJsAndCss %}
+    <style>
+        #ProgressInfo {
+            position: fixed;
+            background-color: lightblue;
+            z-index: 2
+        }
+
+        table .btn {
+            float: none;
+            width: 50px;
+        }
+
+        .svn_item {
+            border: 1px solid gainsboro;
+            background-color: gainsboro;
+        }
+
+        .svn_item:hover {
+            border: 1px solid #999999;
+            background-color: #999999;
+        }
+
+        .selected {
+            border: 1px solid gold;
+            background-color: gold;
+        }
+
+        .selected_item {
+            border: 1px solid #D3C99C;
+            background-color: #D3C99C;
+        }
+
+        .selected, .selected_item, .unlock:hover {
+            cursor: pointer;
+        }
+
+        .start, .end, .start-end {
+            border: 1px solid green;
+            background-color: green;
+        }
+
+        .lock:hover {
+            cursor: not-allowed;
+        }
+
+        .lock_item {
+            border: 1px solid #7fbf40;
+            background-color: #7fbf40;
+            cursor: not-allowed;
+        }
+    </style>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            //禁用|启用按钮
+            $(".inner").on("click", ".btn[cmd=change_is_enabled]", function () {
+                var $this = $(this);
+                var id = $this.attr('pk');
+                var version = $this.attr('version');
+                var text = $this.text().trim();
+
+                easyDialog.open({
+                    container: {
+                        header: '确认',
+                        content: '确认' + text + "Portal包[" + version + "] ?",
+                        yesFn: function () {
+                            $.post('/portal/package/change_is_enabled/', {id: id}, function (resp) {
+                                if (resp.success) {
+                                    dialog_success('', resp.error, function () {
+                                        window.location.reload();
+                                    });
+                                } else {
+                                    dialog_error('', resp.error);
+                                }
+                            }, 'json');
+                        },
+                        noFn: true
+                    },
+                    overlay: false
+                });
+            });
+            //删除按钮
+            $(".inner").on("click", ".btn[cmd=del]", function () {
+                var $this = $(this);
+                var id = $this.attr('pk');
+                var version = $this.attr('version');
+
+                easyDialog.open({
+                    container: {
+                        header: '确认',
+                        content: "确认删除Portal包[" + version + "] ?",
+                        yesFn: function () {
+                            $.post('/portal/package/del/', {id: id}, function (resp) {
+                                if (resp.success) {
+                                    dialog_success('', resp.error);
+                                    $this.parent().parent().parent().remove();
+                                } else {
+                                    dialog_error('', resp.error);
+                                }
+                            }, 'json');
+                        },
+                        noFn: true
+                    },
+                    overlay: false
+                });
+            });
+            //添加模块按钮
+            $(".inner").on("click", "#create", function () {
+                window.open("/portal/package/create/", "_blank");
+            });
+            //编辑按钮
+            $(".inner").on("click", ".btn[cmd=edit]", function () {
+                window.open("/portal/package/edit/?id=" + $(this).attr('pk'), '_blank');
+            });
+            //查看按钮
+            $(".inner").on("click", ".btn[cmd=view]", function () {
+                window.open("/portal/package/view/?id=" + $(this).attr('pk'), '_blank');
+            });
+
+            //生成升级脚本
+            $(".inner").on("click", ".btn[cmd=GenSQL]", function () {
+                alert("脚本正在生成，请耐心等待！不要刷新此页面!");
+                var old_id = $($($(this).parent().parent().next().children()[6]).children()[0]).attr("pk");
+                var new_id = $($(this)).attr("pk");
+
+
+                var result = {
+                    "old_id":old_id,
+                    "new_id":new_id
+                };
+
+                var url = "/portal/update/update_sql/";
+                $.post(url, result, function (resp) {
+                    if (resp.success) {
+                        alert("success");
+                    } else {
+                        alert("fail");
+                    }
+                }, 'json');
+            });
+
+            //查询进度
+//{#            setInterval(function() {#}
+//{#                $.get('/portal/update/sqlgen_process_info/', function (resp) {#}
+//{#                    if(resp.success)#}
+//{#                    {#}
+//{#                        $("#ProgressInfo").text(resp.sqlgenINFO);#}
+//{#                    }#}
+//{#                }, 'json');#}
+//{#            }, 1000);#}
+
+
+
+            //下载升级脚本
+            $(".inner").on("click", ".btn[cmd=DownSQL]", function () {
+                var version = $($(this)).attr("version");
+                var old_version = $($($(this).parent().parent().next().children()[6]).children()[0]).attr("version");
+
+                var result = {
+                    "version":version,
+                    "old_version":old_version
+                };
+
+                var url = "/portal/update/download_update_sql/?version=" + version + "&&old_version=" + old_version;
+                window.open(url, "_self");
+            });
+
+            //初次点击显示更多SVN记录
+            $('.inner').on('click', '.svn_tips', function () {
+                var $this = $(this);
+                var branch_id = $this.attr('branch_id');
+                var svn_url = $this.attr('svn_url');
+                var revision_end = $this.attr('reversion');
+
+                var dialog_title = $('span[type=dialog_title]');
+                dialog_title.text(svn_url + ' - 提交记录');
+                var dialog_table = $('#dialog_table .easyDialog_text');
+                var svn_item_td = $('#svn_item_td');
+                svn_item_td.empty();
+
+                //查询之后的SVN提交记录
+                var url = '/programBranch/svn/list/';
+                var params = {
+                    revision_end: revision_end,
+                    id: branch_id,
+                    limit: 30
+                };
+                $.get(url, params, function (resp) {
+                    if (resp.success) {
+                        if (resp.data.length == 0) {
+                            dialog_error('', '已展示全部!');
+                            return false;
+                        }
+
+                        var exist = resp.key_submit;
+                        var html = '';
+                        for (var index in resp.data) {
+                            var item = resp.data[index];
+                            var message = item.message.length > 100 ? (item.message.substr(0, 100) + '~') : item.message;
+
+                            var is_lock = item.revision in exist ? true : false;
+
+                            //make type as css
+                            var type = 'unlock';//start,end,start-end
+                            if (is_lock) {
+                                type = 'lock' + ' ' + exist[item.revision].type.join('-');
+                            }
+                            //create message
+                            var title = false;
+                            if (is_lock) {
+                                title = '[' + exist[item.revision].time + '] ' + exist[item.revision].create_user + ': ' + exist[item.revision].remark;
+                            }
+
+                            var html_index = parseInt(index) + 1;
+                            html += '<span id="' + item.revision + '" class="like_table svn_item ' + type + '" ' + (title ? 'title="' + title + '"' : '') + '>';
+                            html += '<span type="index">' + html_index + '</span>';
+                            html += '<span type="revision">' + item.revision + '</span>';
+                            html += '<span type="date_time" style="width: 200px;">' + item.date_time + '</span>';
+                            html += '<span type="author" style="width: 140px;">' + item.author + '</span>';
+                            html += '<span type="message">' + message + '</span>';
+                            html += '</span>';
+                        }
+                        $('#svn_item_td').append(html);
+
+                        //标记lock
+                        //清空全部颜色
+                        $('.lock_item').each(function (index, domEle) {
+                            $(domEle).removeClass('lock_item');
+                        });
+                        var lock_flag = false;
+                        $('.svn_item').each(function (i, domEle) {
+                            var obj = $(domEle);
+                            if (lock_flag) {
+                                if (obj.hasClass('end')) {
+                                    lock_flag = false;
+                                } else {
+                                    obj.attr('class', 'like_table svn_item lock lock_item');
+                                }
+                            } else {
+                                if (obj.hasClass('start')) {
+                                    lock_flag = true;
+                                }
+                            }
+                        });
+                        easyDialog.open({
+                            container: 'dialog_table',
+                            overlay: false
+                        });
+                    } else {
+                        dialog_error('', resp.error);
+                    }
+                });
+            });
+        });
+    </script>
+{% endblock %}
+{% block rootBody %}
+    <div class="title_1"><span>Portal包列表</span></div>
+    <div class="inner">
+        <div class="btn_line">
+            <div class="btn" id="create">生成Portal包</div>
+        </div>
+        <div id="ProgressInfo" style="text-align:left; font-size: 26px; font-weight: bold; margin-left: 33%;"></div>
+        <table class="bordered table">
+            <tr>
+                <th>序号</th>
+                <th style="width: 95px">SVN版本号</th>
+                <th>SVN路径</th>
+                <th>可用</th>
+                <th>程序包</th>
+                <th>建库脚本</th>
+                <th>从上一版本升级的脚本</th>
+                <th>源主机</th>
+                <th>创建人</th>
+                <th>创建时间</th>
+                <th>备注</th>
+                <th>操作</th>
+            </tr>
+            {% for package in packages %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ package.svn_version }}
+                        {% if svn_info_dict|get_svn_new_reversion:package.svn_url != package.svn_version %}
+                            <span title="点击显示详情:{{ svn_info_dict|get_svn_new_message:package.svn_url }}" class="svn_tips" reversion="{{ package.svn_version }}" svn_url="{{ package.svn_url }}" branch_id="{{ package.get_branch_info.id }}">旧</span>
+                        {% endif %}
+                    </td>
+                    <td><span title="{{ package.svn_url }}">{{ package.svn_url|parse_svn_url }}</span></td>
+                    <td>{% if package.is_enabled %}是{% else %}<span style="color: red;font-weight: bolder">否</span>{% endif %}</td>
+                    <td><a title="{{ package.package_size }}字节" href="/portal/package/download_package/?id={{ package.id }}">{% widthratio package.package_size 1048576 1 %}MB</a></td>
+                    <td><a title="{{ package.sql_size }}字节" href="/portal/package/download_sql/?id={{ package.id }}">{% widthratio package.sql_size 1024 1 %}KB</a></td>
+                    <td>
+                        <div class="btn" cmd="GenSQL" title="生成升级脚本" pk="{{ package.id }}" version="{{ package.svn_version }}">生成</div>
+                        <div class="btn" cmd="DownSQL" title="下载升级脚本" pk="{{ package.id }} " version="{{ package.svn_version }}">下载</div>
+                    </td>
+                    <td>{{ package.portal_machine.host }}</td>
+                    <td>{{ package.create_user.username }}</td>
+                    <td>{{ package.create_time|date:'Y-m-d H:i:s' }}</td>
+                    <td>{{ package.remark }}</td>
+                    <td>
+                        <div class="btn_line">
+                            <div class="btn" cmd="del" title="删除Portal包" pk="{{ package.id }}" version="{{ package.svn_version }}">删除</div>
+                            <div class="btn" cmd="edit" title="编辑Portal包" pk="{{ package.id }}" version="{{ package.svn_version }}">编辑</div>
+                            <div class="btn" cmd="view" title="查看Portal包" pk="{{ package.id }}" version="{{ package.svn_version }}">查看</div>
+                            <div class="btn" cmd="change_is_enabled" title="{% if package.is_enabled %}禁用{% else %}启用{% endif %}Portal包" pk="{{ package.id }}" version="{{ package.svn_version }}">
+                                {% if package.is_enabled %}禁用{% else %}启用{% endif %}
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+            {% if package|length  == 0 %}
+                <td>暂无Portal包信息</td>
+            {% endif %}
+        </table>
+    </div>
+    <div id="dialog_table" class="easyDialog_wrapper" style="display: none; margin: 0px; min-width: 1045px; width: auto; min-height: 300px; max-height: 500px;">
+        <div class="easyDialog_content">
+            <h4 class="easyDialog_title" id="easyDialogTitle" style="cursor: move;">
+                <a href="javascript:void(0)" title="关闭窗口" class="close_btn closeBtn_rzrk">×</a>
+                <span type="dialog_title"></span>
+            </h4>
+
+            <div class="easyDialog_text" style="min-height: 300px; max-height: 415px; overflow: auto;">
+                <table class="bordered table_small" type="dialog_table">
+                    <tr>
+                        <td style="width: 100%" id="svn_item_td">
+
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}

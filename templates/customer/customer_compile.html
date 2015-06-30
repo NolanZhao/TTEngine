@@ -1,0 +1,436 @@
+{% extends "customer_common_button.html" %}
+{% load rzrk_tags %}
+
+{% block title %}{% settings_value "MAIN_PROJECT_NAME" %}-欢迎{% endblock %}
+{% block rootJsAndCss %}
+    <style>
+        .like_table span {
+            width: 180px;
+        }
+
+        .like_table input {
+            margin-left: 10px;
+        }
+
+        .like_table label {
+            width: 33px;
+            float: left;
+        }
+
+        .status {
+            margin-top: -5px;
+            margin-left: 0px !important;
+            min-width: 10px !important;
+            width: 34px !important;
+            cursor: pointer;
+        }
+
+        .status:hover {
+            background-color: #C2DFFF;
+        }
+
+        .green {
+
+        }
+    </style>
+    <script type="text/javascript">
+        var index_timer = 0;
+
+        var status_dict = {
+            1: ['成功', '✔', 'green'],
+            0: ['失败', '✖', 'blue'],
+            '-1': ['运行中', '☂', 'red'],
+            null: ['未知', '▬', 'gray']
+        };
+
+        $(document).ready(function () {
+            //开始编译按钮
+            $("#saveBtn").bind('click', start_compiling);{
+                //触发全选按钮
+                //$("input[name='check_batch']").trigger('click');
+                //绑定onchange方法
+                var selects = $('select:visible');
+                var size = selects.size() - 1;
+                $('select:visible').bind('change', function () {
+                    var $this = $(this);
+                    init_one_program_status($this);
+                });
+                $('select:visible').each(function (index, domEle) {
+                    init_one_program_status($(domEle));
+                });
+
+{#                setInterval(function () {#}
+{#                    $.get('/customer/compile_process_info/', function (resp) {#}
+{#                        if (resp.success) {#}
+{#                            $("#ProgressInfo").text(resp.compileINFO);#}
+{#                        }#}
+{#                    }, 'json');#}
+{#                }, 1000);#}
+            }
+
+            {% for program in  program_names %}
+                 $(".inner").on("change", "select[name={{ program }}]", function () {
+                    var $this = $(this);
+                    var branchTag = $this.val();
+                    var programName = $this.attr('name');
+                    $.get('/customer/package_default/', {programName: programName, branchTag: branchTag, customerID: "{{customer.id}}"}, function (resp) {
+                        }, 'json');
+                });
+            {% endfor %}
+			
+
+        });
+
+
+
+        {% comment %}
+        /*初始化模块文件原始路径所需参数*/
+        function init_module_params() {
+            //获取选择的模块ID
+            var checked_input = $("input[type=checkbox][name=module]:checked");
+            var param_names = []
+            $.each(checked_input, function (i) {
+                param_names = param_names.concat(module_param[this.id])
+            });
+            //数组去重
+            var param_names_unique = [];
+            $.each(param_names, function (i, el) {
+                if ($.inArray(el, param_names_unique) === -1) param_names_unique.push(el);
+            });
+            param_names_unique.sort();
+            //生成html
+            var html = '';
+            for (var index in param_names_unique) {
+                html += generate_one_param(param_names_unique[index], get_exist_value(param_names_unique[index]))
+            }
+
+            var target_obj = $("#module_params");
+            target_obj.children().remove();
+            target_obj.html(html);
+        }
+
+        function generate_one_param(param_name, param_value) {
+            var quick_list = param_name_values[param_name];
+            var item = '';
+            item += '<span class="like_table">';
+            item += '<span>' + param_name + ':</span>';
+            item += '<select name="' + param_name + '" cmd="quick_select">';
+            var selected = false;
+            for (var index in quick_list) {
+                var quick_item = quick_list[index];
+                item += '<option value="' + quick_item + '" ';
+                if (quick_item == param_value) {
+                    item += 'selected="selected"';
+                    selected = true;
+                }
+                item += '>' + quick_item + '</option>';
+            }
+            item += '<option value="-1">自定义</option>';
+            item += '</select>';
+            if (selected || (param_value == '' && quick_list.length > 0)) {
+                item += '<input type="text" name="' + param_name + '" value="" style="display: none">';
+            } else {
+                item += '<input type="text" name="' + param_name + '" value="' + param_value + '">';
+            }
+            item += '</span>';
+            return item;
+        }
+        function get_exist_value(param_name) {
+            var param_value = $("#branch_params >> *[name=" + param_name + "]:visible");
+            if (param_value.length > 1) {
+                return param_value[param_value.length - 1].val();
+            } else {
+                return '';
+            }
+        }
+        {% endcomment %}
+        function start_compiling() {
+            var $btn = $(this);
+            var btn_text = $btn.text();
+            //解除绑定按钮
+            $(this).unbind();
+            //开始执行timer
+            var timer = setInterval(function () {
+                index_timer = index_timer == 0 ? 3 : --index_timer;
+                $btn.text(btn_text + get_repeat('.', index_timer));
+            }, 1000);
+
+            //获取参数
+            var machine_id = $("#machine_id").val();
+            var updates = {};
+            var compiles = {};
+            var cleans = {};
+            var params = $(".branch_params");
+            for (var index = 0; index < params.length; index++) {
+                var $this = $(params[index]);
+                var name = $this.attr('name');
+                var isUpdate = $("#" + name + "_isUpdate")[0].checked;
+                var value = $this.val();
+                if (isUpdate) {
+                    updates[name] = value;
+                }
+                var isCompile = $("#" + name + "_isCompile")[0].checked;
+                if (isCompile) {
+                    compiles[name] = value;
+                }
+                var isClean = $("#" + name + "_isClean")[0].checked;
+                if (isClean) {
+                    cleans[name] = value;
+                }
+            }
+            var remark = $("#remark").val();
+            var result = {
+                'cus_id': '{{ customer.id }}',
+                'machine_id': machine_id,
+                'cleans': cleans,
+                'updates': updates,
+                'compiles': compiles,
+                'remark': remark
+            };
+
+            var json = JSON.stringify(result);
+            $.post('/customer/compiling/', {json: json}, function (resp) {
+                //重新绑定点击方法
+                $btn.bind('click', start_compiling);
+                $btn.text(btn_text);
+                //关闭timer
+                if (timer) {
+                    clearInterval(timer);
+                    timer = 0;
+                }
+
+                if (resp.success) {
+                    dialog_success('', resp.error);
+                } else {
+                    var log_str = resp.error;
+                    log_str += '</br>';
+                    log_str += '</br>';
+                    var log_arr = resp.log;
+
+                    for (var index in log_arr) {
+                        var log_item = log_arr[index];
+                        log_str += log_item;
+                        log_str += '</br>';
+                    }
+                    dialog_error('', log_str);
+                }
+                $('select:visible').each(function (index, domEle) {
+                    init_one_program_status($(domEle));
+                });
+            }, 'json');
+        }
+
+        function get_repeat(str, num) {
+            if (num == 0) {
+                return '';
+            }
+            var result = str;
+            for (var index = 1; index < num; index++) {
+                result += str;
+            }
+            return result;
+        }
+
+        function init_one_program_status(select_obj) {
+            var program_name = select_obj.attr('name');
+            var branch_tag = select_obj.val();
+
+            var update_status_obj = select_obj.parent().find('span[type=update]');
+            var clean_status_obj = select_obj.parent().find('span[type=clean]');
+            var compile_status_obj = select_obj.parent().find('span[type=compile]');
+
+            var url = '/customer/compiling/status/';
+            var params = {'program_name': program_name, 'branch_tag': branch_tag};
+
+            $.get(url, params, function (resp) {
+                if (resp.success) {
+                    var data = resp.data;
+                    var update_data = data.update;
+                    var clean_data = data.clean;
+                    var compile_data = data.compile;
+
+                    //update
+                    update_status_obj.empty();
+                    update_status_obj.attr('class', 'status ' + status_dict[update_data.status][2]);
+                    update_status_obj.html('[' + status_dict[update_data.status][1] + ']');
+
+                    var update_status_html = '';
+                    update_status_html += '当前版本: ';
+                    update_status_html += '<br/>';
+                    update_status_html +=  + update_data.local_revision;
+                    update_status_html += '<br/>';
+                    update_status_html +='外链: '+update_data.externals_local_revision;
+                    update_status_html += '<br/>';
+                    update_status_html += '最新版本: ';
+                    update_status_html += '<br/>';
+                    update_status_html +=  +update_data.current_revision;
+                    update_status_html += '<br/>';
+                    update_status_html += '外链: ' + update_data.externals_current_revision;
+                    update_status_html += '<br/>';
+                    update_status_html += '执行结果: ' ;
+                    update_status_html += '<br/>';
+                    update_status_html += status_dict[update_data.status][0];
+
+                    update_status_obj.attr('title', update_status_html);
+                    update_status_obj.show();
+                    update_status_obj.qtip();
+
+                    //clean
+                    clean_status_obj.empty();
+                    clean_status_obj.attr('class', 'status ' + status_dict[clean_data.status][2]);
+                    clean_status_obj.html('[' + status_dict[clean_data.status][1] + ']');
+
+                    var clean_status_html = '';
+                    clean_status_html += '当前版本: ' ;
+                    clean_status_html += '<br/>';
+                    clean_status_html += clean_data.local_revision ;
+                    clean_status_html += '<br/>';
+                    clean_status_html +='外链: '+ clean_data.externals_local_revision ;
+                    clean_status_html += '<br/>';
+                    clean_status_html += '最新版本: ' ;
+                    clean_status_html += '<br/>';
+                    clean_status_html +=  clean_data.current_revision;
+                    clean_status_html += '<br/>';
+                    clean_status_html += '外链: ' + clean_data.externals_current_revision;
+                    clean_status_html += '<br/>';
+                    clean_status_html += '上次版本: ' ;
+                    clean_status_html += '<br/>';
+                    clean_status_html +=   clean_data.last_execute_revision;
+                    clean_status_html += '<br/>';
+                    clean_status_html += '上次开始: ' ;
+                    clean_status_html += '<br/>';
+                    clean_status_html +=  clean_data.last_execute_start_time;
+                    clean_status_html += '<br/>';
+                    clean_status_html += '上次结束: ' ;
+                    clean_status_html += '<br/>';
+                    clean_status_html +=  clean_data.last_execute_end_time;
+                    clean_status_html += '<br/>';
+                    clean_status_html += '执行结果: ' ;
+                    clean_status_html +=  status_dict[clean_data.status][0];
+                    clean_status_html += '<br/>';
+
+                    clean_status_obj.attr('title', clean_status_html);
+                    clean_status_obj.show();
+                    clean_status_obj.qtip();
+
+
+                    //compile
+                    compile_status_obj.empty();
+                    compile_status_obj.attr('class', 'status ' + status_dict[compile_data.status][2]);
+                    compile_status_obj.html('[' + status_dict[compile_data.status][1] + ']');
+
+                    var compile_status_html = '';
+                    compile_status_html += '当前版本: ' ;
+                    compile_status_html += '<br/>';
+                    compile_status_html +=  compile_data.local_revision;
+                    compile_status_html += '<br/>';
+                    compile_status_html += '外链: '+ compile_data.externals_local_revision;
+                    compile_status_html += '<br/>';
+                    compile_status_html += '最新版本: ';
+                    compile_status_html += '<br/>';
+                    compile_status_html +=   compile_data.current_revision;
+                    compile_status_html += '<br/>';
+                    compile_status_html += '外链: '+ compile_data.externals_current_revision;
+                    compile_status_html += '<br/>';
+                    compile_status_html += '上次版本: ' ;
+                    compile_status_html += '<br/>';
+                    compile_status_html += compile_data.last_execute_revision;
+                    compile_status_html += '<br/>';
+                    compile_status_html += '上次开始: ' ;
+                    compile_status_html += '<br/>';
+                    compile_status_html += compile_data.last_execute_start_time;
+                    compile_status_html += '<br/>';
+                    compile_status_html += '上次结束: ' ;
+                    compile_status_html += '<br/>';
+                    compile_status_html +=  compile_data.last_execute_end_time;
+                    compile_status_html += '<br/>';
+                    compile_status_html += '执行结果: ' ;
+                    compile_status_html += '<br/>';
+                    compile_status_html +=  status_dict[compile_data.status][0];
+
+                    compile_status_obj.attr('title', compile_status_html);
+                    compile_status_obj.show();
+                    compile_status_obj.qtip();
+                } else {
+                    dialog_error('', resp.error)
+                }
+            }, 'json');
+        }
+    </script>
+{% endblock %}
+        {% block title_1 %}<span style="float:left;"><span class="cus_name" value="{{ customer.id }}">{{ customer.name }}</span> - 编译指令</span>{% endblock %}
+        {% block content %}
+            <tr>
+                <th style="width: 150px;">客户名称:</th>
+                <td>{{ customer.name }}</td>
+            </tr>
+            <tr>
+                <th>编译机:</th>
+                <td>
+                    {% for machine in  machines %}
+                        <span>{{ machine.name }} - {{ machine.os|parse_os_type }}</span>
+                    {% endfor %}
+                    <select style="width: 400px;display: none" id="machine_id">
+                        {% for machine in  machines %}
+                            <option value="{{ machine.id }}">{{ machine.name }} - {{ machine.os|parse_os_type }}</option>
+                        {% endfor %}
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <th>请填写编译参数:</th>
+                <td>
+                    {% for program in  program_names %}
+                        <span class="like_table">
+                            <span>{{ program }}:</span>
+                            <select id="{{ program }}" name="{{ program }}" class="branch_params">
+                                {% for data in  branchInfos %}
+                                    {% if data.programName == program %}
+                                        {% if data.customerTag == customer.tag or data.customerTag == "" %}
+                                            <option value="{{ data.branchTag }}"{% for defaultData in defaultInfo %}{% if data.branchTag == defaultData.branchTag and data.programName == defaultData.programName %}selected="selected"{% endif %}{% endfor %}> {{ data.branchTag }}</option>
+                                        {% endif %}
+                                    {% endif %}
+                                {% endfor %}
+                            </select>
+
+                            <input type=checkbox id="{{ program }}_isUpdate" name="{{ program }}">
+                            <label for="{{ program }}_isUpdate">更新</label>
+                            <span type="update" class="status" title=""></span>
+
+                            <input type=checkbox id="{{ program }}_isClean" name="{{ program }}" style="margin-left: 50px;">
+                            <label for="{{ program }}_isClean">清空</label>
+                            <span type="clean" class="status"></span>
+
+                            <input type=checkbox id="{{ program }}_isCompile" name="{{ program }}" style="margin-left: 50px;">
+                            <label for="{{ program }}_isCompile">编译</label>
+                            <span type="compile" class="status"></span>
+                        </span>
+                    {% endfor %}
+                </td>
+            </tr>
+            <tr>
+                <th>备注:</th>
+                <td>
+                    <textarea id="remark" style="width: 100%;height: 300px">请填写编译备注</textarea>
+                </td>
+            </tr>
+                </div>
+        {% endblock %}
+{% block floorcontent %}
+            <div class="btn" id="saveBtn">开始编译</div>
+            <br>
+			<div id="ProgressInfo" style="background-color:lightblue; text-align:left; font-size: 26px; font-weight: bold; margin-left: 33%;"></div>
+    <div id="dialog_table" class="easyDialog_wrapper" style="display: none; margin: 0px; min-width: 1080px; width: auto; min-height: 300px; max-height: 500px;">
+        <div class="easyDialog_content">
+            <h4 class="easyDialog_title" id="easyDialogTitle" style="cursor: move;">
+                <a href="javascript:void(0)" title="关闭窗口" class="close_btn" id="closeBtn_rzrk">×</a>
+                <span type="dialog_title"></span>
+            </h4>
+
+            <div class="easyDialog_text" style="min-height: 300px; max-height: 415px; overflow: auto;">
+                <table class="bordered table_small" type="dialog_table">
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}

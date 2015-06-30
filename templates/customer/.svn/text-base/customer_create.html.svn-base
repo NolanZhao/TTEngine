@@ -1,0 +1,854 @@
+{% extends "customer_common_button.html" %}
+{% load rzrk_tags %}
+
+{% block title %}{% settings_value "MAIN_PROJECT_NAME" %}-欢迎{% endblock %}
+{% block rootJsAndCss %}
+    <style>
+        textarea {
+            width: 100%;
+            height: 200px;
+        }
+    </style>
+    <script type="text/javascript">
+    $(document).ready(function () {
+
+        //默认隐藏
+        $(".panel").hide();
+        $("#ModulePanel").hide();
+
+        //滑动显示和隐藏
+        $(".flip").click(function(){
+            $(this).parent().find(".panel").slideToggle("fast");
+        });
+
+        $(".inner").on("click", "div[cmd=Details]", function () {
+            $($($(this).parent().parent()[0]).siblings()[1]).slideToggle("fast");
+        });
+
+        //全选反选
+
+        $(".inner").on("click", "input[name='check_batch']", function () {
+
+            var $this = $(this);
+            if (this.checked) {
+                $this.parent().parent().find("input[type=checkbox]").each(function (i) {
+                    this.checked = true;
+                });
+            } else {
+                $this.parent().parent().find("input[type=checkbox]").each(function (i) {
+                    this.checked = false;
+                });
+            }
+            validate_machine_checkbox();
+        });
+
+
+
+        //绑定客户模块checkbox
+        $('.inner').on('change', 'input[name="cus_module"]', function () {
+            var $this = $(this);
+            var change_value = $this.val();
+            var checked = this.checked;
+            //遍历机器模块执行校验
+            var machineListObj = $("div[type=machine]");
+            var machine_module = machineListObj.find("input[name=module][value=" + change_value + "]");
+            if (checked) {
+                machine_module.removeAttr('disabled');
+                machine_module.parent().show();
+            } else {
+                machine_module.removeAttr('checked');
+                machine_module.attr('disabled', 'disabled');
+                machine_module.parent().hide();
+            }
+        });
+        //添加机器
+        $(".inner").on("click", "div[cmd=addMachine]", function () {
+            addOneMachine();
+            validate_machine_checkbox();
+            $('span[title]').qtip({});
+        });
+        //删除按钮
+        $(".inner").on("click", "div[cmd=delDocument]", function () {
+            $(this).parent().parent().remove();
+        });
+        $(".inner").on("click", "div[cmd=delMachineSetting]", function () {
+            $(this).parent().remove();
+        });
+        //大小按钮
+        $(".inner").on("click", "div[cmd=hideMost]", function () {
+            var $this = $(this);
+            var text = $this.text();
+            var importantSpan = $this.parent().parent().find("div[class=content] span[type=important]");
+            var moreSpan = $this.parent().parent().find("div[class=content] span[type=more]");
+            if (text == "小") {
+                moreSpan.hide();
+                $this.text("大");
+            } else if (text == "大") {
+                moreSpan.show();
+                $this.text("小");
+            } else {
+                alert("悟空不要调皮!");
+            }
+        });
+
+        //保存按钮
+        $('.btn[id=saveBtn]').bind("click", function () {
+            var customerName = $("input[name=customer_name]").val();
+            var customerTag = $("input[name=customer_tag]").val();
+            var customerAftersale = $("input[name=customer_aftersale]").val();
+            var customerCustomerstatus = $("select[name=customer_customerstatus]").val();
+            var customer_virtual_ip = $("input[name=customer_virtual_ip]").val();
+            var customer_outer_trade_ip = $("input[name=customer_outer_trade_ip]").val();
+            var customer_outer_market_ip = $("input[name=customer_outer_market_ip]").val();
+            var customer_outer_portal_ip = $("input[name=customer_outer_portal_ip]").val();
+            var customer_proxy_ip = $("input[name=customer_proxy_ip]").val();
+            var update_server_ip = $("input[name=update_server_ip]").val();
+            var customer_position = $("input[name=customer_position]").val();
+            var customerId = $("#customer_id").val().trim();
+            var customerPermissionList = [];
+            $("[class = 'permission']").each(function (index) {
+                var value_obj = $(this);
+                var permission_id = value_obj.attr('name');
+                var permission_value = value_obj.val();
+                customerPermissionList.push({'permission_id': permission_id, 'permission_value': permission_value});
+            });
+            //客户设置
+            var cus_settings = $("#cus_settings").val();
+            //客户对象
+            var result = {
+                "customerId": customerId ? customerId : null,
+                "customerName": customerName,
+                "customerTag": customerTag,
+                "customerAftersale": customerAftersale,
+                "customerCustomerstatus": customerCustomerstatus,
+                "customer_virtual_ip": customer_virtual_ip,
+                "customer_outer_trade_ip": customer_outer_trade_ip,
+                "customer_outer_market_ip": customer_outer_market_ip,
+                "customer_outer_portal_ip": customer_outer_portal_ip,
+                "customer_proxy_ip": customer_proxy_ip,
+                "update_server_ip": update_server_ip,
+                "customer_position": customer_position,
+                "customer_is_sys": {% if is_sys %}true{% else %}false{% endif %},
+                "customerPermission": customerPermissionList,
+                "moduleList": [],
+                "machineList": [],
+                "settings": cus_settings
+            };
+            var machineListObj = $("div[type=machine]");
+            //初始化机器信息
+            for (var i = 0; i < machineListObj.size(); i++) {
+                var item = machineListObj[i];
+                var $item = $(item);
+                var item_id = $item.find("input[name=machine_id]").val().trim();
+                var machine_type = $item.find("select[name=machine_type]");
+                if (machine_type.length == 0) {
+                    machine_type = 3
+                } else {
+                    machine_type = parseInt(machine_type.val());
+                }
+                var machine_settings = $item.find("textarea[type=machine_settings]").val();
+                var machine_name = $item.find("input[name=machine_name]").val();
+                var machine_code = $item.find("input[name=machine_code]").val();
+                var machine_host = $item.find("input[name=machine_host]").val();
+                var machine_port = $item.find("input[name=machine_port]").val();
+                var machine_username = $item.find("input[name=machine_username]").val();
+                var machine_password = $item.find("input[name=machine_password]").val();
+                //自动跳过必要参数为空情况
+                if (machine_name.trim() == '' || machine_code.trim() == '') {
+                    continue;
+                }
+                var machine = {
+                    "machine_id": item_id ? item_id : null,
+                    "machine_type": machine_type,
+                    "machine_name": machine_name,
+                    "machine_code": machine_code,
+                    "machine_os": parseInt($item.find("select[name=machine_os]").val()),
+                    "machine_host": machine_host,
+                    "machine_port": machine_port,
+                    "machine_username": machine_username,
+                    "machine_password": machine_password,
+                    "machine_xtDir": $item.find("input[name=machine_xtDir]").val(),
+                    "machine_remark": $item.find("input[name=machine_remark]").val(),
+                    "modules": [],
+                    "settings": machine_settings
+                };
+                var machine_modules = $item.find("input[name=module]:enabled");
+                machine_modules.each(function (index) {
+                    if (this.checked) {
+                        machine["modules"].push($(this).val());
+                    }
+                });
+                result["machineList"].push(machine);
+            }
+            //初始化客户模块信息
+            $("input[name=cus_module]").each(function () {
+                if (this.checked) {
+                    result["moduleList"].push($(this).val())
+                }
+            });
+
+            var json = JSON.stringify(result);
+            var url = "/customer/create/";
+            //执行save操作
+            $.post(url, {json: json}, function (resp) {
+                if (resp.success) {
+                    dialog_success('', resp.error, function () {
+                        window.location.href = '/customer/view/?cus_id=' + resp.id;
+                    });
+                } else {
+                    dialog_error('', resp.error);
+                }
+            }, 'json');
+        });
+
+        //编辑按钮
+        $("#page_edit").bind("click", function () {
+            var url = "/customer/edit/?cus_id={{ cus_id }}";
+            window.location.href = url;
+        });
+         $(".inner").on("click", ".btn[cmd=cus_tips]", function () {
+                var $this = $(this);
+                var cus_id = this.id;
+                var cus_name = $this.attr('cus_name');
+
+                var url = '/customer/tips/';
+
+                $.get(url, {'cus_id': cus_id}, function (resp) {
+                    if (resp.success) {
+                        var data = resp.data;
+                        var dialog_title = $('#customer_table span[type=dialog_title]');
+                        dialog_title.html('<span class="cus_name" value="' + cus_id + '">' + cus_name + '</span>' + ' - 备注');
+                        var customer_table = $('#customer_table .easyDialog_text');
+                        customer_table.empty();
+                        customer_table.append(data);
+                        easyDialog.open({
+                            container: 'customer_table',
+                            overlay: false
+                        });
+                    } else {
+                        dialog_error('', resp.error);
+                    }
+                });
+            });
+        //tips添加按钮
+        $("body").on("click", "#addTips", function () {
+            var cus_id = $(this).attr('value');
+            var $this = $(this).parent().parent().find('tr[type=head]');
+            var html = '';
+            html += '<tr>';
+            html += '<td colspan="3">';
+            html += '<textarea name="content" value="" style="width: 100%; height: 150px;"></textarea>';
+            html += '</td>';
+            html += '<td colspan="3">';
+            html += '<span class="btn" cmd="tip_save" style="line-height:20px;" value="' + cus_id + '">保存</span>';
+            html += '<span class="btn" cmd="tip_del" style="line-height:20px;">删除</span>';
+            html += '</td>';
+            html += '</tr>';
+            $this.after(html);
+        });
+
+        //tips删除按钮
+        $("body").on("click", ".btn[cmd=tip_del]", function () {
+            var $this = $(this);
+            if (!$this.attr('value')) {
+                $this.parent().parent().remove();
+                return;
+            }
+            var tip_id = $this.attr('value');
+            var url = '/customer/tips/del/';
+            if (confirm('确认删除该备注?')) {
+                $.post(url, {id: tip_id}, function (resp) {
+                    if (resp.success) {
+                        alert(resp.error);
+                        $this.parent().parent().remove();
+                    } else {
+                        alert(resp.error);
+                    }
+                });
+            }
+        });
+
+        //tips保存按钮
+        $("body").on("click", ".btn[cmd=tip_save]", function () {
+            var $this = $(this).parent().parent();
+            var cus_id = $(this).attr('value');
+            var content = $this.find('textarea').val();
+
+            var url = '/customer/tips/create/';
+            $.post(url, {cus_id: cus_id, content: content}, function (resp) {
+                if (resp.success) {
+                    var data = resp.data;
+                    var html = '';
+                    html += '<tr>';
+                    html += '<td><xmp>' + data.content + '</xmp></td>';
+                    html += '<td>' + data.create_user + '</td>';
+                    html += '<td>' + data.create_time + '</td>';
+                    html += '<td><span class="btn" cmd="tip_del" style="line-height: 20px;" value="' + data.id + '">删除</span></td>';
+                    html += '</tr>';
+                    $this.replaceWith(html);
+                } else {
+                    alert(resp.error);
+                }
+
+            });
+        });
+
+        validate_machine_checkbox();
+    });
+
+
+
+
+    //添加一台机器
+    function addOneMachine() {
+        var list = $("#machine_list td");
+        var html = '';
+        html += '<div type="machine" style="border: 1px dashed gray;float: left;margin-top: 5px;width: 100%">';
+        html += '<div class="btn_line">';
+        html += '<div class="s_btn" cmd="delDocument">-</div>';
+        html += '<div class="s_btn" cmd="hideMost">小</div>';
+        html += '<div class="s_btn" cmd="addMachine">+</div>';
+        html += '<input type="hidden" name="machine_id" value="">';
+        html += '</div>';
+        html += '<div class="content">';
+        html += '<span type="important" class="like_table">';
+        html += '<span>机器名称:</span><input type="text" name="machine_name" value="">';
+        html += '</span>';
+        {% if is_sys %}
+            html += '<span type="more" class="like_table">';
+            html += '<span>机器类型:</span>';
+            html += '<select name="machine_type">';
+            html += '<option value="2">测试机</option>';
+            html += '</select>';
+        {% endif %}
+        html += '</span>';
+        html += '<span type="more" class="like_table">';
+        html += '<span>机器码:</span><input type="text" name="machine_code" value="">';
+        html += '</span>';
+        html += '<span type="more" class="like_table">';
+        html += '<span>操作系统:</span>';
+        html += '<select name="machine_os", value=0>';
+        html += '<option value="1">Linux</option>';
+        html += '<option value="2">Windows</option>';
+        html += '</select>';
+        html += '</span>';
+        html += '<span type="more" class="like_table">';
+        html += '<span>Host:</span>';
+        html += '<input type="text" name="machine_host" value="">';
+        html += '</span>';
+        html += '<span type="more" class="like_table">';
+        html += '<span>Port:</span>';
+        html += '<input type="text" name="machine_port" value="22">';
+        html += '</span>';
+        html += '<span type="more" class="like_table">';
+        html += '<span>Username:</span>';
+        html += '<input type="text" name="machine_username" value="root">';
+        html += '</span>';
+        html += '<span type="more" class="like_table">';
+        html += '<span>Password:</span>';
+        html += '<input type="text" name="machine_password" value="">';
+        html += '</span>';
+        html += '<span type="more" class="like_table">';
+        html += '<span>迅投目录:</span><input type="text" name="machine_xtDir" value="/home/rzrk/">';
+        html += '</span>';
+        html += '<span type="more" class="like_table">';
+        html += '<span>备注:</span><input type="text" name="machine_remark" value="">';
+        html += '</span>';
+        html += '<span type="more" class="like_table">';
+        html += '<span>机器模块:</span>';
+        html += '</span>';
+        html += '<span type="more" style="display: block;margin-left: 110px;">';
+        {% if modules|length == 0 %}
+            html += '暂无模块信息';
+        {% else %}
+            html += '<br><input type="checkbox" name="check_batch">';
+            html += '<a>全选</a>';
+            {% for module in modules %}
+                html += '<div style="line-height: 26px;width: 100%;height: 26px;background-color: {{ forloop.counter|parse_color }};">';
+                html += '<input style="width:13px;float: left;" type="checkbox" name="module" value="{{ module.id }}">';
+                html += '<span style="width:200px;float: left;margin-left: 5px;">{% if module.remark %}{{ module.remark }}{% else %}暂无备注{% endif %}</span>';
+                html += '<span>({{ module.name }})</span>';
+                html += '</div>';
+            {% endfor %}
+        {% endif %}
+        html += '</span>';
+        html += '<span type="more" class="like_table">';
+        html += '<span>设置项:</span>';
+        html += '</span>';
+        html += '<span type="more" class="like_table">';
+        html += '<textarea type="machine_settings">{}</textarea>';
+        html += '</span>';
+        html += '</div>';
+        html += '</div>';
+        list.append(html)
+    }
+
+    function validate_machine_checkbox() {
+        //初始化模块checkbox
+        var un_selected_checkbox = $("input[name=cus_module]:not(:checked)");
+        for (var index = 0; index < un_selected_checkbox.length; index++) {
+            //取消勾选,禁止勾选
+            var obj = $(un_selected_checkbox[index]);
+            var value = obj.val();
+            var machine_modules = $("input[name=module][value=" + value + "]");
+            machine_modules.each(function () {
+                $(this).attr('disabled', 'disabled');
+                $(this).removeAttr('checked');
+                $(this).parent().hide();
+            });
+        }
+        var selected_checkbox = $("input[name=cus_module]:checked");
+        for (var index = 0; index < selected_checkbox.length; index++) {
+            //取消禁止勾选
+            var obj = $(selected_checkbox[index]);
+            var value = obj.val();
+            var machine_modules = $("input[name=module][value=" + value + "]");
+            machine_modules.each(function () {
+                $(this).removeAttr('disabled');
+                $(this).parent().show();
+            });
+        }
+    }
+
+    </script>
+{% endblock %}
+    {% block title_1 %}
+        <span style="float:left;">{% if is_view or is_edit %}<span class="cus_name" value="{{ customer.id }}">{{ customer.name }}</span> - {% else %}新客户 - {% endif %}{% if is_edit %}编辑{% elif is_view %}查看{% else %}录入{% endif %}</span>
+        {% endblock %}
+    {% block extratitle_1 %}
+        {% if not is_view %}
+            <div class="btn" id="saveBtn">保存</div>
+        {% endif %}
+        {% if is_view %}
+            <div class="btn" id="page_edit">修改</div>
+            <span class="btn" title="编译" onclick="javascript:window.open('/customer/compiling/?cus_id={{ customer.id }}','_self')">更新编译</span>
+            <span class="btn" onclick="javascript:window.open('/customer/package/{{ customer.id }}/','_self')" title="安装包">安装包</span>
+        {% endif %}
+        {% endblock %}
+    {% block content %}
+        <tr>
+            <th style="width: 120px;">客户名称:</th>
+            <td>
+                {% if is_view %}
+                    {{ customer.name }}
+                {% else %}
+                    <span class="like_table">
+                        <input type="text" name="customer_name" value="{{ customer.name }}">
+                    </span>
+                    <input type="hidden" name="customer_id" id="customer_is_sys" value="{{ is_sys }}">
+                    <input type="hidden" name="customer_id" id="customer_id" value="{{ customer.id }}">
+                {% endif %}
+            </td>
+        </tr>
+        <tr>
+            <th>客户标记:</th>
+            <td>
+                {% if is_view %}
+                    {{ customer.tag }}
+                {% else %}
+                    <span class="like_table">
+                        <input type="text" id="customer_tag" name="customer_tag" value="{{ customer.tag }}">
+                    </span>
+                {% endif %}
+            </td>
+        </tr>
+        <tr>
+            <th>售后负责:</th>
+            <td>
+                {% if is_view %}
+                    {{ customer.aftersale }}
+                {% else %}
+                    <span class="like_table">
+                        <input type="text" name="customer_aftersale" value="{{ customer.aftersale }}">
+                    </span>
+                {% endif %}
+            </td>
+        </tr>
+        <tr>
+            <th>客户状态:</th>
+            <td>
+                {% if is_view %}
+                    {{ customer.customerstatus }}
+                {% else %}
+                    <span class="like_table">
+                        <select id="select" name="customer_customerstatus" >
+                             <option >测试中</option>
+                             <option >已签约</option>
+                             <option >已付费</option>
+                        </select>
+                        {% comment %}<input type="text" name="customer_customerstatus" value="{{ customer.customerstatus }}">{% endcomment %}
+                    </span>
+                {% endif %}
+            </td>
+        </tr>
+        <tr>
+            <th>虚拟IP:</th>
+            <td>
+                {% if is_view %}
+                    {{ customer.virtual_ip }}
+                {% else %}
+                    <span class="like_table">
+                        <input type="text" name="customer_virtual_ip" value="{% if customer.virtual_ip %}{{ customer.virtual_ip }}{% endif %}">
+                    </span>
+                {% endif %}
+            </td>
+        </tr>
+        <tr>
+            <th>交易服务地址:</th>
+            <td>
+                {% if is_view %}
+                    {{ customer.outer_trade_ip }}
+                {% else %}
+                    <span class="like_table">
+                        <input type="text" name="customer_outer_trade_ip" value="{% if customer.outer_trade_ip %}{{ customer.outer_trade_ip }}{% endif %}">
+                    </span>
+                {% endif %}
+            </td>
+        </tr>
+        <tr>
+            <th>行情服务地址:</th>
+            <td>
+                {% if is_view %}
+                    {{ customer.outer_market_ip }}
+                {% else %}
+                    <span class="like_table">
+                        <input type="text" name="customer_outer_market_ip" value="{% if customer.outer_market_ip %}{{ customer.outer_market_ip }}{% endif %}">
+                    </span>
+                {% endif %}
+            </td>
+        </tr>
+        <tr>
+            <th>Portal地址:</th>
+            <td>
+                {% if is_view %}
+                    {{ customer.outer_portal_ip }}
+                {% else %}
+                    <span class="like_table">
+                        <input type="text" name="customer_outer_portal_ip" value="{% if customer.outer_portal_ip %}{{ customer.outer_portal_ip }}{% endif %}">
+                    </span>
+                {% endif %}
+            </td>
+        </tr>
+        <tr>
+            <th>代理地址:</th>
+            <td>
+                {% if is_view %}
+                    {{ customer.proxy_ip }}
+                {% else %}
+                    <span class="like_table">
+                        <input type="text" name="customer_proxy_ip" value="{% if customer.proxy_ip %}{{ customer.proxy_ip }}{% endif %}">
+                    </span>
+                {% endif %}
+            </td>
+        </tr>
+        <tr>
+            <th>升级服务器地址:</th>
+            <td>
+                {% if is_view %}
+                    {{ customer.update_server_ip }}
+                {% else %}
+                    <span class="like_table">
+                        <input type="text" name="update_server_ip" value="{% if customer.update_server_ip %}{{ customer.update_server_ip }}{% endif %}">
+                    </span>
+                {% endif %}
+            </td>
+        </tr>
+        <tr>
+            <th>客户所在地:</th>
+            <td>
+                {% if is_view %}
+                    {{ customer.position }}
+                {% else %}
+                    <span class="like_table">
+                         <input type="text" name="customer_position" value="{% if customer.position %}{{ customer.position }}{% endif %}">
+                    </span>
+                {% endif %}
+            </td>
+        </tr>
+        <tr>
+            <th>客户模块:</th>
+           <td>
+                <div style="background-color: white" id="moduleGroup_list">
+                    {% for group in groups %}
+                        <div>
+                              <div class="flip" style="background-color: #dce9f9;font-size:14px;border: solid white">{{ group.name }}</div>
+                              <div class="panel">
+                              <p>
+                                    {% if modules|length == 0 %}
+                                        暂无模块信息
+                                    {% else %}
+                                        {% if is_view %}
+                                            {% if customer.modules %}
+                                                {% for module in customer.modules %}
+                                                    {% if module.group == group.name %}
+                                                    <span class="like_table" style="background-color:{{ forloop.counter|parse_color }};height: 30px;margin: 0px;">
+                                                        <span style="width: 200px;">{% if module.remark %}{{ module.remark }}{% else %}暂无备注{% endif %}</span>
+                                                        <span>({{ module.name }})</span>
+                                                    </span>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            {% else %}
+                                                客户无模块
+                                            {% endif %}
+                                        {% else %}
+                                            <div>
+                                            <input type="checkbox" name="check_batch">
+                                            <span>全选</span>
+                                            </div>
+                                            {% for module in modules %}
+                                                {% if module.group == group.name %}
+                                                    <div style="line-height: 26px;width: 100%;height: 26px;background-color:{{ forloop.counter|parse_color }}">
+                                                             {% if module.name == "BaseConfig" or module.name == "BaseLuaScript" or module.name == "BaseMonitor" or module.name == "BasePythonScript" or module.name == "XtBaseLibs"%}
+                                                                <input style="width:13px;float: left;" type="checkbox" name="cus_module" value="{{ module.id }}" {% if is_edit and module in customer.modules %} checked="checked" {% endif %}>
+                                                             {% else %}
+                                                                <input style="width:13px;float: left;" type="checkbox" name="cus_module" value="{{ module.id }}" {% if is_edit and module in customer.modules %} checked="checked" {% endif %}>
+                                                             {% endif %}
+                                                        <span style="width:200px;float: left;margin-left: 5px;">{% if module.remark %}{{ module.remark }}{% else %}暂无备注{% endif %}</span>
+                                                        <span>({{ module.name }})</span>
+                                                    </div>
+                                                {% endif %}
+                                            {% endfor %}
+                                        {% endif %}
+                                    {% endif %}
+                              </p>
+                              </div>
+                        </div>
+                    {% endfor %}
+                </div>
+           </td>
+        </tr>
+        <tr>
+            <th colspan="2" style="color: blue">客户机器:</th>
+        </tr>
+        <tr id="machine_list">
+            <td colspan="2">
+                {% if not is_view %}
+                    <div class="btn_line">
+                        <div class="s_btn" cmd="addMachine">+</div>
+                    </div>
+                {% endif %}
+                {% if is_edit %}
+                    {% for machine in customer.machines %}
+                        <div type="machine" style="border: 1px dashed gray;float: left;margin-top: 5px;width: 100%">
+                            <div class="btn_line">
+                                <div class="s_btn" cmd="delDocument">-</div>
+                                <div class="s_btn" cmd="hideMost">小</div>
+                                <div class="s_btn" cmd="addMachine">+</div>
+                                <input type="hidden" name="machine_id" value="{{ machine.id }}">
+                            </div>
+                            <div class="content">
+                                <span type="important" class="like_table">
+                                    <span>机器名称:</span>
+                                    <input type="text" name="machine_name" value="{{ machine.name }}">
+                                </span>
+                                {% if is_sys %}
+                                    <span type="more" class="like_table">
+                                    <span>机器类型:</span>
+                                    <select name="machine_type">
+                                        <option value="2" {% if machine.type == 2 %}selected="selected"{% endif %}>测试机</option>
+                                    </select>
+                                {% endif %}
+                                </span>
+                                <span type="more" class="like_table">
+                                    <span>机器码:</span>
+                                    <input type="text" name="machine_code" value="{{ machine.code }}">
+                                </span>
+                                <span type="more" class="like_table">
+                                    <span>操作系统:</span>
+                                    <select name="machine_os">
+                                        <option value="1" {% if machine.os == 1 %}selected="selected"{% endif %}>Linux</option>
+                                        <option value="2" {% if machine.os == 2 %}selected="selected"{% endif %}>Windows</option>
+                                    </select>
+                                </span>
+                                <span type="more" class="like_table">
+                                    <span>Host:</span>
+                                    <input type="text" name="machine_host" value="{% if machine.host %}{{ machine.host }}{% endif %}">
+                                </span>
+                                <span type="more" class="like_table">
+                                    <span>Port:</span>
+                                    <input type="text" name="machine_port" value="{% if machine.port %}{{ machine.port }}{% endif %}">
+                                </span>
+                                <span type="more" class="like_table">
+                                    <span>Username:</span>
+                                    <input type="text" name="machine_username" value="{% if machine.username %}{{ machine.username }}{% endif %}">
+                                </span>
+                                <span type="more" class="like_table">
+                                    <span>Password:</span>
+                                    <input type="text" name="machine_password" value="{% if machine.password %}{{ machine.password }}{% endif %}">
+                                </span>
+                                <span type="more" class="like_table">
+                                    <span>迅投目录:</span>
+                                    <input type="text" name="machine_xtDir" value="{{ machine.xtDir }}">
+                                </span>
+                                <span type="more" class="like_table">
+                                    <span>备注:</span>
+                                    <input type="text" name="machine_remark" value="{{ machine.remark }}">
+                                </span>
+                                <span type="more" class="like_table">
+                                    <span>机器模块:</span>
+                                </span>
+                                <span type="more" style="display: block;margin-left: 110px;">
+                                    {% if modules|length == 0 %}
+                                        暂无模块信息
+                                    {% else %}
+                                        <input type="checkbox" name="check_batch">
+                                        <a>全选</a>
+                                        {% for module in modules %}
+                                            <div style="line-height: 26px;width: 100%;height: 26px;background-color: {{ forloop.counter|parse_color }};">
+                                                <input style="width:13px;float: left;" type="checkbox" name="module" value="{{ module.id }}" {% if machine.modules and module in machine.modules %}checked="checked"{% endif %}>
+                                                <span style="width:200px;float: left;margin-left: 5px;">{% if module.remark %}{{ module.remark }}{% else %}暂无备注{% endif %}</span>
+                                                <span>({{ module.name }})</span>
+                                            </div>
+                                        {% endfor %}
+                                    {% endif %}
+                                </span>
+                                <span type="more" class="like_table">
+                                    <span>机器设置项:</span>
+                                </span>
+                                <span type="more" class="like_table">
+                                    <textarea type="machine_settings">{{ machine.settings }}</textarea>
+                                </span>
+                            </div>
+                        </div>
+                    {% endfor %}
+
+                {% elif is_view %}
+                <table>
+                    <tr type="main" id="machine_list">
+                        <th style="width: 40px;">序号</th>
+                        <th style="width: 180px;">机器名称</th>
+                        <th style="width: 560px;">UUID</th>
+                        <th style="width: 200px;">IP地址</th>
+                        <th style="width: 80px;">端口</th>
+                        <th style="width: 100px;">UserName</th>
+                        <th style="width: 100px;">Password</th>
+                        <th style="width: 100px">操作系统</th>
+                        <th style="width: 100px">机器类型</th>
+                        <th style="width: 400px">迅投目录</th>
+                        <th style="width: 40px">详情</th>
+                    </tr>
+
+                    {% for machine in customer.machines %}
+                        <tr>
+                            <th>{{ forloop.counter }}</th>
+                            <td>{{ machine.name }}</td>
+                            <td>{{ machine.code }}</td>
+                            <td>{% if machine.host %}{{ machine.host }}{% endif %}</td>
+                            <td>{% if machine.port %}{{ machine.port }}{% endif %}</td>
+                            <td>{% if machine.username %}{{ machine.username }}{% endif %}</td>
+                            <td>{% if machine.password %}{{ machine.password }}{% endif %}</td>
+                            <td>{{ machine.os|parse_os_type }}</td>
+                            <td>{{ machine.type|parse_machine_type }}</td>
+                            <td>{{ machine.xtDir }}</td>
+                            <td><div class="s_btn" cmd="Details">+</div></td>
+                        </tr>
+
+                        <tr id="ModulePanel">
+                            <th>模块和备注</th>
+                            <td colspan="10">
+                                <span type="more" class="like_table">
+                                    {% if modules|length == 0 %}
+                                        暂无模块信息
+                                    {% else %}
+                                        {% for module in modules %}
+                                            {% if machine.modules and module in machine.modules %}
+                                                <div style="width: 100%;height: 26px;background-color: {{ forloop.counter|parse_color }};">
+                                                    <span style="width:200px;float: left;">{% if module.remark %}{{ module.remark }}{% else %}暂无备注{% endif %}</span>
+                                                    <span>({{ module.name }})</span>
+                                                </div>
+                                            {% endif %}
+                                        {% endfor %}
+                                    {% endif %}
+                                </span>
+                                <span type="more" class="like_table">
+                                    <span>设置项:</span>
+                                    <span>{% if machine.settings %}{{ machine.settings }}{% else %}暂无{% endif %}</span>
+                                </span>
+                               <span type="more" class="like_table">
+                                    <span>备注:</span>
+                                    <span>{{ machine.remark }}</span>
+                                </span>
+                            </td>
+                        </tr>
+                    {% endfor %}
+
+			    </table>
+                {% endif %}
+            </td>
+        </tr>
+        <tr>
+            <th>客户配置:</th>
+            <td>
+                {% if is_view %}
+                    {{ customer.settings }}
+                {% else %}
+                    <textarea id="cus_settings">{% if customer %}{{ customer.settings }}{% else %}{}{% endif %}</textarea>
+                {% endif %}
+            </td>
+        </tr>
+        {% if is_view %}
+            <tr>
+                <th>权限配置</th>
+                <td>
+                    <div class="flip" style="background-color: #dce9f9;font-size:17px;border: solid white">
+                         <span>权限配置</span>
+                    </div>
+                    <div class="panel">
+                    {% for key,value in customer.permissions.items %}
+                        <span class="like_table" style="background-color: {{ forloop.counter|parse_color }};margin: 0px;">
+                            <span style="width: 200px;">{% if key|get_permission_remark %}{{ key|get_permission_remark }}{% else %}暂无备注{% endif %}</span>
+                            <span style="width: 700px;">({{ key|get_permission_name }}):</span>
+                            <span>{% if key|get_permission_type == 'Boolean' %}{% if value == 0 %}False{% else %}True{% endif %}{% else %}{{ value }}{% endif %}</span>
+                            <span>(默认:{{ key|get_permission_default_value }})</span>
+                        </span>
+                    {% endfor %}
+                    </div>
+                </td>
+            </tr>
+        {% else %}
+            {% if permissions %}
+                <tr>
+                    <th rowspan="{{ permissions|length }}">权限配置:</th>
+                    <td>
+                        <div class="flip" style="background-color: #dce9f9;font-size:17px;border: solid white">
+                             <span>权限配置</span>
+                        </div>
+                        <div class="panel">
+                        {% for permission in permissions %}
+                            <span class="like_table" style="background-color: {{ forloop.counter|parse_color }};margin: 0px;">
+                                <span style="width: 200px;">{% if permission.remark %}{{ permission.remark }}{% else %}暂无备注{% endif %}</span>
+                                <span style="width: 700px;">({{ permission.name }}):</span>
+                                {% if permission.value_type == 'Boolean' %}
+                                    <select name="{{ permission.id }}" style="width: 100px;" class="permission">
+                                        <option value="true" {% if customer.permissions|cus_perm_get:permission.id == 1 %}selected="selected"{% endif %}>True</option>
+                                        <option value="false" {% if customer.permissions|cus_perm_get:permission.id == 0 %}selected="selected"{% endif %}>False</option>
+                                    </select>
+                                {% elif permission.value_type == 'Number' %}
+                                    <input type="text" style="width: 100px;" name="{{ permission.id }}" class="permission" value="{% if is_edit %}{% if customer.permissions|cus_perm_contain:permission.id %}{{ customer.permissions|cus_perm_get:permission.id }}{% else %}{{ permission.value }}{% endif %}{% else %}{{ permission.value }}{% endif %}">
+                                {% endif %}
+                                <span>(默认:{{ permission.value|capfirst }})</span>
+                            </span>
+                        {% endfor %}
+                        </div>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <th>权限配置:</th>
+                    <td>暂无权限项</td>
+
+                </tr>
+            {% endif %}
+        {% endif %}
+    <div id="dialog_table" class="easyDialog_wrapper" style="display: none; margin: 0px; min-width: 1045px; width: auto; min-height: 300px; max-height: 500px;">
+        <div class="easyDialog_content">
+            <h4 class="easyDialog_title" id="easyDialogTitle" style="cursor: move;">
+                <a href="javascript:void(0)" title="关闭窗口" class="close_btn closeBtn_rzrk">×</a>
+                <span type="dialog_title"></span>
+            </h4>
+
+            <div class="easyDialog_text" style="min-height: 300px; max-height: 415px; overflow: auto;">
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svn/svnrepos/!svn/ver/166710/server5/deploy/trunk/TTEngine/media/js/validate
+END
+jquery.validate.js
+K 25
+svn:wc:ra_dav:version-url
+V 96
+/svn/svnrepos/!svn/ver/166710/server5/deploy/trunk/TTEngine/media/js/validate/jquery.validate.js
+END
+additional-methods.js
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/svn/svnrepos/!svn/ver/166710/server5/deploy/trunk/TTEngine/media/js/validate/additional-methods.js
+END
+jquery.validate.min.js
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/svn/svnrepos/!svn/ver/166710/server5/deploy/trunk/TTEngine/media/js/validate/jquery.validate.min.js
+END
+additional-methods.min.js
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/svn/svnrepos/!svn/ver/166710/server5/deploy/trunk/TTEngine/media/js/validate/additional-methods.min.js
+END

@@ -1,0 +1,113 @@
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svn/svnrepos/!svn/ver/167575/server5/deploy/trunk/TTEngine/rpc/script/codeGenerator
+END
+StructCppCodeGenerator.py
+K 25
+svn:wc:ra_dav:version-url
+V 110
+/svn/svnrepos/!svn/ver/167575/server5/deploy/trunk/TTEngine/rpc/script/codeGenerator/StructCppCodeGenerator.py
+END
+StdClientCodeGenerator.py
+K 25
+svn:wc:ra_dav:version-url
+V 110
+/svn/svnrepos/!svn/ver/167575/server5/deploy/trunk/TTEngine/rpc/script/codeGenerator/StdClientCodeGenerator.py
+END
+__init__.py
+K 25
+svn:wc:ra_dav:version-url
+V 96
+/svn/svnrepos/!svn/ver/167575/server5/deploy/trunk/TTEngine/rpc/script/codeGenerator/__init__.py
+END
+ServerTemplate.py
+K 25
+svn:wc:ra_dav:version-url
+V 102
+/svn/svnrepos/!svn/ver/167575/server5/deploy/trunk/TTEngine/rpc/script/codeGenerator/ServerTemplate.py
+END
+SqlGenerator.py
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/svn/svnrepos/!svn/ver/167575/server5/deploy/trunk/TTEngine/rpc/script/codeGenerator/SqlGenerator.py
+END
+ServerCodeGenerator.py
+K 25
+svn:wc:ra_dav:version-url
+V 107
+/svn/svnrepos/!svn/ver/167575/server5/deploy/trunk/TTEngine/rpc/script/codeGenerator/ServerCodeGenerator.py
+END
+BrokerTran.py
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/svn/svnrepos/!svn/ver/167575/server5/deploy/trunk/TTEngine/rpc/script/codeGenerator/BrokerTran.py
+END
+ClientTemplate.py
+K 25
+svn:wc:ra_dav:version-url
+V 102
+/svn/svnrepos/!svn/ver/167575/server5/deploy/trunk/TTEngine/rpc/script/codeGenerator/ClientTemplate.py
+END
+StockServerCodeGenerator.py
+K 25
+svn:wc:ra_dav:version-url
+V 112
+/svn/svnrepos/!svn/ver/167575/server5/deploy/trunk/TTEngine/rpc/script/codeGenerator/StockServerCodeGenerator.py
+END
+DjangoTranslator.py
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/svn/svnrepos/!svn/ver/167575/server5/deploy/trunk/TTEngine/rpc/script/codeGenerator/DjangoTranslator.py
+END
+LuaTemplate.py
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/svn/svnrepos/!svn/ver/167575/server5/deploy/trunk/TTEngine/rpc/script/codeGenerator/LuaTemplate.py
+END
+RPCTemplate.py
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/svn/svnrepos/!svn/ver/167575/server5/deploy/trunk/TTEngine/rpc/script/codeGenerator/RPCTemplate.py
+END
+ClientCodeGenerator.py
+K 25
+svn:wc:ra_dav:version-url
+V 107
+/svn/svnrepos/!svn/ver/167575/server5/deploy/trunk/TTEngine/rpc/script/codeGenerator/ClientCodeGenerator.py
+END
+CodeGenerator.py
+K 25
+svn:wc:ra_dav:version-url
+V 101
+/svn/svnrepos/!svn/ver/167575/server5/deploy/trunk/TTEngine/rpc/script/codeGenerator/CodeGenerator.py
+END
+LuaCodeGenerator.py
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/svn/svnrepos/!svn/ver/167575/server5/deploy/trunk/TTEngine/rpc/script/codeGenerator/LuaCodeGenerator.py
+END
+StockClientCodeGenerator.py
+K 25
+svn:wc:ra_dav:version-url
+V 112
+/svn/svnrepos/!svn/ver/167575/server5/deploy/trunk/TTEngine/rpc/script/codeGenerator/StockClientCodeGenerator.py
+END
+StdClientTemplate.py
+K 25
+svn:wc:ra_dav:version-url
+V 105
+/svn/svnrepos/!svn/ver/167575/server5/deploy/trunk/TTEngine/rpc/script/codeGenerator/StdClientTemplate.py
+END
+RPCCodeGenerator.py
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/svn/svnrepos/!svn/ver/167575/server5/deploy/trunk/TTEngine/rpc/script/codeGenerator/RPCCodeGenerator.py
+END

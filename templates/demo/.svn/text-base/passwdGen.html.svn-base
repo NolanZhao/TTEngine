@@ -1,0 +1,41 @@
+{% extends "root.html" %}
+{% load rzrk_tags %}
+
+{% block title %}{% settings_value "MAIN_PROJECT_NAME" %}-监控模块编辑{% endblock %}
+{% block rootJsAndCss %}
+    <style>
+    </style>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#GeneratorBtn").bind("click", function () {
+                $.post('/demo/passwdGen/', {}, function (resp) {
+                        if (resp.success) {
+                           Password = resp.error;
+                           document.getElementById("passwd_view").value=Password;
+                        } else {
+                            dialog_error('', resp.error);
+                        }
+                    }, 'json')
+
+            });
+        });
+
+    </script>
+{% endblock %}
+{% block rootBody %}
+    <div class="title_1">-*-随机密码生成器-*-</div>
+    <div class="inner">
+        <table class="bordered table" id="table">
+            <tr>
+                <th style="width: 150px">
+                    <div class="btn" id="GeneratorBtn" name="edit">生成密码</div>
+                </th>
+                <td>
+                    <span class="like_table">
+                        <input type="text" style="height: 25px" name="setting_name" id="passwd_view" value="">
+                    </span>
+                </td>
+            </tr>
+        </table>
+    </div>
+{% endblock %}

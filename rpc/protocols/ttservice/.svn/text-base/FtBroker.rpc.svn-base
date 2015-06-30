@@ -1,0 +1,67 @@
+Namespace = ttservice
+ServiceName = FtBroker
+
+Includes = (
+    Protocol/rpc_Structs_Def.h,
+    Protocol/rpc_FtCommon_Def.h,
+    Protocol/rpc_ClientTraderCommon_Def.h
+)
+
+CppIncludes = (
+    Protocol/rpc_Structs.h,
+    Protocol/rpc_FtCommon.h,
+    Protocol/rpc_ClientTraderCommon.h,
+    net/RPCEngine.h
+)
+
+# 登录相关
+
+
+login(req:LoginReq) => (success:#b, ErrorID:#i, ErrorMsg:#S, response:LoginResponsePtr)
+#login(platformId:#i,brokerId:#i,accountType:#i,userName:#S,password:#S,addresses:[#S],extra_info:#S) => (success:#b, ErrorID:#i, ErrorMsg:#S, response:LoginResponsePtr)
+
+order(req:OrderReqPtr) => (content:OrderRespPtr)
+
+
+
+cancel(req : CancelReqPtr ) => (success:#b)
+
+queryOrder(req:QueryOrderReqPtr) =>(content:[OrderDetailPtr])
+
+queryAccount(req:QueryAccountReqPtr) =>(content:AccountDetailPtr)
+
+queryBusiness(req:QueryAccountReqPtr) =>(content:[DealDetailPtr])
+
+queryPositionDetail(req:QueryAccountReqPtr) =>(content:[PositionDetailPtr])
+
+queryExchange(req:QueryAccountReqPtr) =>(content:[CExchangeDetailPtr])
+
+queryInstrument(req:QueryAccountReqPtr) =>(content:[CInstrumentDetailPtr])
+
+queryInstrumentMarginRate(req:QueryInstrumentMarginRateReqPtr) =>(content:CMarginRateDetailPtr)
+
+queryInstrumentCommissionRate(req:QueryInstrumentCommissionRateReqPtr) =>(content:CCommissionRateDetailPtr)
+
+queryTransferBank(req:QueryAccountReqPtr) =>(content:[BankDetailPtr])
+queryExchangeStatus(req:QueryAccountReqPtr) =>(content:[CExchangeStatusPtr])
+
+queryBankAmount(req:QueryBankAmountReqPtr) =>(content:BankAmountDetailPtr)
+
+bankTransfer(req:BankTransferReqPtr) => (success:#b)
+
+queryTransferSerial(req:QueryTransferSerialReqPtr) =>()
+
+querySettlementInfo(req:QuerySettlementInfoReqPtr) =>(content:[SettlementDetailPtr])
+
+queryInvestor(req:QueryAccountReqPtr) =>(content:InverstorDetailPtr)
+
+updateUserPassword(req:UpdateUserPasswordReqPtr) =>(success:#b)
+
+updateTradingAccountPassword(req:UpdateTradingAccountPasswordReqPtr) =>(success:#b)
+
+queryRawCtp(req:bson::bo) => (success:#b)
+
+quit() => (success : #b)
+
+=> pushData(data:IDataPtr)
+=> pushRaw(param:bson::bo)

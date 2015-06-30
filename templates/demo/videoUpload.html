@@ -1,0 +1,150 @@
+{% extends "server_monitor_common.html" %}
+{% load rzrk_tags %}
+
+{% block title %}{% settings_value "MAIN_PROJECT_NAME" %}-欢迎{% endblock %}
+{% block rootJsAndCss %}
+    <style>
+        textarea {
+            width: 100%;
+            height: 200px;
+        }
+
+        .loading {
+            width: 700px;
+            height: 20px;
+            text-align: center;
+            border: 2px solid #BEBEBE;
+            margin-left: 215px;
+            margin-top: -26px;
+        }
+
+        .loading div {
+            background-color: #C1FFE4;
+            margin-top: -20px;
+            width: 700px;
+            height: 20px;
+            z-index: 2;
+        }
+
+        .loading span {
+            position: relative;
+            z-index: 3;
+        }
+
+    </style>
+
+    <script src="/media/js/jq/jquery-2.1.0.min.js"></script>
+    <script src="/media/js/ajaxfileupload/ajaxfileupload.js"></script>
+
+    <script type="text/javascript">
+    $(document).ready(function () {
+
+        //保存按钮
+        $('#saveBtn').bind("click", function () {
+            var tittle = $("#tittle").val();
+            var description = $("#description").val();
+            var url = $("#attachmenturl").val();
+
+            var result = {
+                "tittle": tittle,
+                "description": description,
+                "url":url
+            };
+
+            var json = JSON.stringify(result);
+            var url = "/demo/videoPost/";
+            //执行save操作
+            $.post(url, result, function (resp) {
+                if (resp.success) {
+                    alert("提交成功！")
+                    window.location.href = window.location.href;
+                } else {
+                    alert(resp.error);
+                }
+            }, 'json');
+
+        });
+
+        //绑定上传方法
+
+        $("#fileuploadbutton").click(function () {
+            var $this = $("#uploadPackageFile");
+            var path = $this.val();
+            if (!path) {
+                alert("上传文件不能为空！");
+                return;
+            }
+            ajaxFileUpload();
+        })
+
+        function ajaxFileUpload() {
+            $.ajaxFileUpload
+            (
+                {
+                    url: '/demo/uploadVideo/', //用于文件上传的服务器端请求地址
+                    secureuri: false, //是否需要安全协议，一般设置为false
+                    fileElementId: 'uploadPackageFile', //文件上传域的ID
+                    dataType: 'json', //返回值类型 一般设置为json
+                    success: function (data, status)  //服务器成功响应处理函数
+                    {
+                        $("#attachmenturl").val(data.fileurl);
+                        if (typeof (data.error) != 'undefined') {
+                            if (data.error.trim.length == 0) {
+                                alert("上传成功！")
+                            } else {
+                                alert(data.error);
+                            }
+                        }
+                    }
+                }
+            )
+            return false;
+        }
+
+    });
+
+    </script>
+{% endblock %}
+    {% block title_1 %}
+        <span style="float:left;"><span value="video">公司培训视频</span>
+    {% endblock %}
+    {% block extratitle_1 %}
+            <div class="btn" id="saveBtn">提交</div>
+    {% endblock %}
+
+    {% block content %}
+        <tr>
+            <th>标题:</th> 
+            <td>
+                <input style="width: 500px" id="tittle">
+            </td>
+        </tr>
+
+        <tr>
+            <th>描述:</th>
+            <td>
+                <textarea id="description"></textarea>
+            </td>
+        </tr>
+        <tr>
+            <th>文件:</th>
+            <td>
+                <input type="button" id="fileuploadbutton" value="上传" />
+                <input id="uploadPackageFile" type="file" name="uploadFile" method="ajaxSubmit" class="uploadFile tips">
+                <input type="hidden" name="attachmenturl" id="attachmenturl" />
+            </td>
+        </tr>
+
+
+    <div id="dialog_table" class="easyDialog_wrapper" style="display: none; margin: 0px; min-width: 1045px; width: auto; min-height: 300px; max-height: 500px;">
+        <div class="easyDialog_content">
+            <h4 class="easyDialog_title" id="easyDialogTitle" style="cursor: move;">
+                <a href="javascript:void(0)" title="关闭窗口" class="close_btn closeBtn_rzrk">×</a>
+                <span type="dialog_title"></span>
+            </h4>
+
+            <div class="easyDialog_text" style="min-height: 300px; max-height: 415px; overflow: auto;">
+            </div>
+        </div>
+    </div>
+{% endblock %}

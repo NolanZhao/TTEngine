@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svn/svnrepos/!svn/ver/167030/server5/deploy/trunk/TTEngine/scripts/customer
+END
+__init__.py
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/svn/svnrepos/!svn/ver/166034/server5/deploy/trunk/TTEngine/scripts/customer/__init__.py
+END
+Customer.py
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/svn/svnrepos/!svn/ver/167030/server5/deploy/trunk/TTEngine/scripts/customer/Customer.py
+END
+Machine.py
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svn/svnrepos/!svn/ver/167030/server5/deploy/trunk/TTEngine/scripts/customer/Machine.py
+END

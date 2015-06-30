@@ -1,0 +1,77 @@
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svn/svnrepos/!svn/ver/167575/server5/deploy/trunk/TTEngine/rpc/protocols/ttservice
+END
+FtBroker.rpc
+K 25
+svn:wc:ra_dav:version-url
+V 96
+/svn/svnrepos/!svn/ver/167575/server5/deploy/trunk/TTEngine/rpc/protocols/ttservice/FtBroker.rpc
+END
+GenerateRpcHeader.sh
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/svn/svnrepos/!svn/ver/167575/server5/deploy/trunk/TTEngine/rpc/protocols/ttservice/GenerateRpcHeader.sh
+END
+WebService.rpc
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/svn/svnrepos/!svn/ver/167575/server5/deploy/trunk/TTEngine/rpc/protocols/ttservice/WebService.rpc
+END
+XtTask.rpc
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/svn/svnrepos/!svn/ver/167575/server5/deploy/trunk/TTEngine/rpc/protocols/ttservice/XtTask.rpc
+END
+ClientTrader.rpc
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/svn/svnrepos/!svn/ver/167575/server5/deploy/trunk/TTEngine/rpc/protocols/ttservice/ClientTrader.rpc
+END
+CopyToClient.py
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/svn/svnrepos/!svn/ver/167575/server5/deploy/trunk/TTEngine/rpc/protocols/ttservice/CopyToClient.py
+END
+TradingMonitorService.rpc
+K 25
+svn:wc:ra_dav:version-url
+V 109
+/svn/svnrepos/!svn/ver/167575/server5/deploy/trunk/TTEngine/rpc/protocols/ttservice/TradingMonitorService.rpc
+END
+GenRPC.py
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/svn/svnrepos/!svn/ver/167575/server5/deploy/trunk/TTEngine/rpc/protocols/ttservice/GenRPC.py
+END
+StockClientTrader.rpc
+K 25
+svn:wc:ra_dav:version-url
+V 105
+/svn/svnrepos/!svn/ver/167575/server5/deploy/trunk/TTEngine/rpc/protocols/ttservice/StockClientTrader.rpc
+END
+doc.rpc
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/svn/svnrepos/!svn/ver/167575/server5/deploy/trunk/TTEngine/rpc/protocols/ttservice/doc.rpc
+END
+StkBroker.rpc
+K 25
+svn:wc:ra_dav:version-url
+V 97
+/svn/svnrepos/!svn/ver/167575/server5/deploy/trunk/TTEngine/rpc/protocols/ttservice/StkBroker.rpc
+END
+RiskControl.rpc
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/svn/svnrepos/!svn/ver/167575/server5/deploy/trunk/TTEngine/rpc/protocols/ttservice/RiskControl.rpc
+END
